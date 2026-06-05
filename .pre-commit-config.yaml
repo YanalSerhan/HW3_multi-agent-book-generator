@@ -1,0 +1,49 @@
+# ==============================================================================
+# Pre-commit hooks — CrewAI Multi-Agent Book Generator
+# ==============================================================================
+# Install: pre-commit install
+# Run all: pre-commit run --all-files
+# ==============================================================================
+
+repos:
+  # ---------- General ----------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+        exclude: ".*\\.jsonl$"
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: debug-statements
+
+  # ---------- Ruff (Lint + Format) ----------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # ---------- Type Checking ----------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic>=2.0
+          - pydantic-settings>=2.0
+          - types-requests
+        args: [--ignore-missing-imports]
+
+  # ---------- Spell Check ----------
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args: [--skip, ".git,.venv,output,*.bib"]
+        exclude: ".*\\.bib$"

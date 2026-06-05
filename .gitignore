@@ -1,0 +1,87 @@
+# ==============================================================================
+# .gitignore — CrewAI Multi-Agent Book Generator
+# ==============================================================================
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+
+# ---------- Virtual Environments ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- Testing ----------
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+
+# ---------- Secrets ----------
+.env
+.env.local
+.env.production
+
+# ---------- Output / Generated Artifacts ----------
+output/*.pdf
+output/latex/*.aux
+output/latex/*.log
+output/latex/*.bbl
+output/latex/*.blg
+output/latex/*.toc
+output/latex/*.out
+output/latex/*.fls
+output/latex/*.fdb_latexmk
+output/latex/*.idx
+output/latex/*.ilg
+output/latex/*.ind
+output/latex/*.glo
+output/latex/*.gls
+output/latex/*.glg
+output/latex/*.bcf
+output/latex/*.run.xml
+output/latex/*.synctex.gz
+output/logs/
+output/coverage/
+
+# Keep gitkeep files and the PDF for submission
+!output/.gitkeep
+!output/latex/.gitkeep
+
+# ---------- LaTeX Auxiliary (general) ----------
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# ---------- OS Files ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Misc ----------
+*.log
+*.bak
+*.tmp
