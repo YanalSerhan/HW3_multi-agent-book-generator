@@ -2,16 +2,14 @@ import subprocess
 from pathlib import Path
 
 from ..exceptions.domain import CompilationError
+from ..shared.gatekeeper import ApiGatekeeper
 from .base import BaseClient
 
-
-from typing import Optional
-from ..shared.gatekeeper import ApiGatekeeper
 
 class LaTeXClient(BaseClient):
     """Client to execute LaTeX compilation tools via subprocess."""
 
-    def __init__(self, gatekeeper: Optional[ApiGatekeeper] = None) -> None:
+    def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
         # We don't necessarily rate limit local compilation, but we use the gatekeeper
         # to queue compilation tasks and enforce max_concurrent = 1.
         super().__init__("latex", gatekeeper)

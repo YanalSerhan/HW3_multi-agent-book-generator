@@ -2284,7 +2284,7 @@ From test runs and stress tests, document:
 
 **Goal:** All agents, tools, and workflows fully implemented.
 
-**Sub-phase 3a: Tools (Day 3–4)**
+**Sub-phase 3a: Tools (Day 3–4)** [DONE]
 
 | Task | Deliverable | Dependency | Completion Criteria |
 |------|-------------|------------|---------------------|
@@ -2295,7 +2295,7 @@ From test runs and stress tests, document:
 | `ReadabilityScoreTool` | Tool class | `textstat` | Score returned for sample text |
 | `FactCheckTool` | Tool class | SDK layer | Cross-check logic works |
 
-**Sub-phase 3b: Agents (Day 4–5)**
+**Sub-phase 3b: Agents (Day 4–5)** [DONE]
 
 Implement agents in dependency order:
 1. Research Agent (A-01)
@@ -2309,7 +2309,7 @@ Implement agents in dependency order:
 9. PDF Production Agent (A-09)
 10. Quality Assurance Agent (A-10)
 
-**Sub-phase 3c: Workflows (Day 5–6)**
+**Sub-phase 3c: Workflows (Day 5–6)** [DONE]
 
 | Task | Deliverable | Dependency | Completion Criteria |
 |------|-------------|------------|---------------------|
@@ -2320,7 +2320,7 @@ Implement agents in dependency order:
 | Retry logic | Retry wrappers | Workflows | Retry tested with mock failure |
 | Human checkpoints | Interactive prompts | Workflows | Prompts appear when configured |
 
-**Sub-phase 3d: LaTeX System (Day 6–7)**
+**Sub-phase 3d: LaTeX System (Day 6–7)** [DONE]
 
 | Task | Deliverable | Dependency | Completion Criteria |
 |------|-------------|------------|---------------------|
@@ -2330,7 +2330,7 @@ Implement agents in dependency order:
 | Bibliography integration | BibLaTeX config | Template | Citations render |
 | Glossary/Index | LaTeX config | Template | Glossary and index compile |
 
-**Phase 3 is complete when:** `make run` completes end-to-end (with real or mock LLM); PDF is produced.
+**Phase 3 is complete when:** `make run` completes end-to-end (with real or mock LLM); PDF is produced. [COMPLETED]
 
 ---
 

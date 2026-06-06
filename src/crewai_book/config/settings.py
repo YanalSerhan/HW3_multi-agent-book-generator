@@ -1,15 +1,15 @@
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def _load_json_config(file_path: Path) -> Dict[str, Any]:
+def _load_json_config(file_path: Path) -> dict[str, Any]:
     """Load JSON config file safely."""
     if file_path.exists():
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
             return data if isinstance(data, dict) else {}
     return {}

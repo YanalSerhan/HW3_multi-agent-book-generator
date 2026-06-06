@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 
@@ -11,7 +11,7 @@ from .base import BaseClient
 class LLMClient(BaseClient):
     """Client for interacting with LLM APIs via httpx."""
 
-    def __init__(self, gatekeeper: Optional[ApiGatekeeper] = None) -> None:
+    def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
         super().__init__("openai", gatekeeper)
         self.base_url = "https://api.openai.com/v1"
         self.headers = {
@@ -36,7 +36,7 @@ class LLMClient(BaseClient):
             raise APIConnectionError("LLM API call failed", {"error": str(e)}) from e
 
     def complete(
-        self, messages: list[Dict[str, Any]], model: str = "gpt-4o", temperature: float = 0.7
+        self, messages: list[dict[str, Any]], model: str = "gpt-4o", temperature: float = 0.7
     ) -> str:
         """Get a completion from the LLM."""
         payload = {

@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 from ..observability.logger import get_logger
 from ..sdk.latex_client import LaTeXClient
@@ -8,7 +7,7 @@ from ..sdk.latex_client import LaTeXClient
 class PDFService:
     """Service to orchestrate PDF compilation."""
 
-    def __init__(self, latex_client: Optional[LaTeXClient] = None) -> None:
+    def __init__(self, latex_client: LaTeXClient | None = None) -> None:
         self.latex_client = latex_client or LaTeXClient()
         self.logger = get_logger("service.pdf")
 

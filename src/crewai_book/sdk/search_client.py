@@ -1,5 +1,5 @@
-from typing import Any, Optional, List, Dict
-import urllib.parse
+from typing import Any
+
 import httpx
 
 from ..config.settings import settings
@@ -11,7 +11,7 @@ from .base import BaseClient
 class SearchClient(BaseClient):
     """Client for web and academic search APIs."""
 
-    def __init__(self, gatekeeper: Optional[ApiGatekeeper] = None) -> None:
+    def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
         super().__init__("serper", gatekeeper)
         self.headers = {
             "X-API-KEY": settings.serper_api_key,

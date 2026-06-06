@@ -42,6 +42,7 @@ def setup_logger() -> None:
 
 from typing import Any
 
+
 def get_logger(module_name: str) -> Any:
     """Get a contextualized logger."""
     return logger.bind(module=module_name)

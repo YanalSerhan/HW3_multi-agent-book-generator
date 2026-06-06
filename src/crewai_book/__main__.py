@@ -65,17 +65,24 @@ def run(
     ),
 ) -> None:
     """Run the full book generation pipeline."""
+    from crewai_book.workflows.main_crew import run_pipeline
+
+    final_topic = topic or "Multi-Agent Systems in AI"
+
     console.print(
         f"[bold green]CrewAI Book Generator v{__version__}[/bold green]"
     )
-    console.print(f"  Topic: {topic or '(from .env)'}")
+    console.print(f"  Topic: {final_topic}")
     console.print(f"  Type:  {document_type}")
     console.print(f"  Output: {output_dir}")
     console.print()
-    console.print(
-        "[yellow]Pipeline not yet implemented. "
-        "Complete Phase 2 (Architecture) and Phase 3 (Implementation) first.[/yellow]"
-    )
+
+    try:
+        state = run_pipeline(final_topic)
+        console.print(f"[bold green]Pipeline completed![/bold green] Run ID: {state.run_id}")
+    except Exception as e:
+        console.print(f"[bold red]Pipeline failed:[/bold red] {e}")
+        raise typer.Exit(code=1)
 
 
 @app.command()
@@ -84,8 +91,8 @@ def info() -> None:
     console.print(f"[bold]CrewAI Book Generator v{__version__}[/bold]")
     console.print()
     console.print("[dim]Configuration:[/dim]")
-    console.print("  .env file: [yellow]not yet loaded[/yellow]")
-    console.print("  Pipeline:  [yellow]not yet implemented[/yellow]")
+    console.print("  .env file: [yellow]check .env.example[/yellow]")
+    console.print("  Pipeline:  [green]implemented[/green]")
 
 
 if __name__ == "__main__":
