@@ -12,6 +12,7 @@
 
 ## Table of Contents
 
+0. [🔴 Mandatory Requirements Checklist (PDF Guidelines)](#-mandatory-requirements-checklist-pdf-guidelines)
 1. [Executive Overview](#1-executive-overview)
 2. [Requirements Analysis](#2-requirements-analysis)
 3. [Project Architecture Planning](#3-project-architecture-planning)
@@ -26,6 +27,427 @@
 12. [Project Timeline](#12-project-timeline)
 13. [Definition of Done](#13-definition-of-done)
 14. [Excellence Beyond Requirements](#14-excellence-beyond-requirements)
+
+---
+
+## 🔴 Mandatory Requirements Checklist (PDF Guidelines)
+
+> All items below are extracted directly from the *Guidelines for Writing Professional Software at the Highest Level of Excellence* (Dr. Yoram Segal, v3.00).
+> **Every item must be checked before submission is considered complete.**
+
+---
+
+### §2 — Mandatory Project Structure & Documentation Files
+
+#### Required Files
+
+- [ ] 🔴 `README.md` exists in the project root
+- [ ] 🔴 `README.md` includes: **installation instructions** (step-by-step, env vars, troubleshooting)
+- [ ] 🔴 `README.md` includes: **usage instructions** (flags, modes, typical workflow, CLI/GUI)
+- [ ] 🔴 `README.md` includes: **examples and demos** (code samples, screenshots, use-case scenarios)
+- [ ] 🔴 `README.md` includes: **configuration guide** (all parameters explained)
+- [ ] 🔴 `README.md` includes: **contribution guidelines** (code style, conventions)
+- [ ] 🔴 `README.md` includes: **license and attribution** (third-party libraries credited)
+
+#### Required `/docs` Directory
+
+- [ ] 🔴 `docs/PRD.md` exists — Product Requirements Document
+- [ ] 🔴 `docs/PRD.md` includes: project overview, context, target audience, stakeholder analysis
+- [ ] 🔴 `docs/PRD.md` includes: measurable goals and KPIs with acceptance criteria
+- [ ] 🔴 `docs/PRD.md` includes: functional and non-functional requirements, user stories
+- [ ] 🔴 `docs/PRD.md` includes: assumptions, dependencies, out-of-scope items
+- [ ] 🔴 `docs/PRD.md` includes: timeline with milestones (roadmap)
+- [ ] 🔴 `docs/PLAN.md` exists — Architecture & Implementation Plan
+- [ ] 🔴 `docs/PLAN.md` includes: C4 Model diagrams (Context, Container, Component, Code)
+- [ ] 🔴 `docs/PLAN.md` includes: UML diagrams for complex flows
+- [ ] 🔴 `docs/PLAN.md` includes: deployment diagrams
+- [ ] 🔴 `docs/PLAN.md` includes: Architecture Decision Records (ADRs) with rationale and trade-offs
+- [ ] 🔴 `docs/PLAN.md` includes: API documentation, data schemas, interface contracts
+- [ ] 🔴 `docs/TODO.md` exists — this file, kept updated throughout development
+- [ ] 🔴 `docs/TODO.md` includes: tasks with status (Not started / In progress / Done)
+- [ ] 🔴 `docs/TODO.md` includes: priorities and phase breakdown
+- [ ] 🔴 `docs/TODO.md` includes: responsibility assignment per task
+- [ ] 🔴 `docs/TODO.md` includes: definition-of-done criteria per task
+
+#### Per-Algorithm / Per-Mechanism PRD Files
+
+- [ ] 🔴 `docs/PRD_research_pipeline.md` — dedicated PRD for Research Pipeline mechanism
+- [ ] 🔴 `docs/PRD_latex_system.md` — dedicated PRD for LaTeX System mechanism
+- [ ] 🔴 `docs/PRD_pdf_production.md` — dedicated PRD for PDF Production mechanism
+- [ ] 🔴 Each per-mechanism PRD includes: theoretical background, specific requirements, expected I/O, constraints, selection rationale, success criteria, test scenarios
+
+#### Mandatory Workflow (must follow this order)
+
+- [ ] 🔴 **Step 1:** `docs/PRD.md` written and approved **before any code**
+- [ ] 🔴 **Step 2:** `docs/PLAN.md` (architecture plan) written
+- [ ] 🔴 **Step 3:** `docs/TODO.md` (task list) written
+- [ ] 🔴 **Step 4:** Per-mechanism PRD files written for all major algorithms
+- [ ] 🔴 **Step 5:** All documents approved **before implementation begins**
+- [ ] 🔴 **Step 6:** `docs/TODO.md` updated continuously as development progresses
+- [ ] 🔴 **Step 7:** Results saved, visualizations created, `README.md` finalized
+
+---
+
+### §3 — Code Structure & Quality
+
+#### File Size
+
+- [ ] 🔴 **No source file exceeds 150 lines of code** (comments and blank lines excluded)
+- [ ] 🔴 All oversized files have been split using one of these strategies:
+  - [ ] Extract helper functions to a separate file
+  - [ ] Extract `Mixin` classes for shared responsibilities
+  - [ ] 50/50 split on logical seams (read/write, etc.)
+  - [ ] Extract constants to `constants.py`
+  - [ ] Extract model definitions to a dedicated models file
+
+#### Code Comments & Documentation
+
+- [ ] 🔴 Every **module** has a docstring explaining its purpose
+- [ ] 🔴 Every **class** has a docstring
+- [ ] 🔴 Every **public function/method** has a docstring
+- [ ] 🔴 All docstrings explain **"why"** not just **"what"**
+- [ ] 🔴 Complex design decisions are explained in comments
+- [ ] 🔴 Pre-conditions and assumptions are documented
+- [ ] 🔴 Comments are kept **in sync with code changes**
+
+#### Code Quality Principles
+
+- [ ] 🔴 All variable and function names are **descriptive and precise**
+- [ ] 🔴 All functions are **short and focused** (single responsibility principle)
+- [ ] 🔴 **DRY principle** enforced — no duplicated logic anywhere
+- [ ] 🔴 Consistent code style maintained **throughout the entire project**
+
+---
+
+### §4 — SDK Architecture & OOP Design
+
+#### SDK Layer
+
+- [ ] 🔴 **All business logic** is accessible via the SDK layer
+- [ ] 🔴 SDK is the **single entry point** for all consumers (GUI, CLI, third parties)
+- [ ] 🔴 No business logic resides in GUI, CLI, or controller layers
+- [ ] 🔴 External consumers **only** interact with the SDK — never with internal modules directly
+- [ ] 🔴 Architecture follows: External → SDK → Domain Services → Infrastructure
+
+#### OOP & No Code Duplication
+
+- [ ] 🔴 **Zero code duplication** — same logic never appears in two files
+- [ ] 🔴 Logic shared across 2+ files has been extracted to a **shared module**
+- [ ] 🔴 Same `try/except` pattern appearing in 3+ files → extracted to a **wrapper function**
+- [ ] 🔴 Same pattern in 3+ classes → extracted to **base class or Mixin**
+- [ ] 🔴 Duplicated logic with variants → implemented as **Template Method pattern**
+
+#### Mixin Rules
+
+- [ ] 🔴 Each Mixin handles **exactly one concern**
+- [ ] 🔴 No two Mixins share the same methods
+- [ ] 🔴 All Mixins are independently testable
+
+---
+
+### §5 — API Gatekeeper & Rate Control
+
+#### API Gatekeeper
+
+- [ ] 🔴 **Central `ApiGatekeeper` class** exists in `src/<package>/shared/gatekeeper.py`
+- [ ] 🔴 **Every external API call** passes through the Gatekeeper — no direct calls allowed
+- [ ] 🔴 Gatekeeper enforces **rate limits before execution**
+- [ ] 🔴 Gatekeeper implements **queue for overflow requests** (FIFO, no dropping)
+- [ ] 🔴 Gatekeeper **logs all API calls** for monitoring
+- [ ] 🔴 Gatekeeper implements **retry on transient failures**
+- [ ] 🔴 Gatekeeper exposes `get_queue_status()` method
+
+#### Rate Limit Configuration
+
+- [ ] 🔴 Rate limits are **never hardcoded** in source code
+- [ ] 🔴 Rate limits are read from `config/rate_limits.json`
+- [ ] 🔴 `rate_limits.json` includes a `version` field (starting at `"1.00"`)
+- [ ] 🔴 Configuration includes: `requests_per_minute`, `requests_per_hour`, `concurrent_max`, `retry_after_seconds`, `max_retries`
+
+#### Queue Management
+
+- [ ] 🔴 FIFO queue for requests that exceed rate limits
+- [ ] 🔴 Maximum queue depth is configured (not unbounded)
+- [ ] 🔴 Back-pressure signaling when queue is full
+- [ ] 🔴 Queue draining mechanism when rate-limit windows reset
+
+---
+
+### §6 — Test-Driven Development & Quality Assurance
+
+#### TDD Process
+
+- [ ] 🔴 Development follows **Red → Green → Refactor** cycle strictly
+- [ ] 🔴 Tests are written **before or alongside** code — never as an afterthought
+- [ ] 🔴 Every module has a **corresponding test file**
+- [ ] 🔴 Every **public method/function** has at least one test
+- [ ] 🔴 Tests cover **both the happy path and error cases**
+
+#### Test Coverage
+
+- [ ] 🔴 **Global test coverage ≥ 85%** (enforced via `pytest --cov`)
+- [ ] 🔴 Coverage configuration set in `pyproject.toml` with `fail_under = 85`
+- [ ] 🔴 Coverage includes: **statement, branch, and critical-path** coverage
+- [ ] 🔴 Test files also comply with the **150-line file size limit**
+- [ ] 🔴 Tests have **zero dependencies on external services** (all mocked)
+
+#### Test Structure
+
+- [ ] 🔴 `tests/unit/` mirrors `src/` structure exactly
+- [ ] 🔴 `tests/integration/` for cross-component tests
+- [ ] 🔴 `conftest.py` contains all shared fixtures
+- [ ] 🔴 External dependencies (files, DBs, APIs) are fully **mocked**
+
+#### Edge Cases & Failures
+
+- [ ] 🔴 All **boundary conditions** are identified and documented
+- [ ] 🔴 Each edge case has a corresponding test with documented expected output
+- [ ] 🔴 Defensive programming with **clear error messages**
+- [ ] 🔴 Detailed logging with **graceful degradation** on failures
+- [ ] 🔴 Automated test reports generated with **pass/fail rates** per run
+
+---
+
+### §7 — Code Linting, Configuration, & Security
+
+#### Ruff Linter
+
+- [ ] 🔴 **Zero Ruff violations** — `ruff check` exits with code 0
+- [ ] 🔴 Ruff configured in `pyproject.toml` with `line-length = 100`, `target-version = "py310"`
+- [ ] 🔴 Enabled rule sets: `E, F, W, I, N, UP, B, C4, SIM`
+- [ ] 🔴 No suppressed errors without documented justification
+
+#### No Hardcoded Values
+
+- [ ] 🔴 **No API URLs** hardcoded in source — all from config
+- [ ] 🔴 **No rate limits** hardcoded in source — all from `rate_limits.json`
+- [ ] 🔴 **No timeouts** hardcoded in source — all from config
+- [ ] 🔴 **No secrets or API keys** anywhere in source code
+- [ ] 🔴 Only permitted hardcoded values: mathematical/physical constants, default fallback values, `Enum` members, immutable project constants in `constants.py`
+
+#### Configuration Architecture
+
+- [ ] 🔴 Clear configuration hierarchy is followed
+- [ ] 🔴 `config/setup.json` — main app config (versioned)
+- [ ] 🔴 `config/rate_limits.json` — API rate limits (versioned)
+- [ ] 🔴 `config/logging_config.json` — logging configuration
+- [ ] 🔴 `.env` — secrets (git-ignored)
+- [ ] 🔴 `.env.example` — placeholder values (committed to repo)
+- [ ] 🔴 `pyproject.toml` — build, lint, and test settings
+- [ ] 🔴 `src/<package>/constants.py` — immutable project constants
+
+#### Security
+
+- [ ] 🔴 `.env` is in `.gitignore` — verified before first commit
+- [ ] 🔴 `.env.example` exists with placeholder values and descriptions for **all keys**
+- [ ] 🔴 **No API keys, passwords, or tokens** committed to the repository
+- [ ] 🔴 All secrets accessed **only** via `os.environ.get("KEY")` or equivalent
+- [ ] 🔴 `.gitignore` includes: `.env`, `credentials.json`, `*.key`, `*.pem`
+- [ ] 🔴 Secret rotation policy documented; usage is monitored; least-privilege applied
+
+---
+
+### §8 — Version Control & Dependency Management
+
+#### Version Tracking
+
+- [ ] 🔴 **Starting version is `1.00`** — set in `src/<pkg>/shared/version.py`
+- [ ] 🔴 Configuration files include a `"version": "1.00"` field
+- [ ] 🔴 `rate_limits.json` includes `"rate_limits.version": "1.00"`
+- [ ] 🔴 Application validates config version compatibility on startup
+
+#### `uv` Package Manager (MANDATORY)
+
+- [ ] 🔴 **`uv` is the ONLY package manager used** — `pip` is forbidden
+- [ ] 🔴 `uv sync` used for installing dependencies (not `pip install`)
+- [ ] 🔴 `uv add <pkg>` used for adding packages (not `pip install <pkg>`)
+- [ ] 🔴 `uv run python script.py` used to run scripts (not `python script.py`)
+- [ ] 🔴 `uv run pytest tests/` used to run tests (not `python -m pytest`)
+- [ ] 🔴 `uv lock` used to pin dependencies (not `pip freeze`)
+- [ ] 🔴 `pyproject.toml` is the **single source of truth** for dependencies (no `requirements.txt`)
+- [ ] 🔴 `uv.lock` exists and is committed to the repository
+- [ ] 🔴 No direct calls to `pip`, `python -m`, or `virtualenv` anywhere in code, scripts, or CI/CD
+
+#### Git Workflow
+
+- [ ] 🔴 Commit history is **clean and meaningful** — no WIP or merge-conflict commits on main
+- [ ] 🔴 All commit messages follow **Conventional Commits** format
+- [ ] 🔴 Feature branches used for new development
+- [ ] 🔴 Pull Requests used for code review
+- [ ] 🔴 Major releases tagged with `git tag` (e.g., `v1.0.0`)
+
+#### Prompt Engineering Log
+
+- [ ] 🔴 `docs/PROMPT_LOG.md` (or equivalent) exists — documents all significant AI prompts used
+- [ ] 🔴 Each logged prompt includes: context, goal, example outputs, iterative improvements, best practices learned
+
+---
+
+### §9 — Research & Experimentation
+
+#### Parameter Research
+
+- [ ] 🔴 **Systematic experiments** conducted with controlled parameter variation
+- [ ] 🔴 Each parameter's effect is **precisely documented**
+- [ ] 🔴 Advanced analysis applied (variance analysis, partial derivatives, or OAT approach)
+
+#### Analysis Notebook
+
+- [ ] 🔴 `notebooks/` directory exists with analysis notebooks
+- [ ] 🔴 Notebooks contain: systematic experiment results, algorithm comparisons, mathematical proofs or theoretical analysis where applicable
+- [ ] 🔴 Academic references cited using proper attribution
+
+#### Visualizations
+
+- [ ] 🔴 Results are presented with **high-quality visualizations**
+- [ ] 🔴 Visualization types used appropriately: Bar charts, Line charts, Scatter plots, Heatmaps, Box plots, Waterfall charts
+- [ ] 🔴 All visualizations have: clear labels, consistent colors, high resolution, readable legends
+
+---
+
+### §10 — User Interface & Experience
+
+#### UI Quality Criteria
+
+- [ ] 🔴 UI meets Nielsen's 10 Heuristics (learnability, efficiency, memorability, error prevention, satisfaction)
+- [ ] 🔴 System status is always visible to the user
+- [ ] 🔴 UI uses real-world metaphors where appropriate
+- [ ] 🔴 UI supports undo/redo or user control where applicable
+- [ ] 🔴 Error messages are clear and guide the user toward resolution
+
+#### UI Documentation
+
+- [ ] 🔴 Screenshots documented for every screen/state
+- [ ] 🔴 Typical user workflow documented
+- [ ] 🔴 User interactions and feedback mechanisms documented
+- [ ] 🔴 Accessibility considerations documented
+
+---
+
+### §11 — Cost Analysis
+
+- [ ] 🔴 **Token usage tracked** per API call (input and output tokens separately)
+- [ ] 🔴 **Cost per million tokens** calculated per model/service used
+- [ ] 🔴 **Total estimated cost** computed for a full pipeline run
+- [ ] 🔴 Cost breakdown table documented (model, input tokens, output tokens, total cost)
+- [ ] 🔴 Cost optimization strategies identified and documented
+- [ ] 🔴 Real-time cost monitoring implemented; budget alerts configured
+
+---
+
+### §12 — Maintainability & Extensibility
+
+#### Extension Points
+
+- [ ] 🔴 Plugin/extension architecture implemented with clear interfaces
+- [ ] 🔴 Lifecycle hooks defined (e.g., `beforeCreate`, `afterUpdate`)
+- [ ] 🔴 Middleware mechanism available for cross-cutting concerns
+- [ ] 🔴 All extension points documented with examples
+
+#### Maintainability
+
+- [ ] 🔴 Code is modular — responsibilities are clearly separated
+- [ ] 🔴 Components are reusable across the codebase
+- [ ] 🔴 All components are independently analyzable and testable
+
+---
+
+### §13 — ISO/IEC 25010 Quality Standard
+
+- [ ] 🔴 **Functional Suitability**: System does what it's supposed to, correctly and completely
+- [ ] 🔴 **Performance Efficiency**: Response times acceptable; resource usage optimized
+- [ ] 🔴 **Compatibility**: Co-existence and interoperability requirements met
+- [ ] 🔴 **Usability**: Learnability, operability, accessibility, error protection
+- [ ] 🔴 **Reliability**: Maturity, availability, fault tolerance, recoverability
+- [ ] 🔴 **Security**: Confidentiality, integrity, authentication, accountability
+- [ ] 🔴 **Maintainability**: Modularity, reusability, analyzability, modifiability, testability
+- [ ] 🔴 **Portability**: Adaptability, installability, replaceability
+
+---
+
+### §14 — Package Organization
+
+- [ ] 🔴 Project is organized as a **proper Python package**
+- [ ] 🔴 `pyproject.toml` defines: name, version, description, author, license, dependencies
+- [ ] 🔴 `__init__.py` exists in the root package and in every sub-package directory
+- [ ] 🔴 `__init__.py` exports public API via `__all__`
+- [ ] 🔴 `__version__` is defined in root `__init__.py`
+- [ ] 🔴 **All imports use relative paths** within the package — never absolute paths
+- [ ] 🔴 All file reads/writes use **relative paths** from the package root — never absolute
+
+---
+
+### §15 — Parallel Processing (where applicable)
+
+- [ ] 🔴 `multiprocessing` used for CPU-bound tasks (model training, image processing, math)
+- [ ] 🔴 `multithreading` used for I/O-bound tasks (DB, network, file R/W)
+- [ ] 🔴 Thread safety enforced: locks on shared variables, no deadlocks, `Queue.queue` for data passing
+- [ ] 🔴 Dynamic thread/process count configured
+- [ ] 🔴 Proper resource management: handles exceptions, closes resources, prevents memory leaks
+
+---
+
+### §16 — Building Block Design
+
+- [ ] 🔴 Each class/component defines its **Input Data** (types, domain, validation)
+- [ ] 🔴 Each class/component defines its **Output Data** (types, format, edge-case behavior)
+- [ ] 🔴 Each class/component defines its **Setup Data** (parameters, defaults, config)
+- [ ] 🔴 Each component has **single responsibility**
+- [ ] 🔴 Each component addresses a **single concern** (separation of concerns)
+- [ ] 🔴 Each component is **independently testable** via dependency injection
+
+---
+
+### §17 — Final Submission Checklist (from Guidelines)
+
+#### §17.1 Documentation & Structure
+
+- [ ] 🔴 Comprehensive `README.md` at root (user-guide quality)
+- [ ] 🔴 `docs/` directory with `PRD.md`, `PLAN.md`, `TODO.md`
+- [ ] 🔴 Per-mechanism PRD files for all major algorithms
+- [ ] 🔴 Architecture documentation with clear diagrams
+- [ ] 🔴 Prompt engineering log documented
+
+#### §17.2 Code & Architecture
+
+- [ ] 🔴 SDK architecture — all business logic via SDK layer
+- [ ] 🔴 OOP design — inheritance/Mixins used; zero code duplication
+- [ ] 🔴 API Gatekeeper — all external calls routed through it
+- [ ] 🔴 Rate limits from configuration, not hardcoded; queue managed
+- [ ] 🔴 All files ≤ 150 lines; comments and docstrings on everything
+- [ ] 🔴 Consistent naming conventions throughout
+
+#### §17.3 Testing & Quality
+
+- [ ] 🔴 TDD: tests written before/with code
+- [ ] 🔴 Coverage ≥ 85%
+- [ ] 🔴 Zero Ruff violations
+- [ ] 🔴 Edge cases documented and tested
+- [ ] 🔴 Automated test reports generated
+
+#### §17.4 Security & Configuration
+
+- [ ] 🔴 Config files separated from code, versioned
+- [ ] 🔴 `.env.example` with placeholder values committed
+- [ ] 🔴 No API keys or secrets in source code
+- [ ] 🔴 `.gitignore` up to date
+- [ ] 🔴 `uv` used as the sole package manager
+
+#### §17.5 Research & Visualization
+
+- [ ] 🔴 Systematic experiments with parameter variation
+- [ ] 🔴 Sensitivity analysis documented with graphs in notebooks
+- [ ] 🔴 Architecture diagrams, screenshots, high-quality graphs
+- [ ] 🔴 Token cost analysis and optimization strategies
+
+#### §17.6 Standards & Extensibility
+
+- [ ] 🔴 Extension points documented
+- [ ] 🔴 Organized as a proper Python package
+- [ ] 🔴 Parallel processing implemented correctly (where applicable)
+- [ ] 🔴 Building-block design pattern followed
+- [ ] 🔴 ISO/IEC 25010 compliance verified
+- [ ] 🔴 Clean Git history; license; attribution; deployment instructions
 
 ---
 
@@ -54,6 +476,10 @@ The project simultaneously satisfies:
 | SC-08 | Citation integrity | 100% of cited sources are real, accessible, and correctly formatted |
 | SC-09 | Engineering compliance | All guideline checklist items verified |
 | SC-10 | Submission package complete | All deliverables present in submission archive |
+| SC-11 | Package Management | `uv` used exclusively for dependencies; `uv.lock` present; `pip` prohibited |
+| SC-12 | API Gatekeeper | All external API calls route through centralized gatekeeper with queuing |
+| SC-13 | Code File Size | Maximum 150 lines of code per file strictly enforced |
+| SC-14 | TDD Methodology | Test-Driven Development (Red-Green-Refactor) documented and practiced |
 
 ### 1.3 Expected Deliverables
 
@@ -71,15 +497,17 @@ Deliverable D-10: docs/RESEARCH.md (research methodology and results)
 Deliverable D-11: docs/USER_GUIDE.md (end-user instructions)
 Deliverable D-12: docs/DEVELOPER_GUIDE.md (developer instructions)
 Deliverable D-13: tests/ (complete test suite with coverage report)
-Deliverable D-14: evaluation/ (benchmarks, metrics, experiments)
-Deliverable D-15: Submission archive (.zip or .tar.gz)
+Deliverable D-14: evaluation/ (benchmarks, metrics, experiments, API cost analysis)
+Deliverable D-15: docs/PROMPT_LOG.md (Prompt Engineering Log)
+Deliverable D-16: notebooks/results_analysis.ipynb (Results Analysis & Visualizations)
+Deliverable D-17: Submission archive (.zip or .tar.gz)
 ```
 
 ### 1.4 Definition of Project Completion
 
 The project is **complete** when and only when:
 
-1. All 15 deliverables above exist and are non-empty and valid.
+1. All 17 deliverables above exist and are non-empty and valid.
 2. `make install && make run` completes without error on a clean environment.
 3. `make test` passes with coverage ≥85%.
 4. `make lint` passes with zero errors.
@@ -111,6 +539,8 @@ The project is **complete** when and only when:
 | FR-13 | System must produce reproducible output | Guideline | MEDIUM | Two sequential runs produce structurally identical PDF |
 | FR-14 | System must provide a CLI entry point | Guideline | MEDIUM | `python -m crewai_book --help` works |
 | FR-15 | System must support configurable topics via config file or CLI | Guideline | MEDIUM | Topic changed via config without code change |
+| FR-16 | Central API Gatekeeper | Guideline | CRITICAL | All external API calls route through Gatekeeper |
+| FR-17 | API Rate Limiting & Queuing | Guideline | HIGH | Config-driven rate limits with FIFO fallback queues |
 
 ### 2.2 Non-Functional Requirements
 
@@ -131,6 +561,10 @@ The project is **complete** when and only when:
 | NFR-13 | Git history must be clean; no merge conflicts or WIP commits in main | Guideline | MEDIUM | `git log --oneline` review |
 | NFR-14 | CHANGELOG.md maintained with semantic versioning | Guideline | MEDIUM | File present and non-empty |
 | NFR-15 | Project must work on Linux and macOS | Guideline | MEDIUM | CI matrix includes both |
+| NFR-16 | Maximum 150 lines of code per file | Guideline | CRITICAL | Script check passes across `src/` |
+| NFR-17 | OOP without code duplication | Guideline | HIGH | Use Mixins/Template Methods (DRY) |
+| NFR-18 | ISO/IEC 25010 compliance | Guideline | HIGH | High Usability, Reliability, Portability |
+| NFR-19 | No hardcoded configurable values | Guideline | CRITICAL | All configs in config files, zero in code |
 
 ### 2.3 Technical Requirements
 
@@ -150,6 +584,10 @@ The project is **complete** when and only when:
 | TR-12 | `pyproject.toml` as single build configuration | Guideline | HIGH | No `setup.py`; no `setup.cfg` |
 | TR-13 | Pre-commit hooks configured | Guideline | MEDIUM | `.pre-commit-config.yaml` present |
 | TR-14 | GitHub Actions CI pipeline | Guideline | MEDIUM | `.github/workflows/ci.yml` present |
+| TR-15 | Package manager MUST be `uv` | Guideline | CRITICAL | `uv.lock` present; `pip` usage causes failure |
+| TR-16 | TDD (Test-Driven Development) | Guideline | HIGH | Unit tests written before/alongside implementation |
+| TR-17 | Configuration Version Tracking | Guideline | HIGH | Config files include explicit `version` fields |
+| TR-18 | Thread-safety in Multiprocessing | Guideline | HIGH | Use `Queue`, locks, context managers for concurrency |
 
 ### 2.4 Documentation Requirements
 
@@ -166,7 +604,9 @@ The project is **complete** when and only when:
 | DR-09 | Inline docstrings on all public APIs | Guideline | HIGH | `pydocstyle` passes |
 | DR-10 | CHANGELOG.md with semantic versioning | Guideline | MEDIUM | File present and structured |
 | DR-11 | docs/agents/README.md per-agent documentation | Guideline | MEDIUM | One file per agent |
-| DR-12 | Additional PRD for each major mechanism (Research, LaTeX, PDF) | Guideline | MEDIUM | Files present |
+| DR-12 | Additional PRD for each major mechanism (Research, LaTeX, PDF) | Guideline | CRITICAL | Files present in `docs/prds/` |
+| DR-13 | README.md content sections | Guideline | CRITICAL | Must include Install, Usage, Examples, Config, Contrib, License |
+| DR-14 | Prompt Engineering Log | Guideline | HIGH | `docs/PROMPT_LOG.md` present with prompts and metrics |
 
 ### 2.5 Testing Requirements
 
@@ -182,6 +622,8 @@ The project is **complete** when and only when:
 | TST-08 | Coverage ≥85% | Guideline | HIGH | `pytest --cov` report |
 | TST-09 | Performance/timing benchmarks | Guideline | MEDIUM | Benchmark results logged |
 | TST-10 | Content quality evaluation | Guideline | MEDIUM | Readability score computed |
+| TST-11 | Edge cases & graceful degradation | Guideline | HIGH | Tests mock edge cases and verify clean failure/recovery |
+| TST-12 | Automated test reports | Guideline | HIGH | CI generates test/coverage reports |
 
 ### 2.6 Research Requirements
 
@@ -193,6 +635,9 @@ The project is **complete** when and only when:
 | RR-04 | No hallucinated citations | Guideline | CRITICAL | Fact-check agent audit |
 | RR-05 | Research agent documents its search strategy | Guideline | MEDIUM | Search log present |
 | RR-06 | Comparative evaluation: agent vs baseline | Guideline | MEDIUM | RESEARCH.md section present |
+| RR-07 | Results Analysis Notebook | Guideline | HIGH | Jupyter notebook with Python visualization |
+| RR-08 | API Cost Analysis | Guideline | HIGH | Explicit tracking of input/output token costs |
+| RR-09 | Parameter Sensitivity Analysis | Guideline | HIGH | Documented testing of varying system parameters |
 
 ### 2.7 Submission Requirements
 
@@ -225,6 +670,7 @@ crewai-book-generator/
 ├── .gitignore                      # Python, LaTeX, IDE, secrets
 ├── Makefile                        # Standard targets
 ├── pyproject.toml                  # Single build config
+├── uv.lock                         # Locked dependencies via uv
 ├── README.md                       # Project overview
 ├── CHANGELOG.md                    # Semantic versioned changelog
 ├── docs/
@@ -235,6 +681,7 @@ crewai-book-generator/
 │   ├── RESEARCH.md
 │   ├── USER_GUIDE.md
 │   ├── DEVELOPER_GUIDE.md
+│   ├── PROMPT_LOG.md               # Prompt Engineering Log
 │   ├── agents/                     # Per-agent documentation
 │   │   ├── research_agent.md
 │   │   ├── fact_verification_agent.md
@@ -249,7 +696,11 @@ crewai-book-generator/
 │   └── prds/
 │       ├── PRD_research_pipeline.md
 │       ├── PRD_latex_system.md
+│       ├── PRD_api_gatekeeper.md   # Required PRD for mechanism
 │       └── PRD_pdf_production.md
+├── config/                         # Configuration files (versioned)
+│   ├── settings.json
+│   └── rate_limits.json
 ├── src/
 │   └── crewai_book/
 │       ├── __init__.py
@@ -343,6 +794,8 @@ crewai-book-generator/
 │   ├── experiments/
 │   ├── results/
 │   └── reports/
+├── notebooks/                      # Analysis notebooks
+│   └── results_analysis.ipynb
 ├── output/                         # Generated artifacts (gitignored except PDF)
 │   ├── latex/
 │   └── .gitkeep
@@ -400,11 +853,14 @@ dev = [
     "gitleaks",
 ]
 
+[tool.coverage.report]
+fail_under = 85
+
 [project.scripts]
 crewai-book = "crewai_book.__main__:app"
 ```
 
-**Completion Criteria:** `pip install -e ".[dev]"` succeeds in a fresh virtualenv.
+**Completion Criteria:** `uv sync` succeeds in a fresh environment; `pip` and `virtualenv` are NOT used.
 
 ---
 
@@ -416,9 +872,9 @@ crewai-book = "crewai_book.__main__:app"
 .PHONY: help install run test lint type-check format clean docs pdf
 
 help:          ## Show this help
-install:       ## Install all dependencies
-run:           ## Run the full pipeline
-test:          ## Run all tests with coverage
+install:       ## Install all dependencies via uv
+run:           ## Run the full pipeline via uv
+test:          ## Run all tests with coverage via uv
 lint:          ## Run ruff linter
 type-check:    ## Run mypy
 format:        ## Format code with ruff
@@ -449,6 +905,8 @@ Every SDK class must:
 - Implement `__repr__` for debugging.
 - Have a corresponding mock in `tests/conftest.py`.
 - Raise only domain-specific exceptions (not raw HTTP or OS errors).
+
+**Critical Requirement:** All external API calls MUST route through a centralized `ApiGatekeeper` that enforces config-driven rate limits and manages a fallback FIFO queue for overflow handling. No direct API requests are allowed.
 
 ---
 
@@ -526,6 +984,9 @@ class Settings(BaseSettings):
     min_readability_score: float = 60.0
     min_citation_count: int = 15
     min_pages: int = 20
+
+    # Versioning
+    version: str = "1.0.0"
 
     model_config = SettingsConfigDict(env_file=".env")
 ```
@@ -1770,14 +2231,14 @@ From test runs and stress tests, document:
 
 **Goal:** Fully understand requirements; make no implementation decisions prematurely.
 
-| Task | Deliverable | Completion Criteria |
-|------|-------------|---------------------|
-| Read all provided documents | Full understanding | No open questions |
-| Create this TODO.md | Approved TODO.md | All sections complete |
-| Create repository skeleton | Empty repo with structure | `git push` success |
-| Validate all tools available | Tool checklist | Python 3.11+, LaTeX, make all accessible |
+| Task | Status | Deliverable | Completion Criteria |
+|------|--------|-------------|---------------------|
+| Read all provided documents | [x] | Full understanding | No open questions |
+| Create this TODO.md | [x] | Approved TODO.md | All sections complete |
+| Create repository skeleton | [x] | Empty repo with structure | `git push` success |
+| Validate all tools available | [x] | Tool checklist | Python 3.11+, LaTeX, make all accessible |
 
-**Phase 0 is complete when:** This TODO.md exists, is committed, and the repository skeleton is in place.
+**Phase 0 Status:** **COMPLETED**
 
 ---
 
@@ -1785,17 +2246,17 @@ From test runs and stress tests, document:
 
 **Goal:** All planning documents written; topic selected; architecture finalized.
 
-| Task | Deliverable | Dependency | Completion Criteria |
-|------|-------------|------------|---------------------|
-| Write `docs/PRD.md` | PRD.md | Phase 0 | All sections complete |
-| Write `docs/PLAN.md` | PLAN.md | PRD.md | All ADRs documented |
-| Topic evaluation | Topic decision | PRD.md | Score ≥3.8/5.0; documented |
-| `.env.example` | `.env.example` | Architecture | All keys documented |
-| `pyproject.toml` | Build config | Phase 0 | `pip install -e ".[dev]"` works |
-| Makefile | Makefile | Phase 0 | All targets defined |
-| Pre-commit hooks | `.pre-commit-config.yaml` | pyproject.toml | Hooks install and run |
+| Task | Status | Deliverable | Dependency | Completion Criteria |
+|------|--------|-------------|------------|---------------------|
+| Write `docs/PRD.md` | [x] | PRD.md | Phase 0 | All sections complete |
+| Write `docs/PLAN.md` | [x] | PLAN.md | PRD.md | All ADRs documented |
+| Topic evaluation | [x] | Topic decision | PRD.md | Score ≥3.8/5.0; documented |
+| `.env.example` | [x] | `.env.example` | Architecture | All keys documented |
+| `pyproject.toml` | [x] | Build config | Phase 0 | `uv sync` succeeds in a fresh environment; `pip` and `virtualenv` are NOT used. |
+| Makefile | [x] | Makefile | Phase 0 | All targets defined |
+| Pre-commit hooks | [x] | `.pre-commit-config.yaml` | pyproject.toml | Hooks install and run |
 
-**Phase 1 is complete when:** All planning documents committed; topic selected; build system works.
+**Phase 1 Status:** **COMPLETED**
 
 ---
 
@@ -1803,17 +2264,19 @@ From test runs and stress tests, document:
 
 **Goal:** All layers designed; configuration working; domain models complete.
 
-| Task | Deliverable | Dependency | Completion Criteria |
-|------|-------------|------------|---------------------|
-| Domain models | `domain/` | Phase 1 | `mypy --strict` passes |
-| Settings model | `config/settings.py` | `.env.example` | All configs load from `.env` |
-| SDK layer | `sdk/` | Domain | All clients testable |
-| Service layer | `services/` | SDK | Business logic isolated |
-| Logger/observability | `observability/` | Settings | Structured logs produced |
-| Error hierarchy | exceptions defined | Domain | All exception types present |
-| `docs/ARCHITECTURE.md` | Architecture doc | All above | Diagrams render on GitHub |
+| Task | Status | Deliverable | Dependency | Completion Criteria |
+|------|--------|-------------|------------|---------------------|
+| Domain models | [x] | `domain/` | Phase 1 | `mypy --strict` passes |
+| Settings model | [x] | `config/settings.py` | `.env.example` | All configs load from `.env` |
+| SDK layer | [x] | `sdk/` | Domain | All clients testable |
+| Service layer | [x] | `services/` | SDK | Business logic isolated |
+| Logger/observability | [x] | `observability/` | Settings | Structured logs produced |
+| Error hierarchy | [x] | exceptions defined | Domain | All exception types present |
+| `docs/ARCHITECTURE.md` | [x] | Architecture doc | All above | Diagrams render on GitHub |
 
 **Phase 2 is complete when:** All layers compile; `mypy` passes; ARCHITECTURE.md committed.
+
+**Phase 2 Status:** **COMPLETED**
 
 ---
 

@@ -1,0 +1,26 @@
+{
+  "rate_limits.version": "1.00",
+  "limits": {
+    "openai": {
+      "requests_per_minute": 500,
+      "requests_per_hour": 10000,
+      "concurrent_max": 10,
+      "retry_after_seconds": 5,
+      "max_retries": 3
+    },
+    "serper": {
+      "requests_per_minute": 100,
+      "requests_per_hour": 1000,
+      "concurrent_max": 5,
+      "retry_after_seconds": 2,
+      "max_retries": 3
+    },
+    "arxiv": {
+      "requests_per_minute": 30,
+      "requests_per_hour": 500,
+      "concurrent_max": 1,
+      "retry_after_seconds": 3,
+      "max_retries": 3
+    }
+  }
+}
