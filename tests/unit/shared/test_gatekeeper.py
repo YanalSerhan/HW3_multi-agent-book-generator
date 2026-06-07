@@ -8,28 +8,31 @@ from crewai_book.shared.gatekeeper import ApiGatekeeper
 
 
 @pytest.fixture
-def mock_config():
+def mock_config() -> None:
+    """Test docstring."""
     with patch("crewai_book.shared.gatekeeper.config_manager") as mock_mgr:
         mock_mgr.get_rate_limits.return_value = {
             "limits": {
                 "test_service": {
                     "requests_per_minute": 2,
                     "retry_after_seconds": 0.1,
-                    "max_retries": 1
+                    "max_retries": 1,
                 }
             }
         }
         yield mock_mgr
 
 
-def test_gatekeeper_initialization(mock_config):
+def test_gatekeeper_initialization(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service")
     assert gk.rpm == 2
     assert gk.retry_after == 0.1
     assert gk.max_retries == 1
 
 
-def test_gatekeeper_execution_success(mock_config):
+def test_gatekeeper_execution_success(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service")
     mock_func = MagicMock(return_value="success")
     result = gk.execute(mock_func, "arg1", kwarg1="test")
@@ -40,7 +43,8 @@ def test_gatekeeper_execution_success(mock_config):
     assert status["current_size"] == 0
 
 
-def test_gatekeeper_rate_limiting(mock_config):
+def test_gatekeeper_rate_limiting(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service")
     mock_func = MagicMock(return_value="success")
 
@@ -58,7 +62,8 @@ def test_gatekeeper_rate_limiting(mock_config):
         mock_sleep.assert_called_once()
 
 
-def test_gatekeeper_queue_full(mock_config):
+def test_gatekeeper_queue_full(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service", max_queue_size=1)
     # Fill the queue manually
     gk.request_queue.put(1)
@@ -68,7 +73,8 @@ def test_gatekeeper_queue_full(mock_config):
         gk.execute(mock_func)
 
 
-def test_gatekeeper_retry_logic(mock_config):
+def test_gatekeeper_retry_logic(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service")
 
     # Function fails first time, succeeds second
@@ -81,7 +87,8 @@ def test_gatekeeper_retry_logic(mock_config):
         mock_sleep.assert_called_once_with(0.1)
 
 
-def test_gatekeeper_max_retries_exceeded(mock_config):
+def test_gatekeeper_max_retries_exceeded(mock_config) -> None:
+    """Test docstring."""
     gk = ApiGatekeeper("test_service")
 
     # Function always fails

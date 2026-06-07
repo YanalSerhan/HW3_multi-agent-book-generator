@@ -69,9 +69,7 @@ def run(
 
     final_topic = topic or "Multi-Agent Systems in AI"
 
-    console.print(
-        f"[bold green]CrewAI Book Generator v{__version__}[/bold green]"
-    )
+    console.print(f"[bold green]CrewAI Book Generator v{__version__}[/bold green]")
     console.print(f"  Topic: {final_topic}")
     console.print(f"  Type:  {document_type}")
     console.print(f"  Output: {output_dir}")
@@ -82,7 +80,7 @@ def run(
         console.print(f"[bold green]Pipeline completed![/bold green] Run ID: {state.run_id}")
     except Exception as e:
         console.print(f"[bold red]Pipeline failed:[/bold red] {e}")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e
 
 
 @app.command()

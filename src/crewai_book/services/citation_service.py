@@ -6,6 +6,7 @@ class CitationService:
     """Service to handle citation validation and formatting."""
 
     def __init__(self) -> None:
+        """Initialize."""
         self.logger = get_logger("service.citation")
 
     def generate_bibtex(self, bibliography: Bibliography) -> str:

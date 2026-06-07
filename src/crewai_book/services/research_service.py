@@ -1,4 +1,3 @@
-
 from ..domain.state import Citation
 from ..observability.logger import get_logger
 from ..sdk.search_client import SearchClient
@@ -8,6 +7,7 @@ class ResearchService:
     """Service handling literature research and fact-checking."""
 
     def __init__(self, search_client: SearchClient | None = None) -> None:
+        """Initialize."""
         self.search_client = search_client or SearchClient()
         self.logger = get_logger("service.research")
 
@@ -28,7 +28,7 @@ class ResearchService:
                 doi=None,
                 confidence_score=1.0,
                 url=res.get("link", ""),
-                abstract=res.get("snippet", "")
+                abstract=res.get("snippet", ""),
             )
             citations.append(cit)
 

@@ -11,6 +11,7 @@ class LaTeXService:
     """Service to render articles into LaTeX source."""
 
     def __init__(self, template_dir: Path = TEMPLATE_DIR) -> None:
+        """Initialize."""
         self.logger = get_logger("service.latex")
 
         # Create dir if not exists (for tests)
@@ -21,7 +22,7 @@ class LaTeXService:
             loader=FileSystemLoader(template_dir),
             autoescape=False,
             trim_blocks=True,
-            lstrip_blocks=True
+            lstrip_blocks=True,
         )
 
     def render_article(self, article: Article) -> str:
@@ -31,5 +32,7 @@ class LaTeXService:
             return template.render(article=article)
         except Exception as e:
             self.logger.error(f"Template rendering failed: {e}")
-            # Fallback for when template doesn't exist yet (scaffolding)
-            return f"\\documentclass{{memoir}}\n\\title{{{article.title}}}\n\\begin{{document}}\n\\maketitle\n\\end{{document}}"
+            return (
+                f"\\documentclass{{memoir}}\n\\title{{{article.title}}}\n"
+                f"\\begin{{document}}\n\\maketitle\n\\end{{document}}"
+            )

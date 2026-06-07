@@ -4,6 +4,8 @@ Implements 10 automated quality checkpoints that enforce
 standards between pipeline stages, as defined in PLAN.md §6.1.
 """
 
+from typing import Any
+
 from ..domain.entities import Article
 from ..domain.state import Bibliography, PipelineState
 from ..observability.logger import get_logger
@@ -55,7 +57,9 @@ def check_qg5_readability(readability_score: float) -> bool:
 def check_qg7_citations(bib_count: int, ref_count: int) -> bool:
     """QG-7: Verify 100% citation match rate."""
     passed = bib_count >= ref_count and ref_count > 0
-    logger.info(f"QG-7 Citations: {bib_count} bib / {ref_count} refs — {'PASS' if passed else 'FAIL'}")
+    logger.info(
+        f"QG-7 Citations: {bib_count} bib / {ref_count} refs — {'PASS' if passed else 'FAIL'}"
+    )
     return passed
 
 
@@ -65,6 +69,13 @@ def check_qg8_compilation(compiled: bool) -> bool:
     return compiled
 
 
+def _check_metrics(state: PipelineState, results: dict[str, Any]) -> None:
+    """Check overall metrics and update state."""
+    logger.info(f"Final Metrics for {state.run_id}:")
+    logger.info(f"- Retries used: {state.retries_used}")
+    logger.info(f"- Output compiled: {results.get('compiled', False)}")
+
+
 def check_qg9_pages(page_count: int) -> bool:
     """QG-9: Verify PDF has ≥20 pages."""
     passed = page_count >= 20
@@ -72,7 +83,7 @@ def check_qg9_pages(page_count: int) -> bool:
     return passed
 
 
-def run_all_gates(state: PipelineState, results: dict) -> dict:
+def run_all_gates(state: PipelineState, results: dict[str, Any]) -> dict[str, bool]:
     """Run all applicable quality gates and return a summary.
 
     Args:
@@ -82,7 +93,7 @@ def run_all_gates(state: PipelineState, results: dict) -> dict:
     Returns:
         Dict mapping gate names to pass/fail booleans.
     """
-    gate_results: dict = {}
+    gate_results: dict[str, bool] = {}
 
     if "bibliography" in results:
         gate_results["QG-1"] = check_qg1_sources(results["bibliography"])

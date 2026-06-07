@@ -12,11 +12,9 @@ class SearchClient(BaseClient):
     """Client for web and academic search APIs."""
 
     def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
+        """Initialize."""
         super().__init__("serper", gatekeeper)
-        self.headers = {
-            "X-API-KEY": settings.serper_api_key,
-            "Content-Type": "application/json"
-        }
+        self.headers = {"X-API-KEY": settings.serper_api_key, "Content-Type": "application/json"}
 
     def _do_search(self, query: str) -> dict[str, Any]:
         """Perform a search query via Serper."""
@@ -25,7 +23,7 @@ class SearchClient(BaseClient):
                 response = client.post(
                     "https://google.serper.dev/search",
                     json={"q": query, "num": 10},
-                    headers=self.headers
+                    headers=self.headers,
                 )
                 response.raise_for_status()
                 data = response.json()

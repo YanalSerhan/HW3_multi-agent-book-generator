@@ -12,11 +12,12 @@ class LLMClient(BaseClient):
     """Client for interacting with LLM APIs via httpx."""
 
     def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
+        """Initialize."""
         super().__init__("openai", gatekeeper)
         self.base_url = "https://api.openai.com/v1"
         self.headers = {
             "Authorization": f"Bearer {settings.openai_api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
     def _sync_post(self, endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -24,9 +25,7 @@ class LLMClient(BaseClient):
         try:
             with httpx.Client(timeout=30.0) as client:
                 response = client.post(
-                    f"{self.base_url}/{endpoint}",
-                    json=payload,
-                    headers=self.headers
+                    f"{self.base_url}/{endpoint}", json=payload, headers=self.headers
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -39,11 +38,7 @@ class LLMClient(BaseClient):
         self, messages: list[dict[str, Any]], model: str = "gpt-4o", temperature: float = 0.7
     ) -> str:
         """Get a completion from the LLM."""
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature
-        }
+        payload = {"model": model, "messages": messages, "temperature": temperature}
 
         response_data = self._execute(self._sync_post, "chat/completions", payload)
 

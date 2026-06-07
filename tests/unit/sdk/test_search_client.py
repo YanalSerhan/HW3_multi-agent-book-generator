@@ -4,7 +4,8 @@ from crewai_book.sdk.search_client import SearchClient
 
 
 @patch("crewai_book.sdk.search_client.httpx.Client")
-def test_search_client_success(mock_client_cls):
+def test_search_client_success(mock_client_cls) -> None:
+    """Test docstring."""
     mock_client = MagicMock()
     mock_client_cls.return_value.__enter__.return_value = mock_client
 
@@ -21,7 +22,9 @@ def test_search_client_success(mock_client_cls):
             assert len(res) == 1
             assert res[0]["title"] == "Result"
 
-def test_search_client_no_api_key():
+
+def test_search_client_no_api_key() -> None:
+    """Test docstring."""
     client = SearchClient()
     with patch("crewai_book.sdk.search_client.settings.serper_api_key", ""):
         res = client.search_web("query")

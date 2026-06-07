@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 
 class CitationRef(BaseModel):
     """Reference to a citation within the text."""
+
     bibtex_key: str = Field(..., description="The BibTeX key referring to the citation")
 
 
@@ -11,8 +12,10 @@ class Section(BaseModel):
 
     title: str = Field(..., description="Title of the section")
     content: str = Field(..., description="Markdown content of the section")
-    word_count: int = Field(0, ge=0, description="Word count of the content")
-    citations: list[CitationRef] = Field(default_factory=list, description="Citations used in this section")
+    word_count: int = Field(default=0, ge=0, description="Word count of the content")
+    citations: list[CitationRef] = Field(
+        default_factory=list, description="Citations used in this section"
+    )
 
     def update_word_count(self) -> None:
         """Update the word count based on current content."""
@@ -24,7 +27,9 @@ class Chapter(BaseModel):
 
     number: int = Field(..., description="Chapter sequence number")
     title: str = Field(..., description="Title of the chapter")
-    sections: list[Section] = Field(default_factory=list, description="Sections within the chapter")
+    sections: list[Section] = Field(
+        default_factory=list, description="Sections within the chapter"
+    )
     chapter_summary: str = Field(..., description="Summary of the chapter content")
 
     @property

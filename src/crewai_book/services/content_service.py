@@ -8,6 +8,7 @@ class ContentService:
     """Service to handle content assembly and metrics."""
 
     def __init__(self) -> None:
+        """Initialize."""
         self.logger = get_logger("service.content")
 
     def analyze_readability(self, text: str) -> float:
@@ -29,7 +30,9 @@ class ContentService:
         content = " ".join(full_text)
         readability = self.analyze_readability(content)
 
-        self.logger.info(f"Article total words: {article.total_word_count}, Readability: {readability}")
+        self.logger.info(
+            f"Article total words: {article.total_word_count}, Readability: {readability}"
+        )
 
         if readability < 60.0:
             self.logger.warning("Article readability is below 60.0 target.")

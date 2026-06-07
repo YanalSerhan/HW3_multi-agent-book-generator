@@ -29,6 +29,7 @@ def test_retry_succeeds_after_failures(mock_sleep: MagicMock) -> None:
     call_count = {"n": 0}
 
     def flaky() -> str:
+        """Test docstring."""
         call_count["n"] += 1
         if call_count["n"] < 3:
             raise ValueError("transient")
@@ -54,10 +55,14 @@ def _make_bibliography(n: int) -> Bibliography:
     """Helper to create a bibliography with n entries."""
     bib = Bibliography()
     for i in range(n):
-        bib.add_citation(Citation(
-            bibtex_key=f"key{i}", title=f"Paper {i}",
-            authors=["Author"], year=2024,
-        ))
+        bib.add_citation(
+            Citation(
+                bibtex_key=f"key{i}",
+                title=f"Paper {i}",
+                authors=["Author"],
+                year=2024,
+            )
+        )
     return bib
 
 
@@ -82,7 +87,10 @@ def test_qg3_outline() -> None:
     sec = Section(title="S", content="text", word_count=10)
     chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
     art = Article(
-        title="T", authors=["A"], abstract="", target_audience="all",
+        title="T",
+        authors=["A"],
+        abstract="",
+        target_audience="all",
         chapters=[chap, chap, chap],
     )
     assert check_qg3_outline(art) is True

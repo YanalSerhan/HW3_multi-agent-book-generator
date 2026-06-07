@@ -46,7 +46,7 @@ def retry_with_backoff(
         except Exception as e:
             last_exception = e
             if attempt < max_retries:
-                delay = base_delay * (2 ** attempt)
+                delay = base_delay * (2**attempt)
                 logger.warning(
                     f"{description} failed (attempt {attempt + 1}/{max_retries + 1}): {e}. "
                     f"Retrying in {delay:.1f}s..."

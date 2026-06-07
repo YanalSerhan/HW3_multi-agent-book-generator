@@ -8,9 +8,8 @@ from ..shared.gatekeeper import ApiGatekeeper
 class BaseClient:
     """Base class for all SDK clients providing common dependencies."""
 
-    def __init__(
-        self, service_name: str, gatekeeper: ApiGatekeeper | None = None
-    ) -> None:
+    def __init__(self, service_name: str, gatekeeper: ApiGatekeeper | None = None) -> None:
+        """Initialize."""
         self.service_name = service_name
         self.logger = get_logger(f"sdk.{service_name}")
         self.gatekeeper = gatekeeper or ApiGatekeeper(service_name)

@@ -10,6 +10,7 @@ from ..exceptions.domain import APIConnectionError, RateLimitExceededError
 
 class ApiGatekeeper:
     """Centralized gatekeeper for all external API calls.
+
     Enforces rate limits and provides queued execution with retries.
     """
 
@@ -52,8 +53,8 @@ class ApiGatekeeper:
         except queue.Full:
             raise RateLimitExceededError(
                 f"Queue full for service {self.service_name}",
-                {"max_queue_size": self.request_queue.maxsize}
-            )
+                {"max_queue_size": self.request_queue.maxsize},
+            ) from None
 
         try:
             return self._execute_with_retry(func, *args, **kwargs)
@@ -73,13 +74,10 @@ class ApiGatekeeper:
                 if attempts > self.max_retries:
                     raise APIConnectionError(
                         f"Failed after {self.max_retries} retries calling {self.service_name}",
-                        {"error": str(e)}
+                        {"error": str(e)},
                     ) from e
                 time.sleep(self.retry_after)
 
     def get_queue_status(self) -> dict[str, int]:
         """Return the current queue status."""
-        return {
-            "current_size": self.request_queue.qsize(),
-            "max_size": self.request_queue.maxsize
-        }
+        return {"current_size": self.request_queue.qsize(), "max_size": self.request_queue.maxsize}

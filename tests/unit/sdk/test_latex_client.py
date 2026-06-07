@@ -7,7 +7,8 @@ from crewai_book.sdk.latex_client import LaTeXClient
 
 
 @patch("crewai_book.sdk.latex_client.subprocess.run")
-def test_latex_client_success(mock_run, tmp_path):
+def test_latex_client_success(mock_run, tmp_path) -> None:
+    """Test docstring."""
     mock_result = MagicMock()
     mock_result.returncode = 0
     mock_result.stdout = "Success log"
@@ -22,7 +23,9 @@ def test_latex_client_success(mock_run, tmp_path):
     assert result == "Success log"
     mock_run.assert_called_once()
 
-def test_latex_client_file_not_found():
+
+def test_latex_client_file_not_found() -> None:
+    """Test docstring."""
     client = LaTeXClient()
     with pytest.raises(CompilationError, match="Target file not found"):
         client.compile_pdf("/non/existent/file.tex")

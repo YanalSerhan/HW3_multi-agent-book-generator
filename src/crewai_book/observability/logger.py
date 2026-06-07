@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 from loguru import logger
 
@@ -20,13 +21,7 @@ def setup_logger() -> None:
     # If in development, output to console with colors
     log_level = "DEBUG" if settings.app_env == "development" else "INFO"
 
-    logger.add(
-        sys.stderr,
-        format=log_format,
-        level=log_level,
-        colorize=True,
-        enqueue=True
-    )
+    logger.add(sys.stderr, format=log_format, level=log_level, colorize=True, enqueue=True)
 
     # File logging for all environments
     logger.add(
@@ -37,10 +32,11 @@ def setup_logger() -> None:
         retention="7 days",
         compression="zip",
         enqueue=True,
-        serialize=True  # JSON structured logs for files
+        serialize=True,  # JSON structured logs for files
     )
 
-from typing import Any
+
+
 
 
 def get_logger(module_name: str) -> Any:

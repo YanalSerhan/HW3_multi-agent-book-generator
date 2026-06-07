@@ -23,8 +23,10 @@ def test_render_book_produces_latex() -> None:
     """render_book should produce a compilable LaTeX document."""
     sec = Section(title="Introduction", content="Hello world.", word_count=2)
     chap = Chapter(
-        number=1, title="Chapter One",
-        chapter_summary="The first chapter.", sections=[sec],
+        number=1,
+        title="Chapter One",
+        chapter_summary="The first chapter.",
+        sections=[sec],
     )
     article = Article(
         title="Test Book",

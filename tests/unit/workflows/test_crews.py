@@ -18,7 +18,7 @@ def test_research_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> N
     """Research crew should be created with 3 agents and 3 tasks."""
     from crewai_book.workflows.research_crew import create_research_crew
 
-    crew = create_research_crew("test topic")
+    create_research_crew("test topic")
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 3
@@ -31,7 +31,7 @@ def test_editorial_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> 
     """Editorial crew should be created with 2 agents and 2 tasks."""
     from crewai_book.workflows.editorial_crew import create_editorial_crew
 
-    crew = create_editorial_crew()
+    create_editorial_crew()
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 2
@@ -44,7 +44,7 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     """Main crew should be created with 5 agents and 5 tasks."""
     from crewai_book.workflows.main_crew import create_main_crew
 
-    crew = create_main_crew("test topic")
+    create_main_crew("test topic")
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 5
@@ -79,7 +79,10 @@ def test_qg4_word_count_pass() -> None:
     sec = Section(title="S", content="word " * 1500, word_count=1500)
     chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
     art = Article(
-        title="T", authors=["A"], abstract="", target_audience="all",
+        title="T",
+        authors=["A"],
+        abstract="",
+        target_audience="all",
         chapters=[chap],
     )
     assert check_qg4_word_count(art, target=1500) is True
@@ -90,7 +93,10 @@ def test_qg4_word_count_fail() -> None:
     sec = Section(title="S", content="word", word_count=1)
     chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
     art = Article(
-        title="T", authors=["A"], abstract="", target_audience="all",
+        title="T",
+        authors=["A"],
+        abstract="",
+        target_audience="all",
         chapters=[chap],
     )
     assert check_qg4_word_count(art, target=15000) is False
@@ -115,7 +121,10 @@ def test_run_all_gates_with_article() -> None:
     sec = Section(title="S", content="text " * 1600, word_count=1600)
     chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
     art = Article(
-        title="T", authors=["A"], abstract="", target_audience="all",
+        title="T",
+        authors=["A"],
+        abstract="",
+        target_audience="all",
         chapters=[chap, chap, chap],
     )
     results = {

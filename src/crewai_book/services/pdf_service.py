@@ -8,6 +8,7 @@ class PDFService:
     """Service to orchestrate PDF compilation."""
 
     def __init__(self, latex_client: LaTeXClient | None = None) -> None:
+        """Initialize."""
         self.latex_client = latex_client or LaTeXClient()
         self.logger = get_logger("service.pdf")
 

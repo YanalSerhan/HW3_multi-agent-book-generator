@@ -27,17 +27,14 @@ class AppSettings(BaseSettings):
     human_review_outline: bool = Field(default=True, alias="HUMAN_REVIEW_OUTLINE")
     human_review_draft: bool = Field(default=True, alias="HUMAN_REVIEW_DRAFT")
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 class ConfigManager:
     """Manager to load static JSON configurations."""
 
     def __init__(self) -> None:
+        """Initialize."""
         self.project_root = Path(__file__).parent.parent.parent.parent
         self.config_dir = self.project_root / "config"
         self.setup_config = _load_json_config(self.config_dir / "setup.json")

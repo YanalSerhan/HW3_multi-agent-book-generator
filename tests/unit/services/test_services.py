@@ -9,7 +9,8 @@ from crewai_book.services.pdf_service import PDFService
 from crewai_book.services.research_service import ResearchService
 
 
-def test_research_service():
+def test_research_service() -> None:
+    """Test docstring."""
     mock_client = MagicMock()
     mock_client.search_web.return_value = [{"title": "Web Source 1", "link": "http://example.com"}]
 
@@ -21,7 +22,8 @@ def test_research_service():
     assert citations[0].url == "http://example.com"
 
 
-def test_citation_service():
+def test_citation_service() -> None:
+    """Test docstring."""
     service = CitationService()
     bib = Bibliography()
     cit = Citation(bibtex_key="key1", title="Title", authors=["John Doe"], year=2024, doi="10.123")
@@ -33,7 +35,8 @@ def test_citation_service():
     assert "doi={10.123}" in result
 
 
-def test_content_service():
+def test_content_service() -> None:
+    """Test docstring."""
     service = ContentService()
 
     # Empty readability
@@ -47,12 +50,15 @@ def test_content_service():
     assert is_valid is True
 
 
-def test_latex_service(tmp_path):
+def test_latex_service(tmp_path) -> None:
+    """Test docstring."""
     service = LaTeXService(template_dir=tmp_path)
 
     sec = Section(title="1", content="Text")
     chap = Chapter(number=1, title="C1", chapter_summary="", sections=[sec])
-    art = Article(title="Test Book", authors=["A"], abstract="", target_audience="all", chapters=[chap])
+    art = Article(
+        title="Test Book", authors=["A"], abstract="", target_audience="all", chapters=[chap]
+    )
 
     # Test fallback rendering (no template exists)
     output = service.render_article(art)
@@ -60,7 +66,8 @@ def test_latex_service(tmp_path):
     assert "\\documentclass" in output
 
 
-def test_pdf_service(tmp_path):
+def test_pdf_service(tmp_path) -> None:
+    """Test docstring."""
     mock_client = MagicMock()
     service = PDFService(latex_client=mock_client)
 
