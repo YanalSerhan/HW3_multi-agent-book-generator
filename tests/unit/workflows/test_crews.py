@@ -54,16 +54,16 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     assert len(call_kwargs.kwargs["tasks"]) == 6
 
 
-@patch("crewai_book.workflows.main_crew.create_editorial_crew")
-@patch("crewai_book.workflows.main_crew.create_main_crew")
-@patch("crewai_book.workflows.main_crew.create_research_crew")
+@patch("crewai_book.workflows.pipeline.create_editorial_crew")
+@patch("crewai_book.workflows.pipeline.create_main_crew")
+@patch("crewai_book.workflows.pipeline.create_research_crew")
 def test_run_pipeline(
     mock_research: MagicMock,
     mock_main: MagicMock,
     mock_editorial: MagicMock,
 ) -> None:
     """run_pipeline should execute all three crews and return state."""
-    from crewai_book.workflows.main_crew import run_pipeline
+    from crewai_book.workflows.pipeline import run_pipeline
 
     mock_research.return_value.kickoff.return_value = None
     mock_main.return_value.kickoff.return_value = None

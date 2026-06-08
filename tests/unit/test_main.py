@@ -30,7 +30,7 @@ def test_app_info() -> None:
     assert result.exit_code == 0
     assert "CrewAI Book Generator" in result.stdout
 
-@patch("crewai_book.workflows.main_crew.run_pipeline")
+@patch("crewai_book.workflows.pipeline.run_pipeline")
 def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
     """Test a successful run command."""
     mock_state = PipelineState(topic="Test Topic", run_id="test-run-id")
@@ -41,7 +41,7 @@ def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
     assert "Pipeline completed" in result.stdout
     assert "test-run-id" in result.stdout
 
-@patch("crewai_book.workflows.main_crew.run_pipeline")
+@patch("crewai_book.workflows.pipeline.run_pipeline")
 def test_app_run_failure(mock_run_pipeline: MagicMock) -> None:
     """Test run command failure handling."""
     mock_run_pipeline.side_effect = Exception("Test Error")

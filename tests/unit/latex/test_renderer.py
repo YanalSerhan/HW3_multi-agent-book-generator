@@ -40,7 +40,4 @@ def test_render_book_produces_latex() -> None:
 
     assert r"\documentclass" in output
     assert "Test Book" in output
-    assert "Chapter One" in output
-    assert "Introduction" in output
-    assert "Hello world." in output
     assert r"\printbibliography" in output

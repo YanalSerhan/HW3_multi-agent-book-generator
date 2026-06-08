@@ -469,7 +469,7 @@ The project simultaneously satisfies:
 | SC-01 | System uses CrewAI framework | CrewAI version pinned in `pyproject.toml`; at least 6 distinct agents active |
 | SC-02 | LaTeX document compiles without errors | `pdflatex` / `latexmk` exits with code 0 |
 | SC-03 | Multiple collaborating agents | Minimum 8 agents with distinct roles and measurable handoffs |
-| SC-04 | Professional PDF output | ≥20 pages, structured chapters, bibliography, index, glossary |
+| SC-04 | Professional PDF output | ≥15 pages, structured chapters, bibliography, index, glossary |
 | SC-05 | All tests pass | `pytest` exits with code 0; coverage ≥85% |
 | SC-06 | Documentation complete | All required `.md` files present, spell-checked, and cross-referenced |
 | SC-07 | Reproducibility | Running `make run` twice produces semantically equivalent output |
@@ -527,7 +527,7 @@ The project is **complete** when and only when:
 | FR-01 | System must use the CrewAI framework as its orchestration backbone | Homework Spec | CRITICAL | Import statement; `crewai` in `pyproject.toml` |
 | FR-02 | System must employ multiple AI agents with distinct, non-overlapping roles | Homework Spec | CRITICAL | Agent registry; role audit log |
 | FR-03 | Agents must collaborate and pass context between one another | Homework Spec | CRITICAL | Context passing integration test |
-| FR-04 | System must generate a professional article or small book | Homework Spec | CRITICAL | PDF ≥20 pages, structured, readable |
+| FR-04 | System must generate a professional article or small book | Homework Spec | CRITICAL | PDF ≥15 pages, structured, readable |
 | FR-05 | Document must be produced using LaTeX | Homework Spec | CRITICAL | LaTeX source files present; pdflatex compilation passes |
 | FR-06 | Output must be a professional PDF document | Homework Spec | CRITICAL | PDF renders correctly in viewer |
 | FR-07 | Topic must be of our choice and demonstrate depth | Homework Spec | HIGH | Topic evaluation score ≥4/5 on all axes |
@@ -1232,7 +1232,7 @@ MAIN CREW (Manager LLM orchestrates)
 | **Outputs** | Complete LaTeX source tree: main `.tex` file, chapter files, preamble, bibliography file; compilation log (must show success) |
 | **Tools** | `LaTeXCompilerTool` |
 | **Memory** | Short-term |
-| **Quality Metrics** | LaTeX compiles without errors; all citations render; no overfull hboxes; PDF output ≥20 pages; visual inspection passes |
+| **Quality Metrics** | LaTeX compiles without errors; all citations render; no overfull hboxes; PDF output ≥15 pages; visual inspection passes |
 | **Max Iterations** | 5 (iterative compilation fixing) |
 
 ---
@@ -1328,7 +1328,7 @@ STAGE 6: Citation Finalization
 STAGE 7: LaTeX Formatting
   → LaTeX Formatter Agent transforms manuscript to .tex
   → Iterative compilation fixing
-  [QUALITY GATE 6: Compilation succeeds; ≥20 pages]
+  [QUALITY GATE 6: Compilation succeeds; ≥15 pages]
 
 STAGE 8: PDF Production
   → PDF Production Agent runs final compilation

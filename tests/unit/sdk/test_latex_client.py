@@ -22,7 +22,7 @@ def test_latex_client_success(mock_run, tmp_path) -> None:
     result = client.compile_pdf(str(test_file))
 
     assert result == "Success log"
-    mock_run.assert_called_once()
+    assert mock_run.call_count == 3
 
 
 def test_latex_client_file_not_found() -> None:
@@ -46,7 +46,8 @@ def test_latex_client_compilation_error(mock_run, tmp_path) -> None:
     test_file.touch()
 
     client = LaTeXClient()
-    with pytest.raises(APIConnectionError, match="LaTeX compilation failed"):
+    from crewai_book.exceptions.domain import APIConnectionError
+    with pytest.raises(APIConnectionError, match="Failed after 3 retries"):
         client.compile_pdf(str(test_file))
 
 
@@ -61,7 +62,8 @@ def test_latex_client_timeout(mock_run, tmp_path) -> None:
     test_file.touch()
 
     client = LaTeXClient()
-    with pytest.raises(APIConnectionError, match="LaTeX compilation timed out"):
+    from crewai_book.exceptions.domain import APIConnectionError
+    with pytest.raises(APIConnectionError, match="Failed after 3 retries"):
         client.compile_pdf(str(test_file))
 
 
@@ -75,5 +77,6 @@ def test_latex_client_latexmk_not_found(mock_run, tmp_path) -> None:
     test_file.touch()
 
     client = LaTeXClient()
-    with pytest.raises(APIConnectionError, match="latexmk not found"):
+    from crewai_book.exceptions.domain import APIConnectionError
+    with pytest.raises(APIConnectionError, match="Failed after 3 retries"):
         client.compile_pdf(str(test_file))

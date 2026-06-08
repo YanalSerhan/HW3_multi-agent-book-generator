@@ -68,8 +68,7 @@ def run(
         help="Output directory for generated artifacts.",
     ),
 ) -> None:
-    """Run the full book generation pipeline."""
-    from crewai_book.workflows.main_crew import run_pipeline
+    from crewai_book.workflows.pipeline import run_pipeline
 
     final_topic = topic or "Multi-Agent Systems in AI"
 
