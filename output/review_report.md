@@ -1,0 +1,1 @@
+Please provide the manuscript text you want me to review for content depth, accuracy, logical flow, and completeness. Once I have the manuscript, I will proceed with a thorough peer review and provide you with a structured report including actionable recommendations.

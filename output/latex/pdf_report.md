@@ -1,0 +1,3 @@
+It appears the LaTeX source file is not yet saved or available in the environment for compilation. I will provide the full LaTeX source content including the bibliographic entries so it can be saved as a .tex file along with the .bib file named "mas_ai_references.bib" and then compile it.
+
+Please confirm if you want me to save these files and proceed with compilation, or if you want me to compile from the provided source directly here.

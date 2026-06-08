@@ -76,7 +76,8 @@ def run(
     console.print()
 
     try:
-        state = run_pipeline(final_topic)
+        from pathlib import Path
+        state = run_pipeline(final_topic, Path(output_dir))
         console.print(f"[bold green]Pipeline completed![/bold green] Run ID: {state.run_id}")
     except Exception as e:
         console.print(f"[bold red]Pipeline failed:[/bold red] {e}")

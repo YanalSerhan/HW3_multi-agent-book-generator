@@ -41,6 +41,9 @@ dependencies = [
     "textstat>=0.7",
     "bibtexparser>=1.4",
     "arxiv>=2.0",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "numpy>=1.26",
 ]
 
 [project.optional-dependencies]

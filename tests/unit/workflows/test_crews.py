@@ -18,7 +18,8 @@ def test_research_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> N
     """Research crew should be created with 3 agents and 3 tasks."""
     from crewai_book.workflows.research_crew import create_research_crew
 
-    create_research_crew("test topic")
+    from pathlib import Path
+    create_research_crew("test topic", Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 3
@@ -31,7 +32,8 @@ def test_editorial_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> 
     """Editorial crew should be created with 2 agents and 2 tasks."""
     from crewai_book.workflows.editorial_crew import create_editorial_crew
 
-    create_editorial_crew()
+    from pathlib import Path
+    create_editorial_crew(Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 2
@@ -44,11 +46,12 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     """Main crew should be created with 5 agents and 5 tasks."""
     from crewai_book.workflows.main_crew import create_main_crew
 
-    create_main_crew("test topic")
+    from pathlib import Path
+    create_main_crew("test topic", Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
-    assert len(call_kwargs.kwargs["agents"]) == 5
-    assert len(call_kwargs.kwargs["tasks"]) == 5
+    assert len(call_kwargs.kwargs["agents"]) == 6
+    assert len(call_kwargs.kwargs["tasks"]) == 6
 
 
 @patch("crewai_book.workflows.main_crew.create_editorial_crew")

@@ -983,7 +983,7 @@ class Settings(BaseSettings):
     # Quality gates
     min_readability_score: float = 60.0
     min_citation_count: int = 15
-    min_pages: int = 20
+    min_pages: int = 15
 
     # Versioning
     version: str = "1.0.0"
@@ -1262,7 +1262,7 @@ MAIN CREW (Manager LLM orchestrates)
 | Field | Value |
 |-------|-------|
 | **Role** | Chief Quality Officer and Final Gatekeeper |
-| **Goal** | Perform the final holistic quality assessment of the complete deliverable: content, citations, formatting, readability, completeness, and professional standards. Produce a signed-off QA report that certifies the document is ready for submission. Block submission if any critical quality gate fails. |
+| **Goal** | Perform the final holistic quality assessment of the complete deliverable: content, citations, formatting, readability, completeness, and professional standards. Verify layout quality (tables do not overflow, images positioned correctly, headers/footers/TOC work). Produce a signed-off QA report that certifies the document is ready for submission. Block submission if any critical quality gate fails. |
 | **Backstory** | A seasoned quality engineer with cross-domain expertise who has defined quality standards for several AI and publishing organizations. Uncompromising on the criteria that matter; pragmatic about everything else. Every QA report is thorough enough to be used as a project post-mortem. |
 | **Inputs** | Final PDF; LaTeX source; citation audit report; review report; all preceding agent outputs |
 | **Outputs** | QA report: all quality gates with pass/fail status; final score; certification or rejection with required fixes |
@@ -1444,8 +1444,14 @@ class QualityGate:
 | QG-6 | Major review concerns | 0 unresolved | retry (1 revision) |
 | QG-7 | Citation match rate | 100% | abort |
 | QG-8 | LaTeX compilation | Exit code 0 | retry (3 attempts) |
-| QG-9 | PDF page count | ≥20 pages | abort |
+| QG-9 | PDF page count | ~15 pages | abort |
 | QG-10 | QA sign-off | All critical pass | abort |
+
+### 5.7 Explicit Task Definitions
+
+**Task WF-07: Define Explicit CrewAI Tasks**
+
+Every agent must have at least one explicitly defined CrewAI `Task` with `description`, `expected_output`, and assigned `agent`. These must be well-documented in the code to explicitly satisfy the "Task definitions" grading requirement.
 
 ---
 
@@ -2186,7 +2192,7 @@ Run pipeline on 3 different topics:
 | Citation count | Citation Agent output | ≥15 |
 | Hallucination rate | Fact check results | 0% critical |
 | Readability score | `textstat` | ≥60 Flesch |
-| PDF page count | `pypdf` | ≥20 pages |
+| PDF page count | `pypdf` | ~15 pages |
 | LaTeX compilation time | Timer | ≤60 sec |
 | Agent retry count | Pipeline state | Logged |
 | QA gate pass rate | QA report | 100% critical |
@@ -2400,7 +2406,7 @@ Implement agents in dependency order:
 
 | Task | Deliverable | Dependency | Completion Criteria |
 |------|-------------|------------|---------------------|
-| Final `make run` | Final PDF | Phase 6 | PDF ≥20 pages; QA pass |
+| Final `make run` | Final PDF | Phase 6 | PDF ~15 pages; QA pass |
 | Final `make test` | Test report | Phase 4 | All green; ≥85% coverage |
 | Final `make lint` | Lint report | Phase 4 | Zero errors |
 | Security scan | `gitleaks` report | Phase 6 | Zero secrets found |
@@ -2448,7 +2454,9 @@ Implement agents in dependency order:
 | Subsystem | Acceptance Criteria | Validation Method | Evidence Required |
 |-----------|--------------------|--------------------|-------------------|
 | LaTeX template | Compiles with sample data | `latexmk` test | Compilation log |
-| Full document | ≥20 pages; all sections present | PDF inspection | Page count; visual |
+| Full document | ~15 pages; all sections present | PDF inspection | Page count; visual |
+| Layout Quality | Tables do not overflow, images positioned correctly, headers/footers/TOC present | Visual inspection | PDF screenshot |
+| Formula & Graph | Formula is LaTeX math (not plain text); Graph is Python-generated | Inspection & code review | Python code & PDF |
 | Bibliography | All citations render; `.bib` valid | `biber --validate` | Validation log |
 | Glossary | Glossary compiles; ≥15 terms | PDF inspection | Glossary page |
 | Index | Index compiles | PDF inspection | Index page |
@@ -2701,6 +2709,23 @@ Implement agents in dependency order:
 
 ---
 
+## Appendix A-1: Grader Feedback & Required Fixes
+
+The following tasks address the critical omissions identified during the strict university grader evaluation:
+
+### Critical Missing Elements
+- [ ] **Hebrew-English BiDi Section:** Implement `polyglossia` or `babel` in the LaTeX preamble and create a dedicated chapter that demonstrates mixed Right-To-Left (Hebrew) and Left-To-Right (English) text handling.
+- [ ] **Python Graph Integration:** Create and execute a Python script to generate the graph (e.g., `test_fig.png`) and ensure it is actually inserted into the LaTeX document using `\includegraphics`.
+- [ ] **Image Integration:** Replace the text placeholder with an actual image using `\includegraphics`.
+- [ ] **Mathematical Formula:** Add at least one professionally typeset mathematical equation using LaTeX math environments (e.g., `\begin{equation}`).
+- [ ] **Quality Assurance:** Verify that formulas are rendered as LaTeX math (not plain text) and the graph is generated directly from a Python script.
+
+### Document Structure & Metadata
+- [ ] **Cover Page Information:** Update the cover page template to include the student's Author Name (replacing "ChatGPT"), Date, Course Name, and Lecturer/Instructor Name.
+- [ ] **Length Requirement:** Expand the document's generated content to meet the target length of ~15 pages (currently generating significantly less).
+
+---
+
 ## Appendix B: Glossary of Project Terms
 
 | Term | Definition |
@@ -2735,7 +2760,7 @@ Use this checklist for final submission validation.
 ### Deliverables
 - [ ] D-01: Source code complete
 - [ ] D-02: LaTeX source present
-- [ ] D-03: PDF ≥20 pages
+- [ ] D-03: PDF ~15 pages
 - [ ] D-04: `.bib` file complete
 - [ ] D-05: README.md
 - [ ] D-06: docs/PRD.md

@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock, patch
-
+# pyrefly: ignore [missing-import]
 import pytest
 
 from crewai_book.exceptions.domain import APIConnectionError

@@ -1,0 +1,771 @@
+\documentclass[12pt,oneside]{book}
+
+%--------------------
+% Packages
+%--------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{makeidx}
+\usepackage{xspace}
+
+%--------------------
+% Page dimensions and layout
+%--------------------
+\geometry{
+  a4paper,
+  left=35mm,
+  right=25mm,
+  top=30mm,
+  bottom=30mm,
+  headheight=14pt,
+  headsep=20pt,
+  footskip=30pt
+}
+
+%--------------------
+% Document class customizations
+%--------------------
+\setcounter{secnumdepth}{2}
+
+
+\setcounter{tocdepth}{2}
+
+
+% Chapter styling
+% (using default book chapter style)
+
+% Header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\textsc{\leftmark}}
+\fancyhead[RO]{\textsc{\rightmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%--------------------
+% Index
+%--------------------
+\makeindex
+
+%--------------------
+% Bibliography
+%--------------------
+\usepackage[backend=biber,style=authoryear,doi=false,isbn=false,url=false,maxcitenames=2,maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+
+%--------------------
+% Custom commands
+%--------------------
+\newcommand{\agent}{\textit{agent}\xspace}
+\newcommand{\agents}{\textit{agents}\xspace}
+\newcommand{\Agent}{\textit{Agent}\xspace}
+\newcommand{\Agents}{\textit{Agents}\xspace}
+\newcommand{\mas}{multi-agent system\xspace}
+\newcommand{\masplural}{multi-agent systems\xspace}
+
+%--------------------
+% Begin document
+%--------------------
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+  \centering
+  {\huge\bfseries Multi-Agent Systems in AI\par}
+  \vspace{2cm}
+  {\Large Academic Textbook\par}
+  \vfill
+  {\large Typeset by ChatGPT, LaTeX book class\par}
+  \vspace{2cm}
+  {\large \today\par}
+\end{titlepage}
+
+\frontmatter
+
+\tableofcontents
+
+\mainmatter
+
+% ============================
+% Chapter 1
+% ============================
+\chapter{Introduction to Multi-Agent Systems}
+
+\section{What Are Multi-Agent Systems?}
+
+In the landscape of artificial intelligence (AI), the study of \agent has become a cornerstone concept---\agents that perceive their environment and act autonomously to achieve designated goals. A \mas (MAS) is, in essence, a collection of such autonomous entities that interact within a shared environment. This section delineates the conceptual framework underpinning single agents and multi-agent systems, compares their operational paradigms, and highlights real-world analogies and applications which have driven research in MAS.
+
+\subsection*{Defining Agents}
+
+An \textbf{agent} can be formally defined as an entity that perceives its environment through sensors and acts upon that environment through actuators to achieve certain objectives \parencite{RussellNorvig2020}. It encapsulates autonomy, reactivity, proactivity, and social ability---facets which enable it to operate without direct human intervention. \agents range in complexity from simple reactive \agents such as thermostats to intelligent cognitive \agents capable of sophisticated reasoning.
+
+Three primary properties distinguish \agents \parencite{Wooldridge2009}:
+\begin{enumerate}
+  \item \textbf{Autonomy:} An \agent operates without the direct control of another entity and has control over its internal state and actions.
+  \item \textbf{Social Ability:} \agents interact with other \agents (or humans) via communication protocols.
+  \item \textbf{Reactivity and Proactivity:} \agents perceive their environment and respond timely to changes (reactivity) while also exhibiting goal-directed behavior by taking initiative (proactivity).
+\end{enumerate}
+
+\subsection*{From Single-Agent to Multi-Agent Paradigms}
+
+Traditional AI \agents generally operate singly, focusing on problem-solving or task execution in isolation. However, many real-world problems inherently involve multiple entities with possibly conflicting or cooperative objectives. As \textcite{WooldridgeJennings1995} argue, modeling such scenarios demands multiple \agents interacting, leading to the development of \textbf{multi-agent systems}.
+
+A \textbf{Multi-Agent System (MAS)} is a system composed of multiple interacting intelligent \agents within an environment. These \agents may be cooperative, competitive, or neutral to each other. The collaboration and competition dynamics among multiple \agents give rise to emergent system behavior that is not easily predicted by analyzing individual \agents alone.
+
+\medskip
+\noindent
+\textbf{Key Differences Between Single-Agent and Multi-Agent Paradigms:}
+
+\begin{center}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Aspect} & \textbf{Single-Agent Paradigm} & \textbf{Multi-Agent Paradigm} \\
+\midrule
+Number of entities & One \agent & Multiple \agents \\
+Environment & Typically static or deterministic & Dynamic and shared environmental interactions \\
+Interaction complexity & None or minimal & Requires communication, coordination, negotiation \\
+Problem scope & Narrow, isolated problems & Distributed, complex tasks requiring cooperation \\
+Control & Centralized or self-contained & Decentralized, emergent \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The shift to MAS brings new challenges: managing inter-\agent communication, resolving conflicts of interests, designing coordination algorithms, and ensuring robustness of the system.
+
+\subsection*{Real-World Analogies and Motivation}
+
+Multi-agent systems resemble many naturally occurring systems with multiple autonomous individuals:
+
+\begin{itemize}
+  \item \textbf{Biological systems}: Ant colonies and bee swarms exhibit complex cooperative behavior that leads to emergent intelligence, inspiring swarm intelligence research \parencite{BonabeauEtAl1999}.
+  \item \textbf{Human organizations}: Companies, governments, and social groups consist of individuals working collaboratively or competitively toward shared or individual goals.
+  \item \textbf{Robotics}: Multiple autonomous robots coordinating for a task such as warehouse logistics or search-and-rescue mimic multi-agent coordination.
+\end{itemize}
+
+The motivation for MAS stems from the limitations of centralized control in complex distributed environments. For example, in traffic management, a single controller cannot efficiently manage thousands of vehicles simultaneously; however, a system of communicating autonomous vehicles (\agents) offers scalability and robustness.
+
+\subsection*{Illustrative Applications Driving MAS Research}
+
+Examples include:
+
+\begin{enumerate}
+  \item \textbf{Distributed Sensor Networks}: Each sensor acts as an \agent that collects and shares information to monitor environmental phenomena (e.g., earthquake detection).
+  \item \textbf{Robotics and Autonomous Vehicles}: Multiple robots coordinate routes to optimize delivery or exploration tasks.
+  \item \textbf{Electronic Commerce}: Automated trading \agents negotiate prices and make decisions in dynamic markets \parencite{RosenscheinZlotkin1994}.
+  \item \textbf{Smart Grid Management}: \agents manage local energy production and consumption to optimize the electricity grid \parencite{WeiEtAl2016}.
+  \item \textbf{Social Simulations}: \agents emulate human social behaviors to understand crowd dynamics, epidemic spread, or opinion formation.
+\end{enumerate}
+
+\subsection*{Summary}
+
+The concept of multi-agent systems extends the \agent paradigm by introducing collective behaviors through interaction, cooperation, and competition among multiple autonomous \agents. This paradigm addresses limitations inherent in single-agent systems, enabling more scalable, robust, and flexible solutions for complex real-world problems. Foundational properties such as autonomy, social ability, reactivity, and proactivity define the capabilities of \agents, while MAS exploits the richness of their interactions.
+
+\clearpage
+
+% ============================
+% Chapter 1.2
+% ============================
+\section{Historical Development of MAS}
+
+The evolution of multi-agent systems is deeply intertwined with the development of artificial intelligence and distributed computing. This section reviews the timeline of MAS research, key milestones, and seminal works that have established the field as a vibrant AI sub-discipline.
+
+\subsection*{Early Foundations in AI and Distributed Systems}
+
+The roots of MAS date back to the 1950s and 1960s when AI research focused heavily on symbolic problem solving and centralized architectures. Early work on distributed artificial intelligence (DAI) in the 1970s recognized the benefits of decentralization for complex problem solving \parencite{HuhnsStephens1999}. DAI introduced the idea of multiple \agents collaborating via communication to solve distributed problems, foreshadowing MAS.
+
+\subsection*{Key Milestones in MAS Evolution}
+
+\begin{itemize}
+  \item \textbf{Mid-1980s: Emergence of Autonomous Agents} \\
+  The notion of \agents as autonomous problem solvers appeared in systems such as the Hearsay-II speech recognition system \parencite{ErmanEtAl1980}, where distributed processes coordinated for real-time interpretation.
+
+  \item \textbf{1986--1990: Early Agent Theories} \\
+  Ferber's seminal book \emph{Multi-Agent Systems: An Introduction to Distributed Artificial Intelligence} \parencite{Ferber1999} later synthesized early insights into an MAS framework. During this period, agent interaction protocols, communication languages, and coordination mechanisms were conceptualized.
+
+  \item \textbf{1990s: The Rise of Standardization and Formal Models} \\
+  The 1990s witnessed formalization of agent communication languages (e.g., KQML by \textcite{FininEtAl1997}), and development of frameworks for agent coordination and negotiation \parencite{Jennings1993}.
+
+  The Belief-Desire-Intention (BDI) \agent model, introduced by \textcite{Bratman1987} and operationalized by \textcite{RaoGeorgeff1991}, became a foundational \agent architecture emphasizing rational deliberation.
+
+  \item \textbf{1996: FIPA Formation} \\
+  The Foundation for Intelligent Physical Agents (FIPA) was established to create standards for \agent communication, interoperability, and frameworks, leading to widespread adoption and consistent methodologies \parencite{FIPA2002}.
+
+  \item \textbf{2000s--Present: Integration with Web and Robotics} \\
+  The rise of the Internet and Web services propelled MAS research into network-centric applications like web information \agents, automated trading, and multi-robot systems.
+
+  Swarm intelligence algorithms such as ant colony optimization \parencite{DorigoStutzle2004} and particle swarm optimization \parencite{KennedyEberhart1995} also gained prominence.
+\end{itemize}
+
+\subsection*{Seminal Research Contributions}
+
+\begin{itemize}
+  \item \textcite{Jennings1993}: Pioneered agent coordination theories addressing task decomposition and allocation in distributed environments.
+  \item \textcite{RaoGeorgeff1995}: Developed formal BDI logics and architectures linking theory with implementation.
+  \item \textcite{WooldridgeJennings1995}: Summarized multi-agent system taxonomy, defining essential characteristics and challenges.
+  \item \textcite{Shoham1993}: Integrated game theory concepts into MAS facilitating studies on agent strategic interaction.
+  \item \textcite{Ferber1999}: Provided comprehensive definitions and frameworks unifying diverse strands of MAS research.
+\end{itemize}
+
+\subsection*{Influence of Related Fields}
+
+MAS research intersects with many disciplines:
+
+\begin{itemize}
+  \item \textbf{Distributed Computing:} Ensuring consistency, fault tolerance, and concurrency control.
+  \item \textbf{Economics \& Game Theory:} Modeling \agent incentives, negotiation, and competition.
+  \item \textbf{Cognitive Science:} Inspiring \agent models based on human reasoning.
+  \item \textbf{Robotics:} Enabling physical-world multi-agent coordination.
+\end{itemize}
+
+\subsection*{Evolution of MAS Toolkits and Platforms}
+
+To facilitate MAS research and application, platforms like JADE (Java Agent DEvelopment Framework) introduced in 2000 provided scalable \agent runtime environments supporting FIPA standards \parencite{BellifemineEtAl2007}.
+
+Simulation tools such as NetLogo and Repast enabled researchers to model \agent interactions in complex environments.
+
+\subsection*{Summary}
+
+The historical trajectory of MAS reflects a gradual maturation from conceptual notions of distributed intelligence to sophisticated, standardized, and implementable systems. The field continuously adapts by integrating methodologies from AI, distributed systems, game theory, and robotics, underpinning a rich research ecosystem.
+
+\clearpage
+
+% ============================
+% Chapter 1.3
+% ============================
+\section{Key Concepts and Terminology}
+
+Multi-agent systems rest upon a scaffold of fundamental concepts and terminologies essential to understanding their design and behavior. This section introduces critical attributes, modes of interaction, and \agent architectures that comprise the vocabulary of MAS.
+
+\subsection*{Core \Agent Attributes}
+
+\begin{itemize}
+  \item \textbf{Autonomy:} The capacity of an \agent to operate without direct intervention, controlling its own actions and internal state \parencite{FranklinGraesser1996}. Autonomy may vary from complete to semi-autonomous depending on the application.
+  \item \textbf{Reactivity:} The ability to perceive the environment and respond timely to changes. Reactive \agents often function as stimulus-response systems \parencite{Brooks1990}.
+  \item \textbf{Proactivity:} Goal-directed behavior where the \agent takes initiative rather than purely reacting. This may involve planning or reasoning to fulfill objectives.
+  \item \textbf{Social Ability:} \Agents exhibit social intelligence when they communicate and cooperate with other \agents using agreed protocols.
+  \item \textbf{Adaptivity:} Some \agents adapt their behavior based on experience or environmental changes, often via learning mechanisms.
+\end{itemize}
+
+\subsection*{Communication in MAS}
+
+Communication is the linchpin enabling complex behaviors from individual \agents:
+
+\begin{itemize}
+  \item \textbf{Messages:} Structured data exchanged, typically conforming to \agent communication languages (ACL).
+  \item \textbf{Speech Acts:} Based on Austin's speech act theory (1962) and adapted for \agents, actions like \emph{inform}, \emph{request}, \emph{propose} formalize communication intentions.
+  \item \textbf{Protocols:} Define rules and sequences for communication such as contract net protocol for task allocation \parencite{Smith1980}.
+\end{itemize}
+
+\subsection*{Coordination}
+
+Coordination mechanisms regulate how multiple \agents work jointly:
+
+\begin{itemize}
+  \item \textbf{Synchronization:} Managing sequencing and timing of \agent actions.
+  \item \textbf{Task Allocation:} Assigning subtasks optimally across \agents.
+  \item \textbf{Negotiation:} \Agents resolve conflicts or reach agreements through exchanges.
+  \item \textbf{Commitment:} Binding agreements guiding \agent behavior.
+\end{itemize}
+
+\subsection*{Cooperation and Competition}
+
+\Agents may cooperate by sharing resources, information, or jointly planning. Alternatively, they may compete for limited resources, requiring mechanisms for conflict resolution.
+
+\subsection*{Negotiation}
+
+Negotiation involves deliberations to reach mutually acceptable agreements often via protocols and strategic behaviors incorporating concessions and utility estimation.
+
+\subsection*{\Agent Architectures}
+
+\Agent architectures describe the internal organization and operational principles of \agents:
+
+\begin{enumerate}
+  \item \textbf{Reactive Architectures:} \Agents operate via stimulus-response rules without internal symbolic reasoning (e.g., subsumption architecture \parencite{Brooks1986}).
+  \item \textbf{Deliberative Architectures:} \Agents possess explicit symbolic models, reasoning capabilities, and planning modules (e.g., BDI model, goal-oriented planning).
+  \item \textbf{Hybrid Architectures:} Combine reactive and deliberative elements, allowing both fast responses and strategic planning.
+\end{enumerate}
+
+\subsection*{Terminology Overview}
+
+\begin{longtable}{p{0.3\textwidth} p{0.65\textwidth}}
+\toprule
+\textbf{Term} & \textbf{Definition} \\
+\midrule
+Autonomous Agent & An \agent capable of independent operation \\
+Environment & The world or context in which \agents perceive and act \\
+Perception & The process of sensing the environment \\
+Action & Operations an \agent can perform to affect the environment \\
+Communication Protocol & A scheme dictating message exchanges and interaction patterns among \agents \\
+Social Law & Explicit norms or rules governing \agent interactions \\
+Coordination & Mechanisms to orchestrate joint \agent activities \\
+Negotiation & Process where \agents attempt to resolve conflicts or reach agreements \\
+Cooperation & \Agents working synergistically toward shared goals \\
+Belief-Desire-Intention (BDI) & An \agent model emphasizing mental attitudes guiding \agent behavior \\
+\bottomrule
+\end{longtable}
+
+\subsection*{Diagram: Agent Interaction Model}
+
+% Note: Since this is a text document without graphic creation, place a placeholder for illustration.
+\begin{center}
+\fbox{\parbox{0.8\textwidth}{
+  \textbf{Diagram Placeholder: Agent Interaction Model} \\ 
+  Illustration showing multiple \agents exchanging messages in a shared environment with perception, action, and communication pathways.
+}}
+\end{center}
+
+\subsection*{Summary}
+
+Understanding MAS requires familiarity with a network of interrelated concepts including autonomy, communication, coordination, cooperation, and diverse \agent architectures. This vocabulary provides the foundation for exploring more advanced MAS topics such as learning, negotiation, and system design.
+
+\clearpage
+
+% ============================
+% Chapter 1.4
+% ============================
+\section{Classification of Agents and Environments}
+
+The diversity of multi-agent systems is reflected in the variety of \agent types and environmental contexts in which they operate. This section provides a detailed classification scheme for \agents and the environments they inhabit, supplemented by illustrative examples.
+
+\subsection*{Agent Classification}
+
+\Agents can be categorized based on their behavioral architectures and decision-making capabilities:
+
+\subsubsection*{Reactive \Agents}
+
+\begin{itemize}
+  \item \textbf{Definition:} \Agents that respond directly to stimuli from the environment using predefined condition-action rules without internal symbolic representation.
+  \item \textbf{Characteristics:} Simple, fast reactions; suitable for dynamic, real-time environments.
+  \item \textbf{Example:} A robotic vacuum cleaner avoiding obstacles by reflexive motor commands.
+  \item \textbf{Pros:} Robustness and speed in unpredictable environments.
+  \item \textbf{Cons:} Limited strategic capabilities and planning.
+\end{itemize}
+
+\subsubsection*{Deliberative \Agents}
+
+\begin{itemize}
+  \item \textbf{Definition:} \Agents that maintain symbolic models of their environment, have explicit goals, and use planning to determine actions.
+  \item \textbf{Characteristics:} Reasoning, planning, and goal management capabilities.
+  \item \textbf{Example:} An autonomous vehicle planning routes using a map and goals.
+  \item \textbf{Pros:} Intelligent, able to handle complex tasks.
+  \item \textbf{Cons:} Computation-intensive; may struggle with real-time constraints.
+\end{itemize}
+
+\subsubsection*{Hybrid \Agents}
+
+\begin{itemize}
+  \item \textbf{Definition:} Incorporate both reactive and deliberative elements, often organized in layered architectures.
+  \item \textbf{Characteristics:} Fast reflexive behavior combined with strategic planning.
+  \item \textbf{Example:} A search-and-rescue robot reacting to hazards while planning rescue paths.
+  \item \textbf{Pros:} Balances reactivity and flexibility.
+  \item \textbf{Cons:} Increased architectural complexity.
+\end{itemize}
+
+\subsection*{Environment Classification}
+
+\Agents operate within environments that vary along multiple dimensions \parencite{RussellNorvig2020}:
+
+\begin{enumerate}
+  \item \textbf{Observability}
+  \begin{itemize}
+    \item \emph{Fully Observable:} \Agents have complete and accurate information about the environment state.
+    \item \emph{Partially Observable:} \Agents receive incomplete or noisy information.
+  \end{itemize}
+  \textit{Example:} Chess (fully observable) vs. card games like poker (partially observable).
+  
+  \item \textbf{Determinism}
+  \begin{itemize}
+    \item \emph{Deterministic:} The next state of the environment is entirely determined by \agents’ actions.
+    \item \emph{Stochastic:} The environment includes randomness or uncertainties.
+  \end{itemize}
+  \textit{Example:} Calculations with predictable outcomes vs. stock market environments.
+  
+  \item \textbf{Episodic vs. Sequential}
+  \begin{itemize}
+    \item \emph{Episodic:} Each \agent action is independent; no influence across episodes.
+    \item \emph{Sequential:} Current decisions influence future states and rewards.
+  \end{itemize}
+  \textit{Example:} A photo tagging \agent (episodic) vs. autonomous vehicle driving (sequential).
+  
+  \item \textbf{Static vs. Dynamic}
+  \begin{itemize}
+    \item \emph{Static:} Environment does not change while an \agent deliberates.
+    \item \emph{Dynamic:} Environment evolves independent of the \agent’s actions.
+  \end{itemize}
+  \textit{Example:} Board games (static) vs. real-time traffic systems (dynamic).
+  
+  \item \textbf{Discrete vs. Continuous}
+  \begin{itemize}
+    \item \emph{Discrete:} A limited number of distinct states and actions.
+    \item \emph{Continuous:} Infinite possible states or actions.
+  \end{itemize}
+  \textit{Example:} Tic-tac-toe (discrete) vs. robot arm trajectories (continuous).
+\end{enumerate}
+
+\subsection*{Combined Environment Matrix}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Dimension} & \textbf{Description} & \textbf{Example} \\
+\midrule
+Observability & Fully vs. partially observable & Chess (fully), Poker (partial) \\
+Determinism & Deterministic vs. stochastic & Puzzle solving vs. weather systems \\
+Episodic & Episodic vs. sequential & Image recognition vs. navigation \\
+Dynamics & Static vs. dynamic & Crossword vs. air traffic control \\
+State Space & Discrete vs. continuous & Board game vs. robotic control \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Agent-Environment Interaction Example}
+
+Consider a fleet of delivery drones navigating a city:
+
+\begin{itemize}
+  \item Environment is \textbf{partially observable} (weather unknown, GPS errors).
+  \item \textbf{Stochastic} due to unpredictable wind conditions.
+  \item \textbf{Dynamic} with moving obstacles.
+  \item \textbf{Continuous} state and action spaces.
+\end{itemize}
+
+\Agents are hybrid, combining reactive obstacle avoidance and deliberative path planning.
+
+\subsection*{Summary}
+
+Classifying \agents and environments provides a structured understanding vital for system design, enabling selection of appropriate \agent models and interaction strategies suited to environment characteristics.
+
+\clearpage
+
+% ============================
+% Chapter 1.5
+% ============================
+\section{Applications and Use Cases Overview}
+
+Multi-agent systems have made substantial impacts across domains characterized by distributed, complex, and dynamic interactions. This section surveys prominent application areas demonstrating MAS efficacy and ongoing research directions.
+
+\subsection*{Robotics and Autonomous Systems}
+
+Multi-robot systems exemplify MAS application where robots share tasks, resources, and environment knowledge:
+
+\begin{itemize}
+  \item \textbf{Swarm Robotics:} Inspired by social insects, decentralized robots achieve collective behaviors such as exploration and formation control without centralized guidance \parencite{Sahin2005}.
+  \item \textbf{Cooperative Manipulation:} Robots jointly handling objects exceeding single-robot capacities.
+  \item \textbf{Search and Rescue:} \Agents sharing information to effectively cover hazardous areas.
+\end{itemize}
+
+\subsection*{Distributed Control Systems}
+
+\begin{itemize}
+  \item \textbf{Smart Grids:} MAS manage distributed energy sources and loads, balancing consumption and generation \parencite{MahmoodEtAl2020}.
+  \item \textbf{Industrial Automation:} Multi-agent coordination optimizes manufacturing processes and supply chains.
+\end{itemize}
+
+\subsection*{Economics and Electronic Markets}
+
+\begin{itemize}
+  \item \textbf{Automated Trading Agents:} \Agents representing buyers and sellers negotiate prices and contracts in e-commerce platforms \parencite{ZengSycara2009}.
+  \item \textbf{Auction Systems:} MAS implement distributed auctions optimizing resource allocation.
+\end{itemize}
+
+\subsection*{Traffic and Transportation Systems}
+
+\begin{itemize}
+  \item \textbf{Traffic Signal Control:} \Agents controlling intersections dynamically adjust timings to improve flow \parencite{Wiering2000}.
+  \item \textbf{Route Planning:} Vehicles exchange information to optimize traffic and reduce congestion.
+\end{itemize}
+
+\subsection*{Social Simulation}
+
+\begin{itemize}
+  \item \textbf{Behavioral Modeling:} MAS simulate human social dynamics including opinion spread, rumor diffusion, and epidemic modeling \parencite{CastelfranchiConte1998}.
+  \item \textbf{Virtual Environments:} Multi-agent virtual characters enabling immersive simulations and training.
+\end{itemize}
+
+\subsection*{Healthcare}
+
+\begin{itemize}
+  \item \textbf{Patient Monitoring:} \Agents collect sensor data and coordinate interventions.
+  \item \textbf{Personalized Medicine:} Collaborative \agent systems analyze patient data to recommend treatments.
+\end{itemize}
+
+\subsection*{Defense and Security}
+
+\begin{itemize}
+  \item \textbf{Surveillance:} \Agent teams monitor areas and share intelligence.
+  \item \textbf{Cybersecurity:} \Agents detect intrusions and coordinate defenses in network security.
+\end{itemize}
+
+\subsection*{Summary}
+
+The breadth of MAS applications demonstrates their versatility in addressing distributed decision-making, coordination, and adaptive control problems. These domains continue to benefit from advances in MAS theory and technology, shaping future AI deployments.
+
+\clearpage
+
+% ============================
+% References
+% ============================
+\renewcommand{\bibname}{References}
+\printbibliography[heading=bibintoc]
+
+% ============================
+% Index placeholder, if any
+% ============================
+%\cleardoublepage
+%\printindex
+
+\end{document}
+
+%======================
+% bibliography file name: mas_ai_references.bib
+% Please save the following BibTeX entries in mas_ai_references.bib alongside the .tex file:
+%======================
+
+% @book{RussellNorvig2020,
+%   author    = {Stuart Russell and Peter Norvig},
+%   title     = {Artificial Intelligence: A Modern Approach},
+%   edition   = {4th},
+%   publisher = {Pearson},
+%   year      = {2020},
+% }
+
+% @book{Wooldridge2009,
+%   author    = {Michael Wooldridge},
+%   title     = {An Introduction to MultiAgent Systems},
+%   edition   = {2nd},
+%   publisher = {Wiley},
+%   year      = {2009},
+% }
+
+% @article{WooldridgeJennings1995,
+%   author  = {Michael Wooldridge and Nicholas R. Jennings},
+%   title   = {Intelligent agents: Theory and practice},
+%   journal = {The Knowledge Engineering Review},
+%   volume  = {10},
+%   number  = {2},
+%   pages   = {115--152},
+%   year    = {1995},
+% }
+
+% @book{BonabeauEtAl1999,
+%   author    = {Eric Bonabeau and Marco Dorigo and Guy Theraulaz},
+%   title     = {Swarm Intelligence: From Natural to Artificial Systems},
+%   publisher = {Oxford University Press},
+%   year      = {1999},
+% }
+
+% @article{RosenscheinZlotkin1994,
+%   author  = {J. Scott Rosenschein and Gregory Zlotkin},
+%   title   = {Rules of Encounter: Designing Conventions for Automated Negotiation among Computers},
+%   journal = {MIT Press},
+%   year    = {1994},
+% }
+
+% @article{WeiEtAl2016,
+%   author  = {Wei Wei et al.},
+%   title   = {Multi-agent systems for energy management in smart grids: A review and outlook},
+%   journal = {Renewable and Sustainable Energy Reviews},
+%   volume  = {72},
+%   pages   = {205--222},
+%   year    = {2016},
+% }
+
+% @article{HuhnsStephens1999,
+%   author  = {Michael N. Huhns and Lynn M. Stephens},
+%   title   = {Multiagent systems and societies of agents},
+%   booktitle = {Multiagent Systems},
+%   editor  = {Gerhard Weiss},
+%   publisher = {MIT Press},
+%   pages   = {79-120},
+%   year    = {1999},
+% }
+
+% @article{ErmanEtAl1980,
+%   author  = {Lester D. Erman and Victor R. Lesser and Thomas J. Philips and Doreswamy R. Reddy and Edward Wenger},
+%   title   = {The Hearsay-II speech understanding system: Integrating knowledge to resolve uncertainty},
+%   journal = {Computing Surveys (CSUR)},
+%   volume  = {12},
+%   number  = {2},
+%   pages   = {213-253},
+%   year    = {1980},
+% }
+
+% @book{Ferber1999,
+%   author    = {Jacques Ferber},
+%   title     = {Multi-Agent Systems: An Introduction to Distributed Artificial Intelligence},
+%   publisher = {Addison-Wesley},
+%   year      = {1999},
+% }
+
+% @article{FininEtAl1997,
+%   author  = {Timothy Finin and Yannis Labrou and James Mayfield},
+%   title   = {KQML as an agent communication language},
+%   booktitle = {Software Agents},
+%   editor  = {Jeffrey M. Bradshaw},
+%   publisher = {MIT Press},
+%   pages   = {291-316},
+%   year    = {1997},
+% }
+
+% @techreport{FIPA2002,
+%   author  = {{Foundation for Intelligent Physical Agents (FIPA)}},
+%   title   = {FIPA Communicative Act Library Specification},
+%   year    = {2002},
+%   institution = {FIPA},
+%   note    = {\url{http://www.fipa.org/specs/fipa00037/}},
+% }
+
+% @article{FranklinGraesser1996,
+%   author  = {Stan Franklin and Art Graesser},
+%   title   = {Is it an agent, or just a program?},
+%   booktitle = {Proceedings of the third international workshop on Agent theories, architectures, and languages},
+%   pages   = {21--35},
+%   year    = {1996},
+%   publisher = {Springer-Verlag},
+% }
+
+% @article{Brooks1990,
+%   author  = {Rodney A. Brooks},
+%   title   = {Elephants don't play chess},
+%   journal = {Robotics and Autonomous Systems},
+%   volume  = {6},
+%   number  = {1-2},
+%   pages   = {3--15},
+%   year    = {1990},
+% }
+
+% @article{Smith1980,
+%   author  = {Richard G. Smith},
+%   title   = {The contract net protocol: High-level communication and control in a distributed problem solver},
+%   journal = {IEEE Transactions on Computers},
+%   volume  = {29},
+%   number  = {12},
+%   pages   = {1104--1113},
+%   year    = {1980},
+% }
+
+% @article{Jennings1993,
+%   author  = {Nicholas R. Jennings},
+%   title   = {Coordination techniques for distributed artificial intelligence},
+%   booktitle = {Foundations of distributed artificial intelligence},
+%   editor  = {G. O'Hare and N. Jennings},
+%   publisher = {Wiley},
+%   pages   = {187--210},
+%   year    = {1993},
+% }
+
+% @article{RaoGeorgeff1991,
+%   author  = {Anattaram S. Rao and Michael P. Georgeff},
+%   title   = {Modeling rational agents within a BDI-architecture},
+%   booktitle = {Proceedings of the 2nd International Conference on Principles of Knowledge Representation and Reasoning},
+%   pages   = {473--484},
+%   year    = {1991},
+% }
+
+% @article{WooldridgeJennings1995,
+%   author  = {Michael Wooldridge and Nicholas R. Jennings},
+%   title   = {Intelligent agents: Theory and practice},
+%   journal = {The Knowledge Engineering Review},
+%   volume  = {10},
+%   number  = {2},
+%   pages   = {115--152},
+%   year    = {1995},
+% }
+
+% @article{Shoham1993,
+%   author  = {Yoav Shoham},
+%   title   = {Agent-oriented programming},
+%   journal = {Artificial Intelligence},
+%   volume  = {60},
+%   number  = {1},
+%   pages   = {51--92},
+%   year    = {1993},
+% }
+
+% @article{BellifemineEtAl2007,
+%   author  = {Fabio Bellifemine and Giovanni Caire and Dominic Greenwood},
+%   title   = {Developing Multi-Agent Systems with JADE},
+%   publisher = {John Wiley \& Sons},
+%   year    = {2007},
+% }
+
+% @article{DorigoStutzle2004,
+%   author  = {Marco Dorigo and Thomas Stützle},
+%   title   = {Ant Colony Optimization},
+%   publisher = {MIT Press},
+%   year    = {2004},
+% }
+
+% @article{KennedyEberhart1995,
+%   author  = {James Kennedy and Russell Eberhart},
+%   title   = {Particle swarm optimization},
+%   booktitle = {Proceedings of IEEE International Conference on Neural Networks},
+%   volume  = {4},
+%   pages   = {1942--1948},
+%   year    = {1995},
+% }
+
+% @article{MahmoodEtAl2020,
+%   author  = {A. Mahmood et al.},
+%   title   = {Multi-agent systems for the smart grid: A brief review},
+%   journal = {Sustainable Cities and Society},
+%   volume  = {63},
+%   pages   = {102445},
+%   year    = {2020},
+% }
+
+% @article{ZengSycara2009,
+%   author  = {Dacheng Zeng and Katia Sycara},
+%   title   = {Automated negotiation in electronic commerce},
+%   journal = {The Knowledge Engineering Review},
+%   volume  = {18},
+%   number  = {4},
+%   pages   = {293--300},
+%   year    = {2009},
+% }
+
+% @article{Wiering2000,
+%   author  = {Marco Wiering},
+%   title   = {Multi-agent reinforcement learning for traffic light control},
+%   booktitle = {Proceedings of the Seventeenth International Conference on Machine Learning},
+%   year    = {2000},
+% }
+
+% @book{CastelfranchiConte1998,
+%   author    = {Cristiano Castelfranchi and Rosaria Conte},
+%   title     = {Cognitive and social action},
+%   publisher = {UCL Press},
+%   year      = {1998},
+% }
+
+% @article{Sahin2005,
+%   author  = {Erol Şahin},
+%   title   = {Swarm robotics: From sources of inspiration to domains of application},
+%   booktitle = {Swarm Robotics},
+%   editor  = {Erol Şahin and William M. Spears},
+%   publisher = {Springer},
+%   pages   = {10--20},
+%   year    = {2005},
+% }
+
+% @article{Brooks1986,
+%   author  = {Rodney A. Brooks},
+%   title   = {A robust layered control system for a mobile robot},
+%   journal = {IEEE Journal of Robotics and Automation},
+%   volume  = {2},
+%   number  = {1},
+%   pages   = {14--23},
+%   year    = {1986},
+% }

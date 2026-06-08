@@ -4,6 +4,8 @@ Orchestrates agents A-01 (Research), A-02 (Fact Verification),
 and A-07 (Citation) in a hierarchical crew for the research phase.
 """
 
+from pathlib import Path
+
 from crewai import Crew, Process, Task
 
 from ..agents.citation_agent import create_citation_agent
@@ -14,7 +16,7 @@ from ..observability.logger import get_logger
 logger = get_logger("workflows.research_crew")
 
 
-def create_research_crew(topic: str) -> Crew:
+def create_research_crew(topic: str, output_dir: Path) -> Crew:
     """Build and return the research sub-crew.
 
     This crew uses hierarchical process where the research agent
@@ -32,6 +34,7 @@ def create_research_crew(topic: str) -> Crew:
             "and authoritative websites. Organize sources by subtopic."
         ),
         expected_output="A structured list of 20+ sources with metadata.",
+        output_file=str(output_dir / "research" / "sources.md"),
         agent=research_agent,
     )
 
@@ -42,6 +45,7 @@ def create_research_crew(topic: str) -> Crew:
             "sources. Flag any unverified claims."
         ),
         expected_output="Verification report with confidence scores.",
+        output_file=str(output_dir / "research" / "verification_report.md"),
         agent=fact_agent,
     )
 
@@ -51,10 +55,14 @@ def create_research_crew(topic: str) -> Crew:
             "and every URL is reachable. Produce a clean bibliography."
         ),
         expected_output="Validated bibliography with BibTeX entries.",
+        output_file=str(output_dir / "latex" / "references.bib"),
         agent=citation_agent,
     )
 
     logger.info(f"Creating research crew for topic: {topic}")
+
+    (output_dir / "research").mkdir(parents=True, exist_ok=True)
+    (output_dir / "latex").mkdir(parents=True, exist_ok=True)
 
     return Crew(
         agents=[research_agent, fact_agent, citation_agent],

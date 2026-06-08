@@ -5,9 +5,11 @@ research → outline → writing → editorial → citation → LaTeX → PDF �
 """
 
 import uuid
+from pathlib import Path
 
 from crewai import Crew, Process, Task
 
+from ..agents.figure_agent import create_figure_agent
 from ..agents.latex_agent import create_latex_agent
 from ..agents.outline_agent import create_outline_agent
 from ..agents.pdf_agent import create_pdf_agent
@@ -21,7 +23,7 @@ from .research_crew import create_research_crew
 logger = get_logger("workflows.main_crew")
 
 
-def create_main_crew(topic: str) -> Crew:
+def create_main_crew(topic: str, output_dir: Path) -> Crew:
     """Build the main sequential pipeline crew.
 
     Orchestrates the full pipeline from research through QA,
@@ -31,6 +33,7 @@ def create_main_crew(topic: str) -> Crew:
 
     outline_agent = create_outline_agent()
     writer_agent = create_writer_agent()
+    figure_agent = create_figure_agent()
     latex_agent = create_latex_agent()
     pdf_agent = create_pdf_agent()
     qa_agent = create_qa_agent()
@@ -42,6 +45,7 @@ def create_main_crew(topic: str) -> Crew:
             "summary and target word count for each section."
         ),
         expected_output="Hierarchical outline with chapters and sections.",
+        output_file=str(output_dir / "outline.md"),
         agent=outline_agent,
     )
 
@@ -52,16 +56,34 @@ def create_main_crew(topic: str) -> Crew:
             "Maintain consistent voice and graduate-level readability."
         ),
         expected_output="Complete manuscript text for all chapters.",
+        output_file=str(output_dir / "manuscript.md"),
         agent=writer_agent,
+    )
+
+    figure_task = Task(
+        description=(
+            "Read the manuscript and identify 3 key concepts or architectures that "
+            "would benefit from visualization. Generate 3 professional figures "
+            "(e.g., bar charts, line plots, or block diagrams) using the figure generator tool. "
+            "Save them as PNG or PDF files. Provide a summary of the generated figures "
+            "including their filenames and suggested captions."
+        ),
+        expected_output="A list of generated figures with their filenames and captions.",
+        output_file=str(output_dir / "figures_report.md"),
+        agent=figure_agent,
     )
 
     latex_task = Task(
         description=(
-            "Convert the manuscript into LaTeX source using the memoir "
+            "Convert the manuscript and figures report into LaTeX source using the book "
             "class. Structure it as a compilable book with all required "
-            "packages, bibliography, and formatting."
+            "packages, bibliography, and formatting. You MUST use the graphicx package "
+            "and embed the generated figures using \\begin{figure}[htbp] \\centering "
+            "\\includegraphics{figures/filename} \\caption{caption} \\label{label} "
+            "\\end{figure} where appropriate. Use booktabs for tables without vertical rules."
         ),
         expected_output="Complete LaTeX source files ready for compilation.",
+        output_file=str(output_dir / "latex" / "book.tex"),
         agent=latex_agent,
     )
 
@@ -71,6 +93,7 @@ def create_main_crew(topic: str) -> Crew:
             "output has ≥20 pages and all elements render correctly."
         ),
         expected_output="Compiled PDF with quality verification report.",
+        output_file=str(output_dir / "latex" / "pdf_report.md"),
         agent=pdf_agent,
     )
 
@@ -81,18 +104,19 @@ def create_main_crew(topic: str) -> Crew:
             "manuscript meets all publication standards."
         ),
         expected_output="QA certification report with gate results.",
+        output_file=str(output_dir / "qa_report.md"),
         agent=qa_agent,
     )
 
     return Crew(
-        agents=[outline_agent, writer_agent, latex_agent, pdf_agent, qa_agent],
-        tasks=[outline_task, writing_task, latex_task, pdf_task, qa_task],
+        agents=[outline_agent, writer_agent, figure_agent, latex_agent, pdf_agent, qa_agent],
+        tasks=[outline_task, writing_task, figure_task, latex_task, pdf_task, qa_task],
         process=Process.sequential,
         verbose=True,
     )
 
 
-def run_pipeline(topic: str) -> PipelineState:
+def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineState:
     """Run the complete book generation pipeline.
 
     Executes the research sub-crew, then the main crew stages,
@@ -100,24 +124,36 @@ def run_pipeline(topic: str) -> PipelineState:
 
     Args:
         topic: The book topic to generate.
+        output_dir: The directory to save generated artifacts.
 
     Returns:
         The final PipelineState after all stages complete.
     """
+    from pathlib import Path
+
+    if output_dir is None:
+        from ..shared.constants import OUTPUT_DIR
+        out_path = OUTPUT_DIR
+    else:
+        out_path = Path(output_dir)
+
+    out_path.mkdir(parents=True, exist_ok=True)
+    (out_path / "latex").mkdir(parents=True, exist_ok=True)
+
     run_id = str(uuid.uuid4())[:8]
     state = PipelineState(topic=topic, run_id=run_id)
     logger.info(f"Starting pipeline run {run_id} for: {topic}")
 
     state.current_stage = "research"
-    research_crew = create_research_crew(topic)
+    research_crew = create_research_crew(topic, out_path)
     research_crew.kickoff()
 
     state.current_stage = "main"
-    main_crew = create_main_crew(topic)
+    main_crew = create_main_crew(topic, out_path)
     main_crew.kickoff()
 
     state.current_stage = "editorial"
-    editorial_crew = create_editorial_crew()
+    editorial_crew = create_editorial_crew(out_path)
     editorial_crew.kickoff()
 
     state.current_stage = "complete"

@@ -12,6 +12,15 @@ from crewai_book.agents.qa_agent import create_qa_agent
 from crewai_book.agents.research_agent import create_research_agent
 from crewai_book.agents.reviewer_agent import create_reviewer_agent
 from crewai_book.agents.writer_agent import create_writer_agent
+from crewai_book.agents.figure_agent import create_figure_agent
+
+
+def test_figure_agent_creation() -> None:
+    """Figure agent should have figure generator tool."""
+    agent = create_figure_agent()
+    assert isinstance(agent, Agent)
+    assert agent.role == "Data Visualization Specialist & Illustrator"
+    assert len(agent.tools or []) == 1
 
 
 def test_research_agent_creation() -> None:

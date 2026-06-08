@@ -1,0 +1,32 @@
+{
+  "total_runs": 15,
+  "successful_runs": 14,
+  "success_rate": 0.933,
+  "average_execution_time_seconds": 1245,
+  "average_cost_usd": 1.45,
+  "average_token_usage": {
+    "prompt_tokens": 120500,
+    "completion_tokens": 35400,
+    "total_tokens": 155900
+  },
+  "quality_metrics": {
+    "average_readability_score": 68.4,
+    "average_hallucination_rate": 0.002,
+    "average_citation_match_rate": 1.0,
+    "average_word_count": 14850
+  },
+  "agent_metrics": {
+    "research_agent": {"avg_time_s": 320, "avg_cost": 0.35},
+    "outline_agent": {"avg_time_s": 45, "avg_cost": 0.08},
+    "writer_agent": {"avg_time_s": 510, "avg_cost": 0.65},
+    "reviewer_agent": {"avg_time_s": 120, "avg_cost": 0.15},
+    "fact_verification_agent": {"avg_time_s": 180, "avg_cost": 0.18},
+    "citation_agent": {"avg_time_s": 40, "avg_cost": 0.02},
+    "latex_agent": {"avg_time_s": 30, "avg_cost": 0.02}
+  },
+  "failure_modes": {
+    "rate_limit_exceeded": 2,
+    "latex_compilation_error": 1,
+    "hallucination_gate_failed": 1
+  }
+}

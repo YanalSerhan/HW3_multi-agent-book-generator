@@ -4,6 +4,8 @@ Orchestrates agents A-05 (Editor) and A-06 (Reviewer)
 to perform multi-pass editorial review of the manuscript.
 """
 
+from pathlib import Path
+
 from crewai import Crew, Process, Task
 
 from ..agents.editor_agent import create_editor_agent
@@ -13,7 +15,7 @@ from ..observability.logger import get_logger
 logger = get_logger("workflows.editorial_crew")
 
 
-def create_editorial_crew() -> Crew:
+def create_editorial_crew(output_dir: Path) -> Crew:
     """Build and return the editorial sub-crew.
 
     This crew runs the editor and reviewer sequentially to perform
@@ -30,6 +32,7 @@ def create_editorial_crew() -> Crew:
             "meets the ≥60 Flesch target. Fix any issues found."
         ),
         expected_output="Edited manuscript with improvement notes.",
+        output_file=str(output_dir / "manuscript_edited.md"),
         agent=editor_agent,
     )
 
@@ -40,6 +43,7 @@ def create_editorial_crew() -> Crew:
             "Provide a structured review report with actionable feedback."
         ),
         expected_output="Structured review report with recommendations.",
+        output_file=str(output_dir / "review_report.md"),
         agent=reviewer_agent,
     )
 
