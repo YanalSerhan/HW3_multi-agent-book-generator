@@ -4,8 +4,8 @@
 
 \input{preamble.tex}
 
-\title{ {{- article.title -}} }
-\author{ {{- article.authors | join(' \\and ') -}} }
+\title{ {{- article.title -}} \\ \large Orchestration of AI agents}
+\author{Yanal Serhan \and Nell Khoury \\ \small Lecturer: Dr. Yoram Segal}
 \date{\today}
 
 \begin{document}
@@ -25,22 +25,29 @@
 % ── Main Matter ────────────────────────────────────────
 \mainmatter
 
-{% for chapter in article.chapters %}
-\chapter{ {{- chapter.title -}} }
+{{ latex_content }}
 
-{% if chapter.chapter_summary %}
-\begin{quote}
-\textit{ {{- chapter.chapter_summary -}} }
-\end{quote}
-{% endif %}
+\chapter{Hebrew-English BiDi Section}
+This chapter demonstrates mixed Right-To-Left (Hebrew) and Left-To-Right (English) text handling, as well as python graph integration and mathematical equations.
 
-{% for section in chapter.sections %}
-\section{ {{- section.title -}} }
+\section{BiDi Text}
+\begin{hebrew}
+שלום עולם! זהו טקסט בעברית המשולב עם אנגלית (English) באותו משפט.
+\end{hebrew}
 
-{{ section.content }}
+\section{Mathematical Equation}
+The following is a professionally typeset mathematical equation using the LaTeX math environment:
+\begin{equation}
+E = mc^2
+\end{equation}
 
-{% endfor %}
-{% endfor %}
+\section{Python Graph Integration}
+The figure below is generated directly from a Python script and embedded using the graphicx package.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/test_fig.png}
+\caption{Python Generated Graph}
+\end{figure}
 
 % ── Back Matter ────────────────────────────────────────
 \backmatter

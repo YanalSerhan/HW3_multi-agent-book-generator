@@ -16,25 +16,43 @@ class LaTeXClient(BaseClient):
         super().__init__("latex", gatekeeper)
 
     def _run_latexmk(self, tex_file: Path) -> str:
-        """Run latexmk on a file."""
-        cmd = ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", tex_file.name]
+        """Run compilation using xelatex instead of latexmk to avoid Perl dependency."""
+        import os
+        
+        # Clean up old auxiliary files to prevent compilation failures
+        for ext in ['.aux', '.bbl', '.bcf', '.log', '.out', '.toc', '.run.xml']:
+            aux_file = tex_file.with_suffix(ext)
+            try:
+                if aux_file.exists():
+                    aux_file.unlink()
+            except OSError:
+                pass
 
+        cmd = ["xelatex", "-interaction=nonstopmode", "-halt-on-error", tex_file.name]
         self.logger.info(f"Running LaTeX compilation in {tex_file.parent}: {' '.join(cmd)}")
 
         try:
-            result = subprocess.run(
-                cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=60.0
-            )
-            if result.returncode != 0:
-                self.logger.error(f"Compilation failed: {result.stderr}")
-                raise CompilationError(
-                    "LaTeX compilation failed", {"stdout": result.stdout, "stderr": result.stderr}
-                )
-            return result.stdout
+            # First pass
+            res1 = subprocess.run(cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)
+            if res1.returncode != 0:
+                raise CompilationError("LaTeX first pass failed", {"stdout": res1.stdout, "stderr": res1.stderr})
+            
+            # Bibliography pass
+            try:
+                subprocess.run(["biber", tex_file.stem], cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)
+            except Exception:
+                pass
+                
+            # Second pass
+            res2 = subprocess.run(cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)
+            if res2.returncode != 0:
+                raise CompilationError("LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr})
+                
+            return res2.stdout
         except subprocess.TimeoutExpired as e:
             raise CompilationError("LaTeX compilation timed out") from e
         except FileNotFoundError as e:
-            raise CompilationError("latexmk not found. Is LaTeX installed?") from e
+            raise CompilationError("xelatex not found. Is LaTeX installed?") from e
 
     def compile_pdf(self, tex_file_path: str) -> str:
         """Compile a .tex file into a PDF."""

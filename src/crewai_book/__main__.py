@@ -7,9 +7,13 @@ Run with: python -m crewai_book --help
 from __future__ import annotations
 
 import typer
+from dotenv import load_dotenv
 from rich.console import Console
 
 from crewai_book.version import __version__
+
+# Load environment variables from .env file so CrewAI can find OPENAI_API_KEY
+load_dotenv()
 
 app = typer.Typer(
     name="crewai-book",

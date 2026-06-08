@@ -7,9 +7,9 @@
 
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
-PYTHON := python
-PIP := pip
-PYTEST := pytest
+PYTHON := uv run python
+PIP := uv pip
+PYTEST := uv run pytest
 SRC_DIR := src/crewai_book
 TEST_DIR := tests
 OUTPUT_DIR := output
@@ -35,17 +35,20 @@ help: ## Show this help message
 # ----------------------------------------------------------------------------
 
 install: ## Install all dependencies (production + dev)
-	$(PIP) install -e ".[dev]"
+	uv sync
 
 install-prod: ## Install production dependencies only
-	$(PIP) install -e .
+	uv sync --no-dev
 
 # ----------------------------------------------------------------------------
 # Run
 # ----------------------------------------------------------------------------
 
 run: ## Run the full book generation pipeline
+	mkdir -p $(OUTPUT_DIR)/latex/figures
+	$(PYTHON) scripts/generate_graph.py
 	$(PYTHON) -m crewai_book run
+	$(PYTHON) scripts/clean_tex.py $(OUTPUT_DIR)/latex/book.tex
 
 # ----------------------------------------------------------------------------
 # Testing
@@ -120,7 +123,7 @@ docs: ## Build documentation (placeholder)
 
 pdf: ## Compile LaTeX to PDF
 	@echo "Compiling LaTeX to PDF..."
-	cd $(OUTPUT_DIR)/latex && latexmk -pdf -bibtex -interaction=nonstopmode book.tex
+	cd $(OUTPUT_DIR)/latex && latexmk -xelatex -bibtex -interaction=nonstopmode book.tex
 
 # ----------------------------------------------------------------------------
 # Evaluation

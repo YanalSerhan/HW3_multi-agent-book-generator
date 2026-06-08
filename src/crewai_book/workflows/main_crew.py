@@ -41,7 +41,7 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     outline_task = Task(
         description=(
             f"Create a detailed book outline for '{topic}' with "
-            "6-8 chapters, each having 3-5 sections. Include a chapter "
+            "12-15 chapters, each having 4-6 sections. Include a chapter "
             "summary and target word count for each section."
         ),
         expected_output="Hierarchical outline with chapters and sections.",
@@ -52,7 +52,7 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     writing_task = Task(
         description=(
             "Write the complete manuscript following the outline. "
-            "Each section should be 500-800 words with proper citations. "
+            "Each section should be 800-1000 words with proper citations. "
             "Maintain consistent voice and graduate-level readability."
         ),
         expected_output="Complete manuscript text for all chapters.",
@@ -75,15 +75,14 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
 
     latex_task = Task(
         description=(
-            "Convert the manuscript and figures report into LaTeX source using the book "
-            "class. Structure it as a compilable book with all required "
-            "packages, bibliography, and formatting. You MUST use the graphicx package "
-            "and embed the generated figures using \\begin{figure}[htbp] \\centering "
-            "\\includegraphics{figures/filename} \\caption{caption} \\label{label} "
-            "\\end{figure} where appropriate. Use booktabs for tables without vertical rules."
+            "Convert the manuscript and figures report into LaTeX source. "
+            "Convert all Markdown tables into proper LaTeX \\begin{table} environments. To prevent table overflow, MUST use \\resizebox{\\textwidth}{!}{...} around your tabular environments. "
+            "CRITICAL: Output ONLY the raw LaTeX source code for the chapters and sections. "
+            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "
+            "Do NOT enclose your output in markdown code blocks."
         ),
-        expected_output="Complete LaTeX source files ready for compilation.",
-        output_file=str(output_dir / "latex" / "book.tex"),
+        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",
+        output_file=str(output_dir / "latex" / "body.tex"),
         agent=latex_agent,
     )
 
@@ -151,6 +150,42 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
     state.current_stage = "main"
     main_crew = create_main_crew(topic, out_path)
     main_crew.kickoff()
+    
+    # --- POST-PROCESSING: Render the Final LaTeX Book ---
+    import shutil
+    from jinja2 import Environment, FileSystemLoader
+    from ..shared.constants import TEMPLATE_DIR
+    
+    latex_dir = out_path / "latex"
+    body_path = latex_dir / "body.tex"
+    book_path = latex_dir / "book.tex"
+    
+    if body_path.exists():
+        # Load the generated body
+        body_content = body_path.read_text(encoding='utf-8')
+        
+        # Load the jinja template
+        env = Environment(
+            loader=FileSystemLoader(TEMPLATE_DIR),
+            autoescape=False,
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+        try:
+            template = env.get_template("book.tex.j2")
+            final_tex = template.render(
+                latex_content=body_content,
+                article={"title": topic, "abstract": f"An automatically generated book on {topic}."}
+            )
+            book_path.write_text(final_tex, encoding='utf-8')
+            logger.info("Successfully rendered book.tex from Jinja template.")
+        except Exception as e:
+            logger.error(f"Failed to render Jinja template: {e}")
+            
+        # Ensure preamble is copied
+        preamble_src = TEMPLATE_DIR / "preamble.tex"
+        if preamble_src.exists():
+            shutil.copy(preamble_src, latex_dir / "preamble.tex")
 
     state.current_stage = "editorial"
     editorial_crew = create_editorial_crew(out_path)

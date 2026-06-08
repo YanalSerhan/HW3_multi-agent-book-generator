@@ -1,1 +1,1 @@
-Please provide the manuscript text you want me to edit for clarity, consistency, and grammar, and to check readability.
+Please provide the manuscript text or sections you would like me to edit and evaluate for readability.

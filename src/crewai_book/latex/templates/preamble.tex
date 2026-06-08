@@ -2,6 +2,7 @@
 % This file is included by book.tex.j2 via Jinja2 \input
 
 % ── Typography ──────────────────────────────────────────
+\usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage{palatino}
 \usepackage{microtype}
@@ -9,8 +10,10 @@
 \onehalfspacing
 
 % ── Language & Encoding ────────────────────────────────
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setotherlanguage{hebrew}
+\newfontfamily\hebrewfont[Script=Hebrew]{Arial}
 
 % ── Color ──────────────────────────────────────────────
 \usepackage{xcolor}
