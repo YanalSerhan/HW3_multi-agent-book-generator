@@ -7,6 +7,7 @@ gates have passed and the manuscript meets every standard.
 from crewai import Agent
 
 from ..config.agent_configs import AGENT_CONFIGS
+from ..tools.citation_validator_tool import CitationValidatorTool
 from ..tools.readability_tool import ReadabilityScoreTool
 
 
@@ -17,11 +18,13 @@ def create_qa_agent() -> Agent:
     gate verifications and producing a certification report that
     confirms the manuscript is ready for publication.
     """
+    cfg = AGENT_CONFIGS["qa_agent"]
     return Agent(
-        role=AGENT_CONFIGS["qa_agent"].role,
-        goal=AGENT_CONFIGS["qa_agent"].goal,
-        backstory=AGENT_CONFIGS["qa_agent"].backstory,
-        tools=[ReadabilityScoreTool()],
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
+        tools=[ReadabilityScoreTool(), CitationValidatorTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

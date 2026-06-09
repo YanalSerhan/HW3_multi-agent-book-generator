@@ -57,7 +57,9 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
 @patch("crewai_book.workflows.pipeline.create_editorial_crew")
 @patch("crewai_book.workflows.pipeline.create_main_crew")
 @patch("crewai_book.workflows.pipeline.create_research_crew")
+@patch("crewai_book.workflows.pipeline._evaluate_gates_for_stage")
 def test_run_pipeline(
+    mock_evaluate: MagicMock,
     mock_research: MagicMock,
     mock_main: MagicMock,
     mock_editorial: MagicMock,
@@ -68,6 +70,7 @@ def test_run_pipeline(
     mock_research.return_value.kickoff.return_value = None
     mock_main.return_value.kickoff.return_value = None
     mock_editorial.return_value.kickoff.return_value = None
+    mock_evaluate.return_value = True  # Always pass gates in this high-level test
 
     state = run_pipeline("test topic")
     assert state.current_stage == "complete"
@@ -79,8 +82,9 @@ def test_run_pipeline(
 
 def test_qg4_word_count_pass() -> None:
     """QG-4 should pass when word count is within range."""
-    sec = Section(title="S", content="word " * 1500, word_count=1500)
-    chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
+    # Create 10 sections of 1500 words each to total 15000 words
+    sections = [Section(title=f"S{i}", content="word " * 1500, word_count=1500) for i in range(10)]
+    chap = Chapter(number=1, title="C", chapter_summary="", sections=sections)
     art = Article(
         title="T",
         authors=["A"],
@@ -88,7 +92,8 @@ def test_qg4_word_count_pass() -> None:
         target_audience="all",
         chapters=[chap],
     )
-    assert check_qg4_word_count(art, target=1500) is True
+    state = PipelineState(topic="test", run_id="r1", artifacts={"article": art})
+    assert check_qg4_word_count(state).passed is True
 
 
 def test_qg4_word_count_fail() -> None:
@@ -102,27 +107,33 @@ def test_qg4_word_count_fail() -> None:
         target_audience="all",
         chapters=[chap],
     )
-    assert check_qg4_word_count(art, target=15000) is False
+    state = PipelineState(topic="test", run_id="r1", artifacts={"article": art})
+    assert check_qg4_word_count(state).passed is False
 
 
 def test_qg7_citations() -> None:
     """QG-7 should check bib vs ref counts."""
-    assert check_qg7_citations(20, 15) is True
-    assert check_qg7_citations(5, 15) is False
-    assert check_qg7_citations(0, 0) is False
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 20, "ref_count": 15})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 5, "ref_count": 15})
+    state3 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 0, "ref_count": 0})
+    assert check_qg7_citations(state1).passed is True
+    assert check_qg7_citations(state2).passed is False
+    assert check_qg7_citations(state3).passed is False
 
 
 def test_qg8_compilation() -> None:
     """QG-8 should reflect compilation status."""
-    assert check_qg8_compilation(True) is True
-    assert check_qg8_compilation(False) is False
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"compiled": True})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"compiled": False})
+    assert check_qg8_compilation(state1).passed is True
+    assert check_qg8_compilation(state2).passed is False
 
 
 def test_run_all_gates_with_article() -> None:
     """run_all_gates should include article-based gates."""
-    state = PipelineState(topic="test", run_id="r1")
-    sec = Section(title="S", content="text " * 1600, word_count=1600)
-    chap = Chapter(number=1, title="C", chapter_summary="", sections=[sec])
+    # Create enough words to hit QG-4
+    sections = [Section(title=f"S{i}", content="text " * 1500, word_count=1500) for i in range(10)]
+    chap = Chapter(number=1, title="C", chapter_summary="", sections=sections)
     art = Article(
         title="T",
         authors=["A"],
@@ -130,11 +141,15 @@ def test_run_all_gates_with_article() -> None:
         target_audience="all",
         chapters=[chap, chap, chap],
     )
-    results = {
-        "article": art,
-        "readability_score": 75.0,
-    }
-    gates = run_all_gates(state, results)
+    state = PipelineState(
+        topic="test",
+        run_id="r1",
+        artifacts={
+            "article": art,
+            "readability_score": 75.0,
+        }
+    )
+    gates = run_all_gates(state)
     assert "QG-3" in gates
     assert "QG-5" in gates
     assert gates["QG-5"] is True

@@ -14,13 +14,15 @@ def create_outline_agent() -> Agent:
 
     This agent designs the book's information architecture, creating
     a detailed outline that balances depth, breadth, and readability
-    for the target graduate-level audience.
+    for the target graduate-level audience. No tools — reasoning only.
     """
+    cfg = AGENT_CONFIGS["outline_architect_agent"]
     return Agent(
-        role=AGENT_CONFIGS["outline_architect_agent"].role,
-        goal=AGENT_CONFIGS["outline_architect_agent"].goal,
-        backstory=AGENT_CONFIGS["outline_architect_agent"].backstory,
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
         tools=[],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

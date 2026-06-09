@@ -1,7 +1,12 @@
-"""Figure Generation Agent for creating visualizations."""
+"""Figure Generation Agent — Data Visualization Specialist.
+
+Creates technical charts, diagrams, and plots using Python code
+execution to complement the manuscript with professional visuals.
+"""
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.figure_generator_tool import FigureGeneratorTool
 
 
@@ -12,20 +17,13 @@ def create_figure_agent() -> Agent:
     diagrams, and plots using Python code execution based
     on the manuscript contents.
     """
+    cfg = AGENT_CONFIGS["figure_agent"]
     return Agent(
-        role="Data Visualization Specialist & Illustrator",
-        goal=(
-            "Analyze the manuscript and create highly professional, accurate, and "
-            "visually appealing technical diagrams, charts, and plots to complement the text. "
-            "Save the figures as PNG or PDF files."
-        ),
-        backstory=(
-            "A technical illustrator and data scientist who specializes in communicating complex "
-            "information through clear, professional visual aids. Known for clean, academic-style "
-            "figures that adhere to the highest publishing standards. Proficient in matplotlib "
-            "and seaborn."
-        ),
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
         tools=[FigureGeneratorTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

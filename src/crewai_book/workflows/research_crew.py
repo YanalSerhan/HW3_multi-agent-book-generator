@@ -19,9 +19,9 @@ logger = get_logger("workflows.research_crew")
 def create_research_crew(topic: str, output_dir: Path) -> Crew:
     """Build and return the research sub-crew.
 
-    This crew uses hierarchical process where the research agent
-    leads, delegating fact-checking and citation tasks to the
-    other agents as needed.
+    This crew uses hierarchical process where a manager LLM
+    orchestrates the research, fact-checking, and citation agents
+    to complete the research phase collaboratively.
     """
     research_agent = create_research_agent()
     fact_agent = create_fact_verification_agent()
@@ -52,9 +52,11 @@ def create_research_crew(topic: str, output_dir: Path) -> Crew:
     citation_task = Task(
         description=(
             "Validate all source citations. Check that every DOI resolves "
-            "and every URL is reachable. Produce a clean bibliography."
+            "and every URL is reachable. Produce a clean bibliography. "
+            "IMPORTANT: Your final output must ONLY contain the raw BibTeX entries. "
+            "Do not output markdown, explanations, or backticks."
         ),
-        expected_output="Validated bibliography with BibTeX entries.",
+        expected_output="A raw text file containing at least 15 valid BibTeX entries (e.g., @article{...}). No other text.",
         output_file=str(output_dir / "latex" / "references.bib"),
         agent=citation_agent,
     )
@@ -67,6 +69,7 @@ def create_research_crew(topic: str, output_dir: Path) -> Crew:
     return Crew(
         agents=[research_agent, fact_agent, citation_agent],
         tasks=[research_task, verification_task, citation_task],
-        process=Process.sequential,
+        process=Process.hierarchical,
+        manager_llm="gpt-4o",
         verbose=True,
     )

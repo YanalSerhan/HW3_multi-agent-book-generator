@@ -17,11 +17,13 @@ def create_latex_agent() -> Agent:
     LaTeX source files using the memoir document class, ensuring
     professional typesetting with proper chapter structure.
     """
+    cfg = AGENT_CONFIGS["latex_formatter_agent"]
     return Agent(
-        role=AGENT_CONFIGS["latex_formatter_agent"].role,
-        goal=AGENT_CONFIGS["latex_formatter_agent"].goal,
-        backstory=AGENT_CONFIGS["latex_formatter_agent"].backstory,
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
         tools=[LaTeXCompilerTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

@@ -68,18 +68,22 @@ def _make_bibliography(n: int) -> Bibliography:
 
 def test_qg1_sources_pass() -> None:
     """QG-1 should pass with ≥15 sources."""
-    assert check_qg1_sources(_make_bibliography(15)) is True
+    state = PipelineState(topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(15)})
+    assert check_qg1_sources(state).passed is True
 
 
 def test_qg1_sources_fail() -> None:
     """QG-1 should fail with <15 sources."""
-    assert check_qg1_sources(_make_bibliography(5)) is False
+    state = PipelineState(topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(5)})
+    assert check_qg1_sources(state).passed is False
 
 
 def test_qg2_hallucinations() -> None:
     """QG-2 should pass with 0 hallucinations."""
-    assert check_qg2_hallucinations(0) is True
-    assert check_qg2_hallucinations(1) is False
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"hallucination_count": 0})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"hallucination_count": 1})
+    assert check_qg2_hallucinations(state1).passed is True
+    assert check_qg2_hallucinations(state2).passed is False
 
 
 def test_qg3_outline() -> None:
@@ -93,31 +97,39 @@ def test_qg3_outline() -> None:
         target_audience="all",
         chapters=[chap, chap, chap],
     )
-    assert check_qg3_outline(art) is True
+    state = PipelineState(topic="test", run_id="r1", artifacts={"article": art})
+    assert check_qg3_outline(state).passed is True
 
 
 def test_qg5_readability() -> None:
     """QG-5 should check readability threshold."""
-    assert check_qg5_readability(65.0) is True
-    assert check_qg5_readability(50.0) is False
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"readability_score": 65.0})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"readability_score": 50.0})
+    assert check_qg5_readability(state1).passed is True
+    assert check_qg5_readability(state2).passed is False
 
 
 def test_qg9_pages() -> None:
     """QG-9 should check minimum page count."""
-    assert check_qg9_pages(25) is True
-    assert check_qg9_pages(10) is False
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"page_count": 25})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"page_count": 10})
+    assert check_qg9_pages(state1).passed is True
+    assert check_qg9_pages(state2).passed is False
 
 
 def test_run_all_gates() -> None:
     """run_all_gates should aggregate and record results."""
-    state = PipelineState(topic="test", run_id="r1")
-    results = {
-        "bibliography": _make_bibliography(20),
-        "hallucination_count": 0,
-        "compiled": True,
-        "page_count": 30,
-    }
-    gates = run_all_gates(state, results)
+    state = PipelineState(
+        topic="test",
+        run_id="r1",
+        artifacts={
+            "bibliography": _make_bibliography(20),
+            "hallucination_count": 0,
+            "compiled": True,
+            "page_count": 30,
+        }
+    )
+    gates = run_all_gates(state)
     assert gates["QG-1"] is True
     assert gates["QG-2"] is True
     assert "QG-1" in state.quality_gates_passed

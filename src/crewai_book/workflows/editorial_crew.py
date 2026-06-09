@@ -1,7 +1,7 @@
 """Editorial sub-crew for the book generation pipeline.
 
 Orchestrates agents A-05 (Editor) and A-06 (Reviewer)
-to perform multi-pass editorial review of the manuscript.
+in a hierarchical crew for multi-pass editorial review.
 """
 
 from pathlib import Path
@@ -18,9 +18,10 @@ logger = get_logger("workflows.editorial_crew")
 def create_editorial_crew(output_dir: Path) -> Crew:
     """Build and return the editorial sub-crew.
 
-    This crew runs the editor and reviewer sequentially to perform
-    a multi-pass editorial review, improving prose quality and
-    catching issues before final typesetting.
+    This crew uses hierarchical process where a manager LLM
+    orchestrates the editor and reviewer to perform a multi-pass
+    editorial review, improving prose quality and catching issues
+    before final typesetting.
     """
     editor_agent = create_editor_agent()
     reviewer_agent = create_reviewer_agent()
@@ -52,6 +53,7 @@ def create_editorial_crew(output_dir: Path) -> Crew:
     return Crew(
         agents=[editor_agent, reviewer_agent],
         tasks=[editing_task, review_task],
-        process=Process.sequential,
+        process=Process.hierarchical,
+        manager_llm="gpt-4o",
         verbose=True,
     )

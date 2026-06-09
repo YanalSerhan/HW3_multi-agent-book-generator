@@ -19,6 +19,7 @@ def retry_recoverable(max_attempts: int = 3, initial_backoff: float = 1.0) -> Ca
     Uses exponential backoff for the delay.
     If attempts are exhausted, raises RetryExhaustedError.
     """
+
     def decorator(func: T) -> T:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -39,8 +40,7 @@ def retry_recoverable(max_attempts: int = 3, initial_backoff: float = 1.0) -> Ca
                             f"Last error: {e}"
                         )
                         raise RetryExhaustedError(
-                            f"Failed after {max_attempts} attempts",
-                            context={"last_error": str(e)}
+                            f"Failed after {max_attempts} attempts", context={"last_error": str(e)}
                         ) from e
 
                     logger.warning(

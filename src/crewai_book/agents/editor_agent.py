@@ -17,11 +17,13 @@ def create_editor_agent() -> Agent:
     quality, fixing grammatical issues, and ensuring each section
     meets the target readability score.
     """
+    cfg = AGENT_CONFIGS["editor_agent"]
     return Agent(
-        role=AGENT_CONFIGS["editor_agent"].role,
-        goal=AGENT_CONFIGS["editor_agent"].goal,
-        backstory=AGENT_CONFIGS["editor_agent"].backstory,
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
         tools=[ReadabilityScoreTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

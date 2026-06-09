@@ -7,6 +7,7 @@ to detect and flag potential hallucinations before publication.
 from crewai import Agent
 
 from ..config.agent_configs import AGENT_CONFIGS
+from ..tools.citation_validator_tool import CitationValidatorTool
 from ..tools.fact_check_tool import FactCheckTool
 from ..tools.web_search_tool import WebSearchTool
 
@@ -18,11 +19,13 @@ def create_fact_verification_agent() -> Agent:
     claim in the manuscript is backed by at least two independent
     sources, with zero tolerance for hallucinated content.
     """
+    cfg = AGENT_CONFIGS["fact_verification_agent"]
     return Agent(
-        role=AGENT_CONFIGS["fact_verification_agent"].role,
-        goal=AGENT_CONFIGS["fact_verification_agent"].goal,
-        backstory=AGENT_CONFIGS["fact_verification_agent"].backstory,
-        tools=[FactCheckTool(), WebSearchTool()],
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
+        tools=[WebSearchTool(), CitationValidatorTool(), FactCheckTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

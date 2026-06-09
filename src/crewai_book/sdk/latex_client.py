@@ -18,7 +18,7 @@ class LaTeXClient(BaseClient):
     def _run_latexmk(self, tex_file: Path) -> str:
         """Run compilation using xelatex instead of latexmk to avoid Perl dependency."""
         # Clean up old auxiliary files to prevent compilation failures
-        for ext in ['.aux', '.bbl', '.bcf', '.log', '.out', '.toc', '.run.xml']:
+        for ext in [".aux", ".bbl", ".bcf", ".log", ".out", ".toc", ".run.xml"]:
             aux_file = tex_file.with_suffix(ext)
             try:
                 if aux_file.exists():
@@ -31,19 +31,34 @@ class LaTeXClient(BaseClient):
 
         try:
             # First pass
-            res1 = subprocess.run(cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)  # noqa: E501
+            res1 = subprocess.run(
+                cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
+            )
             if res1.returncode != 0:
-                raise CompilationError("LaTeX first pass failed", {"stdout": res1.stdout, "stderr": res1.stderr})  # noqa: E501
+                raise CompilationError(
+                    "LaTeX first pass failed", {"stdout": res1.stdout, "stderr": res1.stderr}
+                )
 
             # Bibliography pass
             import contextlib
+
             with contextlib.suppress(Exception):
-                subprocess.run(["biber", tex_file.stem], cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)  # noqa: E501
+                subprocess.run(
+                    ["biber", tex_file.stem],
+                    cwd=tex_file.parent,
+                    capture_output=True,
+                    text=True,
+                    timeout=90.0,
+                )
 
             # Second pass
-            res2 = subprocess.run(cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0)  # noqa: E501
+            res2 = subprocess.run(
+                cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
+            )
             if res2.returncode != 0:
-                raise CompilationError("LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr})  # noqa: E501
+                raise CompilationError(
+                    "LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr}
+                )
 
             return res2.stdout
         except subprocess.TimeoutExpired as e:

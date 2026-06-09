@@ -23,7 +23,10 @@ def test_citation_validator_url_invalid(mock_client_cls: MagicMock) -> None:
     """CitationValidatorTool should report unreachable URLs."""
     mock_client = MagicMock()
     mock_client_cls.return_value.__enter__.return_value = mock_client
-    mock_client.head.return_value = MagicMock(status_code=404)
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+    mock_client.head.return_value = mock_response
+    mock_client.get.return_value = mock_response
 
     tool = CitationValidatorTool()
     result = tool._run(url="https://example.com/missing")
@@ -35,7 +38,10 @@ def test_citation_validator_doi_invalid(mock_client_cls: MagicMock) -> None:
     """CitationValidatorTool should report unresolvable DOIs."""
     mock_client = MagicMock()
     mock_client_cls.return_value.__enter__.return_value = mock_client
-    mock_client.head.return_value = MagicMock(status_code=404)
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+    mock_client.head.return_value = mock_response
+    mock_client.get.return_value = mock_response
 
     tool = CitationValidatorTool()
     result = tool._run(doi="10.9999/fake")

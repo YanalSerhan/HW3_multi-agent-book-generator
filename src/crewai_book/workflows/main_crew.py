@@ -109,4 +109,3 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
         process=Process.sequential,
         verbose=True,
     )
-

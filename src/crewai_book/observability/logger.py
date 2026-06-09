@@ -36,9 +36,6 @@ def setup_logger() -> None:
     )
 
 
-
-
-
 def get_logger(module_name: str) -> Any:
     """Get a contextualized logger."""
     return logger.bind(module=module_name)

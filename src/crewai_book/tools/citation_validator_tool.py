@@ -48,9 +48,17 @@ class CitationValidatorTool(BaseTool):
     def _validate_doi(doi: str, logger: Any) -> str:
         """Check if a DOI resolves via doi.org."""
         resolve_url = f"https://doi.org/{doi}"
+        ua = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/91.0.4472.124 Safari/537.36"
+        )
+        headers = {"User-Agent": ua}
         try:
-            with httpx.Client(timeout=10.0, follow_redirects=True) as client:
+            with httpx.Client(timeout=10.0, follow_redirects=True, headers=headers) as client:
                 resp = client.head(resolve_url)
+                if resp.status_code in [403, 404, 405]:
+                    resp = client.get(resolve_url)
                 if resp.status_code < 400:
                     return f"VALID: DOI {doi} resolves successfully."
                 return f"INVALID: DOI {doi} returned status {resp.status_code}."
@@ -61,9 +69,17 @@ class CitationValidatorTool(BaseTool):
     @staticmethod
     def _validate_url(url: str, logger: Any) -> str:
         """Check if a URL is reachable."""
+        ua = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/91.0.4472.124 Safari/537.36"
+        )
+        headers = {"User-Agent": ua}
         try:
-            with httpx.Client(timeout=10.0, follow_redirects=True) as client:
+            with httpx.Client(timeout=10.0, follow_redirects=True, headers=headers) as client:
                 resp = client.head(url)
+                if resp.status_code in [403, 404, 405]:
+                    resp = client.get(url)
                 if resp.status_code < 400:
                     return f"VALID: URL {url} is reachable."
                 return f"INVALID: URL {url} returned status {resp.status_code}."

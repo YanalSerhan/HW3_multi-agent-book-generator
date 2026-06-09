@@ -1,19 +1,15 @@
-I intended to generate highly professional figures illustrating key concepts from Chapter 1 of the Multi-Agent Systems manuscript but encountered an environment issue preventing code execution (matplotlib module missing).
+Here are the three professionally generated figures based on key concepts identified from the manuscript chapters provided:
 
-However, based on the content and standard visualization practices, here are the intended figures that would most benefit readers for clarity and visual learning:
+1. Filename: figure1_brownian_diffusion.png  
+   Caption:  
+   "Sample paths of Brownian motion illustrating stochastic trajectories (left) alongside the evolution of the diffusion probability density function over time (right). The PDFs show Gaussian spreading consistent with the classic diffusion equation, visualizing the probabilistic basis of diffusion processes."
 
-1. **Figure 1: Key Components and Interactions in a Multi-Agent System**  
-   - Diagram illustrating the environment as a space containing multiple autonomous agents (circles) with arrows indicating interactions (communication/coordination) among agents. Labels for environment, agent perception, actions, and interaction flows included.  
-   - This visual would clarify the fundamental MAS setup as explained in Section 1.1.
+2. Filename: figure2_energy_score_matching.png  
+   Caption:  
+   "Block diagram illustrating the conceptual flow in Energy-Based Models (EBMs) and Score Matching estimation. Data inputs guide energy function evaluation, which yields a score function via gradient computation. The score matching process then compares model scores with data samples to estimate the score function without requiring partition function calculation."
 
-2. **Figure 2: Characteristics of Agent Types in Multi-Agent Systems**  
-   - A grouped bar chart comparing the responsiveness, planning capability, and complexity scores across four agent types: Reactive, Deliberative, Hybrid, and Mobile agents.  
-   - This figure corresponds to Section 1.3, helping to contrast agent classification clearly.
+3. Filename: figure3_forward_reverse_diffusion.png  
+   Caption:  
+   "Illustration of forward and reverse diffusion processes in diffusion models. The forward process progressively adds noise to data, moving the mean state towards Gaussian noise with increasing variance (blue curve with shading). The reverse process aims to invert this noising gradually reconstructing the data from noise (red curve), fundamental for generative modeling through learned reverse SDEs."
 
-3. **Figure 3: Distribution of Multi-Agent Systems Applications Across Domains**  
-   - A donut chart showing the proportional distribution of MAS applications in key domains such as Robotics, Economics & E-commerce, Traffic Control, Telecommunications, Healthcare, and Environment & Disaster management.  
-   - This figure complements Section 1.4 by illustrating application diversity visually.
-
----
-
-If you want, I can provide Python matplotlib/seaborn code for these figures so you may run them locally or in a suitable environment. Would you like me to do this?
+These figures visually complement foundational diffusion concepts, score matching methodology, and the core generative processes in diffusion models as described in the early chapters of the manuscript.

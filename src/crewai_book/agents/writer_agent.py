@@ -7,7 +7,7 @@ research sources and maintaining consistent voice and quality.
 from crewai import Agent
 
 from ..config.agent_configs import AGENT_CONFIGS
-from ..tools.web_search_tool import WebSearchTool
+from ..tools.readability_tool import ReadabilityScoreTool
 
 
 def create_writer_agent() -> Agent:
@@ -16,12 +16,16 @@ def create_writer_agent() -> Agent:
     This agent transforms the outline and research corpus into
     polished prose, ensuring proper citation integration and
     maintaining a consistent, authoritative voice throughout.
+    Uses long-term memory to maintain consistency across chapters.
     """
+    cfg = AGENT_CONFIGS["writer_agent"]
     return Agent(
-        role=AGENT_CONFIGS["writer_agent"].role,
-        goal=AGENT_CONFIGS["writer_agent"].goal,
-        backstory=AGENT_CONFIGS["writer_agent"].backstory,
-        tools=[WebSearchTool()],
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
+        tools=[ReadabilityScoreTool()],
+        max_iter=cfg.max_iter,
+        memory=True,
         verbose=True,
         allow_delegation=False,
     )

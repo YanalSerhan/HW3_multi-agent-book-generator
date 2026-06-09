@@ -1032,14 +1032,14 @@ Non-recoverable errors are logged and surfaced with actionable resolution guidan
 
 **Task ARCH-10: Security Requirements**
 
-- [ ] `.env` in `.gitignore`; verified before first commit.
-- [ ] `.env.example` contains all keys with placeholder values and descriptions.
-- [ ] `gitleaks` pre-commit hook configured.
-- [ ] `SecretStr` used for all API keys in Settings.
-- [ ] No `print()` of secrets anywhere in code.
-- [ ] HTTP clients configured with timeouts; no unbounded requests.
-- [ ] Input sanitization before LaTeX rendering (escape special characters).
-- [ ] Security scan result documented in `docs/SECURITY.md`.
+- [x] `.env` in `.gitignore`; verified before first commit.
+- [x] `.env.example` contains all keys with placeholder values and descriptions.
+- [x] `gitleaks` pre-commit hook configured.
+- [x] `SecretStr` used for all API keys in Settings.
+- [x] No `print()` of secrets anywhere in code.
+- [x] HTTP clients configured with timeouts; no unbounded requests.
+- [x] Input sanitization before LaTeX rendering (escape special characters).
+- [x] Security scan result documented in `docs/SECURITY.md`.
 
 ---
 
@@ -1423,7 +1423,7 @@ CHECKPOINT-3: After QA report (always)
 
 ### 5.6 Quality Gates — Detailed Specification
 
-**Task WF-06: Implement Quality Gate System**
+**Task WF-06: Implement Quality Gate System** [x]
 
 ```python
 class QualityGate:

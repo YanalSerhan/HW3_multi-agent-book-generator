@@ -1,4 +1,4 @@
-"""Unit tests for all 10 CrewAI agent factory functions."""
+"""Unit tests for all 11 CrewAI agent factory functions."""
 
 from crewai import Agent
 
@@ -16,28 +16,20 @@ from crewai_book.agents.writer_agent import create_writer_agent
 from crewai_book.config.agent_configs import AGENT_CONFIGS
 
 
-def test_figure_agent_creation() -> None:
-    """Figure agent should have figure generator tool."""
-    agent = create_figure_agent()
-    assert isinstance(agent, Agent)
-    assert agent.role == "Data Visualization Specialist & Illustrator"
-    assert len(agent.tools or []) == 1
-
-
 def test_research_agent_creation() -> None:
-    """Research agent should be a valid CrewAI Agent with tools."""
+    """Research agent should have WebSearch, ArXiv, CitationValidator, Readability tools."""
     agent = create_research_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["research_agent"].role
-    assert len(agent.tools or []) == 2
+    assert len(agent.tools or []) == 4
 
 
 def test_fact_verification_agent_creation() -> None:
-    """Fact verification agent should have fact-checking tools."""
+    """Fact verification agent should have WebSearch, CitationValidator, FactCheck tools."""
     agent = create_fact_verification_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["fact_verification_agent"].role
-    assert len(agent.tools or []) == 2
+    assert len(agent.tools or []) == 3
 
 
 def test_outline_agent_creation() -> None:
@@ -49,7 +41,7 @@ def test_outline_agent_creation() -> None:
 
 
 def test_writer_agent_creation() -> None:
-    """Writer agent should have web search for research."""
+    """Writer agent should have ReadabilityScoreTool and memory enabled."""
     agent = create_writer_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["writer_agent"].role
@@ -65,18 +57,19 @@ def test_editor_agent_creation() -> None:
 
 
 def test_reviewer_agent_creation() -> None:
-    """Reviewer agent should have readability tool."""
+    """Reviewer agent should have CitationValidator and FactCheck tools."""
     agent = create_reviewer_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["reviewer_agent"].role
+    assert len(agent.tools or []) == 2
 
 
 def test_citation_agent_creation() -> None:
-    """Citation agent should have validator and arxiv tools."""
+    """Citation agent should have CitationValidator, WebSearch, and ArXiv tools."""
     agent = create_citation_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["citation_agent"].role
-    assert len(agent.tools or []) == 2
+    assert len(agent.tools or []) == 3
 
 
 def test_latex_agent_creation() -> None:
@@ -84,6 +77,7 @@ def test_latex_agent_creation() -> None:
     agent = create_latex_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["latex_formatter_agent"].role
+    assert len(agent.tools or []) == 1
 
 
 def test_pdf_agent_creation() -> None:
@@ -91,10 +85,20 @@ def test_pdf_agent_creation() -> None:
     agent = create_pdf_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["pdf_production_agent"].role
+    assert len(agent.tools or []) == 1
 
 
 def test_qa_agent_creation() -> None:
-    """QA agent should have readability tool."""
+    """QA agent should have ReadabilityScore and CitationValidator tools."""
     agent = create_qa_agent()
     assert isinstance(agent, Agent)
     assert agent.role == AGENT_CONFIGS["qa_agent"].role
+    assert len(agent.tools or []) == 2
+
+
+def test_figure_agent_creation() -> None:
+    """Figure agent should have figure generator tool and use AGENT_CONFIGS."""
+    agent = create_figure_agent()
+    assert isinstance(agent, Agent)
+    assert agent.role == AGENT_CONFIGS["figure_agent"].role
+    assert len(agent.tools or []) == 1

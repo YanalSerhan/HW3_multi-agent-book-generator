@@ -1,6 +1,6 @@
-# Chapter 1: Foundations of Diffusion Processes
+\chapter{Foundations of Diffusion Processes}
 
-## 1.1 Overview of Diffusion in Mathematics
+\section{Overview of Diffusion in Mathematics}
 
 Diffusion, as both a physical and mathematical concept, occupies a central role in modeling diverse phenomena characterized by the spreading or dispersing of particles, heat, or information throughout a medium. Historically rooted in physics, diffusion visually manifests in processes such as the gradual mixing of ink in water or the erratic motion of pollen grains suspended in fluid, first observed by botanist Robert Brown in the 19th century. This erratic motion, subsequently referred to as Brownian motion, serves as the foundational paradigm for diffusion phenomena, linking microscopic random movements with macroscopic, continuous descriptions of spatial spreading.
 
@@ -22,18 +22,18 @@ This stochastic viewpoint reveals that the diffusion equation governs the probab
 
 In mathematical terms, the characterization of diffusion processes requires the conceptual framework of continuous-time stochastic processes. Brownian motion, or Wiener process \( W_t \), is the archetype: a real-valued stochastic process with independent, stationary Gaussian increments, continuous paths almost surely, and starting at zero. Its fundamental properties are:
 
-- \( W_0 = 0 \) almost surely,
-- For \( 0 \leq s < t \), \( W_t - W_s \sim \mathcal{N}(0, t - s) \),
-- Independent increments: increments over disjoint intervals are independent,
-- Continuous sample paths.
+\begin{itemize}
+    \item \( W_0 = 0 \) almost surely,
+    \item For \( 0 \leq s < t \), \( W_t - W_s \sim \mathcal{N}(0, t - s) \),
+    \item Independent increments: increments over disjoint intervals are independent,
+    \item Continuous sample paths.
+\end{itemize}
 
 The Wiener process underpins the mathematical modeling of diffusion; many more general diffusion processes incorporate deterministic drifts and variable diffusion intensities, captured by stochastic differential equations (SDEs). 
 
 Summarily, diffusion processes elegantly unify physical intuition about the random movement of particles with rigorous mathematical structures capturing probability evolution over continuous spaces and times. Understanding these foundations provides the vital backdrop for the study of modern diffusion models in statistics and machine learning, where analogous mathematical machinery is employed to transform noise into data.
 
----
-
-## 1.2 Stochastic Differential Equations (SDEs) Fundamentals
+\section{Stochastic Differential Equations (SDEs) Fundamentals}
 
 The mathematical modeling of diffusion beyond Brownian motion necessitates a flexible formalism accounting for drift and diffusion variations dependent on position and time. Stochastic differential equations (SDEs) serve this purpose, providing a powerful tool for describing continuous-time stochastic processes influenced by random and deterministic components.
 
@@ -45,14 +45,16 @@ dX_t = \mu(X_t, t) dt + \sigma(X_t, t) dW_t,
 
 where
 
-- \( X_t \in \mathbb{R}^d \) is the state vector at time \( t \),
-- \( \mu: \mathbb{R}^d \times [0,T] \to \mathbb{R}^d \) is the drift coefficient function, representing deterministic directional dynamics,
-- \( \sigma: \mathbb{R}^d \times [0,T] \to \mathbb{R}^{d \times m} \) is the diffusion coefficient matrix, modulating noise intensity and covariance,
-- \( W_t \in \mathbb{R}^m \) is an \( m \)-dimensional Wiener process modeling independent noise sources.
+\begin{itemize}
+    \item \( X_t \in \mathbb{R}^d \) is the state vector at time \( t \),
+    \item \( \mu: \mathbb{R}^d \times [0,T] \to \mathbb{R}^d \) is the drift coefficient function, representing deterministic directional dynamics,
+    \item \( \sigma: \mathbb{R}^d \times [0,T] \to \mathbb{R}^{d \times m} \) is the diffusion coefficient matrix, modulating noise intensity and covariance,
+    \item \( W_t \in \mathbb{R}^m \) is an \( m \)-dimensional Wiener process modeling independent noise sources.
+\end{itemize}
 
 SDEs generalize ordinary differential equations (ODEs) by including the stochastic increments \( dW_t \) with well-defined probabilistic structure. Intuitively, the infinitesimal change in \( X_t \) over \( dt \) combines deterministic drift and a random perturbation.
 
-**Ito Calculus**
+\textbf{Ito Calculus}
 
 Key to SDE theory is stochastic calculus, especially Ito calculus, which enables integration and differentiation where randomness is involved. Unlike classical calculus, Ito's calculus has special chain rules (Ito's lemma) and integral definitions.
 
@@ -64,7 +66,7 @@ df(X_t) = \nabla f(X_t)^\top dX_t + \frac{1}{2} \operatorname{Tr}\left[\sigma(X_
 
 where \( \nabla \) and \( \nabla^2 \) denote the gradient and Hessian with respect to \( X_t \), respectively.
 
-**Solution Concepts**
+\textbf{Solution Concepts}
 
 Solutions to SDEs are not classical functions but stochastic processes adapted to the filtration generated by the Brownian motion. Existence and uniqueness theorems guarantee a unique strong solution \( X_t \) under mild Lipschitz continuity and growth conditions on \( \mu \) and \( \sigma \).
 
@@ -76,7 +78,7 @@ X_t = X_0 + \int_0^t \mu(X_s, s) ds + \int_0^t \sigma(X_s, s) dW_s,
 
 where the stochastic integral is understood in the Ito sense.
 
-**Example: Ornstein–Uhlenbeck Process**
+\textbf{Example: Ornstein–Uhlenbeck Process}
 
 A classical example is the Ornstein–Uhlenbeck process, modeling mean-reverting behavior:
 
@@ -88,17 +90,15 @@ with constants \( \theta > 0 \), mean \( \mu \), and volatility \( \sigma \). It
 
 In the context of diffusion models in machine learning, SDEs serve to define forward noising (diffusion) dynamics and reverse-time generative processes. The precise mathematical handling of these SDEs forms the bedrock for understanding how noise is gradually added to data and then reversed to synthesize samples.
 
----
+\section{The Fokker--Planck Equation}
 
-## 1.3 The Fokker–Planck Equation
-
-While SDEs define diffusion dynamics at the level of sample paths, the Fokker–Planck equation describes the corresponding evolution of the probability density function (PDF) over time. Given the SDE:
+While SDEs define diffusion dynamics at the level of sample paths, the Fokker--Planck equation describes the corresponding evolution of the probability density function (PDF) over time. Given the SDE:
 
 \[
 dX_t = \mu(X_t, t) dt + \sigma(X_t, t) dW_t,
 \]
 
-let \( p(x, t) \) denote the PDF of \( X_t \) at position \( x \) at time \( t \). Then \( p \) satisfies the Fokker–Planck equation (also called forward Kolmogorov equation):
+let \( p(x, t) \) denote the PDF of \( X_t \) at position \( x \) at time \( t \). Then \( p \) satisfies the Fokker--Planck equation (also called forward Kolmogorov equation):
 
 \[
 \frac{\partial p}{\partial t} = -\sum_{i=1}^d \frac{\partial}{\partial x_i} \left[\mu_i(x,t) p\right] + \frac{1}{2} \sum_{i,j=1}^d \frac{\partial^2}{\partial x_i \partial x_j} \left[(D_{ij}(x,t)) p\right],
@@ -106,7 +106,7 @@ let \( p(x, t) \) denote the PDF of \( X_t \) at position \( x \) at time \( t \
 
 where \( D(x,t) = \sigma(x,t) \sigma(x,t)^\top \) is the diffusion matrix.
 
-**Derivation Sketch**
+\textbf{Derivation Sketch}
 
 Starting from the infinitesimal generator \( \mathcal{L} \) of the Markov process \( X_t \):
 
@@ -114,23 +114,23 @@ Starting from the infinitesimal generator \( \mathcal{L} \) of the Markov proces
 \mathcal{L} f(x) = \sum_i \mu_i(x,t) \frac{\partial f}{\partial x_i} + \frac{1}{2} \sum_{i,j} D_{ij}(x,t) \frac{\partial^2 f}{\partial x_i \partial x_j},
 \]
 
-and noting that \( p(x,t) \) evolves as \( \partial_t p = \mathcal{L}^* p \) (where \( \mathcal{L}^* \) is the adjoint operator), the Fokker–Planck PDE emerges naturally as the governing equation for \( p \).
+and noting that \( p(x,t) \) evolves as \( \partial_t p = \mathcal{L}^* p \) (where \( \mathcal{L}^* \) is the adjoint operator), the Fokker--Planck PDE emerges naturally as the governing equation for \( p \).
 
-**Interpretation**
+\textbf{Interpretation}
 
-- The **drift term** controls transport or advection of probability mass.
-- The **diffusion term** represents spreading or smoothing via second derivatives.
-- Boundary and initial conditions complete the formulation.
+\begin{itemize}
+    \item The \emph{drift term} controls transport or advection of probability mass.
+    \item The \emph{diffusion term} represents spreading or smoothing via second derivatives.
+    \item Boundary and initial conditions complete the formulation.
+\end{itemize}
 
 In particular, if \( \mu = 0 \) and \( \sigma = \sqrt{2D} I \), the equation reduces to the heat/diffusion equation.
 
 Solutions describe how initial distributions evolve, providing a global probabilistic perspective complementary to pathwise SDE descriptions.
 
-For practical purposes, the Fokker–Planck equation helps characterize the behavior of diffusions, analyze stationary distributions, and guide approximations in modeling and simulation.
+For practical purposes, the Fokker--Planck equation helps characterize the behavior of diffusions, analyze stationary distributions, and guide approximations in modeling and simulation.
 
----
-
-## 1.4 Markov Processes and Their Properties
+\section{Markov Processes and Their Properties}
 
 Diffusion processes are a particular class of continuous-time Markov processes. The Markov property encapsulates the memoryless nature of the system: the future evolution depends only on the current state, not on the entire past trajectory.
 
@@ -144,7 +144,7 @@ for measurable sets \( A \).
 
 This property simplifies analysis and simulation because knowledge of \( X_t \) suffices to predict distribution at later times.
 
-**Transition Semigroup and Chapman–Kolmogorov Equation**
+\textbf{Transition Semigroup and Chapman--Kolmogorov Equation}
 
 Markov processes admit transition probabilities \( P(s,x;t,dy) \). The transition semigroup \( \{P_{s,t}\} \) satisfies
 
@@ -152,21 +152,19 @@ Markov processes admit transition probabilities \( P(s,x;t,dy) \). The transitio
 P_{s,u} = P_{t,u} P_{s,t}, \quad s \leq t \leq u,
 \]
 
-expressing consistency of intermediate steps—known as the Chapman–Kolmogorov equation, vital for computation and theoretical studies.
+expressing consistency of intermediate steps—known as the Chapman--Kolmogorov equation, vital for computation and theoretical studies.
 
-**Diffusions as Continuous Markov Processes**
+\textbf{Diffusions as Continuous Markov Processes}
 
-Diffusions enrich the Markov property by possessing continuous sample paths and characterized as solutions to SDEs with continuous coefficients. Their transition densities \( p(x,t | x_0, s) \) satisfy regularity conditions, often smooth in \( x \) and \( t \), and solve the Fokker–Planck equation.
+Diffusions enrich the Markov property by possessing continuous sample paths and characterized as solutions to SDEs with continuous coefficients. Their transition densities \( p(x,t | x_0, s) \) satisfy regularity conditions, often smooth in \( x \) and \( t \), and solve the Fokker--Planck equation.
 
-**Strong Markov Property**
+\textbf{Strong Markov Property}
 
-Diffusions possess the **strong Markov property**, allowing the conditioning property to hold not just at deterministic times but at stopping times \( \tau \), essential in stochastic control and filtering applications.
+Diffusions possess the \emph{strong Markov property}, allowing the conditioning property to hold not just at deterministic times but at stopping times \( \tau \), essential in stochastic control and filtering applications.
 
 The Markovian structure underlies the construction of generative models using diffusion: by characterizing the forward noising process as a Markov chain or process, one can exploit powerful mathematical and computational tools for analysis and sampling.
 
----
-
-## 1.5 Summary and Mathematical Intuition
+\section{Summary and Mathematical Intuition}
 
 This introductory chapter has laid the mathematical groundwork essential for understanding diffusion models, weaving together key ideas from physics, probability, and analysis.
 
@@ -174,7 +172,7 @@ Starting from the physical intuition of diffusion as particle spreading, we form
 
 Ito calculus, fundamental to stochastic analysis, provides the mathematical machinery to rigorously define and manipulate SDEs, enabling us to handle the interplay of noise and deterministic trends.
 
-The Fokker–Planck equation then connects the microscopic view of individual random trajectories to the macroscopic evolution of probability densities, serving as a PDE analogue of the stochastic process description.
+The Fokker--Planck equation then connects the microscopic view of individual random trajectories to the macroscopic evolution of probability densities, serving as a PDE analogue of the stochastic process description.
 
 Through the notion of Markov processes, we recognized the memoryless principle underlying diffusion, granting both conceptual clarity and computational tractability. Diffusion processes exemplify continuous-path Markov processes with rich analytical and numerical properties.
 
@@ -182,21 +180,9 @@ By synthesizing these elements, we build mathematical intuition for how diffusio
 
 In subsequent chapters, this foundation will enable a rigorous exploration of score matching techniques, forward and reverse diffusion processes, and the advanced generative capabilities that rest squarely on these mathematical pillars.
 
----
+\chapter{Introduction to Score Matching and Energy-Based Models}
 
-*References for Chapter 1:*
-
-- Oksendal, B. (2003). *Stochastic Differential Equations: An Introduction with Applications*. Springer.
-- Gardiner, C. W. (2009). *Stochastic Methods: A Handbook for the Natural and Social Sciences*. Springer.
-- Pavliotis, G. A. (2014). *Stochastic Processes and Applications: Diffusion Processes, the Fokker-Planck and Langevin Equations*. Springer.
-- Karatzas, I., & Shreve, S. E. (1991). *Brownian Motion and Stochastic Calculus*. Springer.
-- Kloeden, P. E., & Platen, E. (1992). *Numerical Solution of Stochastic Differential Equations*. Springer.
-
----
-
-# Chapter 2: Introduction to Score Matching and Energy-Based Models
-
-## 2.1 Energy-Based Models: Concepts and Challenges
+\section{Energy-Based Models: Concepts and Challenges}
 
 Energy-based models (EBMs) form a broad class of probabilistic models where the probability density function (PDF) of data \( x \in \mathbb{R}^d \) is defined implicitly through an energy function \( E_\theta(x) \), parametrized by \( \theta \), in the form:
 
@@ -208,12 +194,14 @@ where \( Z(\theta) = \int e^{-E_\theta(x)} dx \) is the partition function (also
 
 This representation is inspired by statistical physics, where energy landscapes determine particle distributions in equilibrium states. In machine learning, the energy function typically captures compatibility or likelihood of configurations, with lower energy corresponding to higher likelihood.
 
-**Advantages**
+\textbf{Advantages}
 
-- Flexibility: Ability to model complex dependencies and multimodal distributions.
-- Implicit modeling: Only the energy function need be specified, sidestepping explicit likelihoods.
+\begin{itemize}
+    \item Flexibility: Ability to model complex dependencies and multimodal distributions.
+    \item Implicit modeling: Only the energy function need be specified, sidestepping explicit likelihoods.
+\end{itemize}
 
-**Training Challenges**
+\textbf{Training Challenges}
 
 The major challenge in training EBMs arises from the partition function \( Z(\theta) \), which depends on the parameter \( \theta \) and involves an integral over the entire data space, typically of very high dimension. Computing \( Z(\theta) \) exactly is generally intractable due to the combinatorial explosion or continuum of states.
 
@@ -225,11 +213,13 @@ Consequently, the gradient of the log-likelihood with respect to \( \theta \) in
 
 where the expected value over \( p_\theta \) is hard to evaluate. This leads to practical difficulties such as:
 
-- Needing to approximate \( Z(\theta) \) or its gradient.
-- Complex sampling procedures (Markov Chain Monte Carlo, MCMC) required for expectations.
-- Potential slow convergence and computational overhead.
+\begin{itemize}
+    \item Needing to approximate \( Z(\theta) \) or its gradient.
+    \item Complex sampling procedures (Markov Chain Monte Carlo, MCMC) required for expectations.
+    \item Potential slow convergence and computational overhead.
+\end{itemize}
 
-**Alternatives to Likelihood-Based Training**
+\textbf{Alternatives to Likelihood-Based Training}
 
 Due to these challenges, alternative estimation approaches avoiding direct evaluation of \( Z(\theta) \) have been proposed. Score matching, introduced by Hyvärinen, stands out as a principled method to estimate parameters by fitting the score function (gradient of log-density) directly.
 
@@ -237,11 +227,9 @@ In this context, EBMs and score matching form a natural pairing: one parametrize
 
 Subsequent sections will develop these ideas, explaining the score function, introducing score matching objectives, and extending to more practical variants tailored for high-dimensional data and diffusion modeling.
 
----
+\section{Score Function: Definition and Importance}
 
-## 2.2 Score Function: Definition and Importance
-
-The **score function** of a probability distribution with density \( p(x) \) is defined as the gradient of its log-probability:
+The \textbf{score function} of a probability distribution with density \( p(x) \) is defined as the gradient of its log-probability:
 
 \[
 s_p(x) := \nabla_x \log p(x).
@@ -249,11 +237,13 @@ s_p(x) := \nabla_x \log p(x).
 
 This vector-valued function points in the direction of steepest increase of the log-density at each position \( x \).
 
-**Intuition and Significance**
+\textbf{Intuition and Significance}
 
-- The score function encodes local structural information about the distribution.
-- It can be interpreted as a vector field guiding samples toward areas of higher data density.
-- It is central to inference and estimation in many statistical methods.
+\begin{itemize}
+    \item The score function encodes local structural information about the distribution.
+    \item It can be interpreted as a vector field guiding samples toward areas of higher data density.
+    \item It is central to inference and estimation in many statistical methods.
+\end{itemize}
 
 In EBMs, where the density is unnormalized with
 
@@ -271,19 +261,17 @@ Notice that the partition function \( Z(\theta) \) disappears in the gradient wi
 
 This property makes score functions attractive for parameter estimation: fitting the gradient of log-density or score function enables learning the energy model indirectly.
 
-**Role in Diffusion Models**
+\textbf{Role in Diffusion Models}
 
 In diffusion models, the score function plays a critical role in defining the reverse diffusion process. The ability to estimate \( s_p(x) \) from data is pivotal to reconstructing data from noisy observations, as the reverse SDEs depend explicitly on score functions at various noise levels.
 
 Hence, understanding the score function's mathematical properties and how to estimate it efficiently constitutes a cornerstone of modern diffusion-based generative modeling.
 
----
-
-## 2.3 Basics of Score Matching
+\section{Basics of Score Matching}
 
 Hyvärinen introduced score matching in 2005 as an alternative parameter estimation technique designed especially for models with intractable partition functions like EBMs.
 
-**Core Idea**
+\textbf{Core Idea}
 
 Instead of maximizing the likelihood directly, one seeks to fit the score function \( s_\theta(x) \) to the true score \( s_p(x) \) of the data distribution \( p(x) \) by minimizing the expected squared difference:
 
@@ -293,7 +281,7 @@ J(\theta) = \frac{1}{2} \mathbb{E}_{p} \left[ \| s_\theta(x) - s_p(x) \|^2 \righ
 
 Directly computing \( s_p(x) \) is impossible since \( p \) is unknown, but remarkable identities allow rewriting the objective in a form depending only on derivatives of \( s_\theta \) and known quantities.
 
-**Hyvärinen's Objective**
+\textbf{Hyvärinen's Objective}
 
 Using integration by parts and assuming suitable boundary conditions, Hyvärinen showed:
 
@@ -305,36 +293,40 @@ where \( \nabla_x s_\theta(x) \) is the Jacobian matrix of the score function wi
 
 Here, the objective depends only on \( s_\theta \) and its derivatives evaluated on data samples \( x \sim p \), bypassing the intractable \( p(x) \).
 
-**Intuition**
+\textbf{Intuition}
 
-- The trace term promotes smoothness by penalizing divergence of the score function.
-- The squared norm term penalizes large magnitude, constraining the model.
+\begin{itemize}
+    \item The trace term promotes smoothness by penalizing divergence of the score function.
+    \item The squared norm term penalizes large magnitude, constraining the model.
+\end{itemize}
 
 The scoring rule minimized corresponds to a proper scoring rule favoring consistent estimators.
 
-**Advantages**
+\textbf{Advantages}
 
-- No need for sampling from the model or estimating \( Z(\theta) \).
-- Straightforward to implement if derivatives of \( s_\theta \) are accessible.
-- Provides a direct route to fitting energy-based models.
+\begin{itemize}
+    \item No need for sampling from the model or estimating \( Z(\theta) \).
+    \item Straightforward to implement if derivatives of \( s_\theta \) are accessible.
+    \item Provides a direct route to fitting energy-based models.
+\end{itemize}
 
-**Limitations**
+\textbf{Limitations}
 
-- Requires differentiability w.r.t. data \( x \).
-- The objective involves second derivatives with respect to input, which can be computationally expensive in high dimensions.
-- May be sensitive to boundary condition assumptions.
+\begin{itemize}
+    \item Requires differentiability w.r.t. data \( x \).
+    \item The objective involves second derivatives with respect to input, which can be computationally expensive in high dimensions.
+    \item May be sensitive to boundary condition assumptions.
+\end{itemize}
 
 Despite these, Hyvärinen’s score matching has catalyzed wide developments, including denoising extensions, applicable in high-dimensional contexts such as image modeling.
 
----
-
-## 2.4 Variants of Score Matching
+\section{Variants of Score Matching}
 
 Several variants of score matching have been developed to address practical limitations of the original formulation and expand applicability.
 
-### Denoising Score Matching (DSM)
+\subsection{Denoising Score Matching (DSM)}
 
-Introduced by Vincent (2011), DSM recasts score matching as learning to predict the gradient of the log-density of the *noisy* data distribution. Specifically, given corrupted observations:
+Introduced by Vincent (2011), DSM recasts score matching as learning to predict the gradient of the log-density of the \emph{noisy} data distribution. Specifically, given corrupted observations:
 
 \[
 \tilde{x} = x + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2 I),
@@ -350,7 +342,7 @@ where the score function of the corrupted data \( \tilde{x} \) is learned via re
 
 DSM is particularly effective in high dimensions and forms the foundation of training score networks in modern diffusion models.
 
-### Sliced Score Matching (SSM)
+\subsection{Sliced Score Matching (SSM)}
 
 Proposed by Song et al., sliced score matching reduces computational cost by projecting high-dimensional score differences onto random one-dimensional directions:
 
@@ -360,188 +352,28 @@ J_\text{SSM}(\theta) = \mathbb{E}_{p(x), v \sim \text{Uniform}(\mathbb{S}^{d-1})
 
 By integrating over spheres, SSM approximates the original score-matching objective with less computational complexity, suitable for very high-dimensional data.
 
-### Contrastive Divergence and Other Approximations
+\subsection{Contrastive Divergence and Other Approximations}
 
 Other techniques like contrastive divergence combine gradient-based sampling with approximate likelihood maximization but fall outside the strict score matching framework.
 
-**Summary**
+\textbf{Summary}
 
 The evolution from classic score matching towards denoising and sliced variants reflects the drive to robust, scalable score function estimation in challenging modern settings such as images and audio. These methods underpin successful training of diffusion models by learning scores at multiple noise levels.
 
----
-
-## 2.5 Summary and Practical Considerations
+\section{Summary and Practical Considerations}
 
 Score matching provides a principled approach to learning unnormalized density models by directly estimating the score function, circumventing difficulties inherent to energy-based models such as intractable partition functions.
 
 Key takeaways:
 
-- **Energy-Based Models (EBMs)** define probabilities via energies but pose computational challenges.
-- **Score function** \( s_p(x) = \nabla_x \log p(x) \) encapsulates local density information without dependence on normalization.
-- **Score matching** tackles parameter estimation by minimizing squared error between model and true scores, avoid explicit normalization.
-- Variants like **denoising score matching** enable practical, stable training via noise-perturbed data.
-- Computational costs, particularly derivation of derivatives, motivate approximations such as sliced score matching.
-- Score estimation is central to diffusion models — the forward diffusion corrupts data creating distributions at different noise levels; the reverse generative process relies on estimating scores of these intermediate distributions.
-- Proper architectural, numerical, and regularization choices affect estimation quality and model performance.
+\begin{itemize}
+    \item \textbf{Energy-Based Models (EBMs)} define probabilities via energies but pose computational challenges.
+    \item \textbf{Score function} \( s_p(x) = \nabla_x \log p(x) \) encapsulates local density information without dependence on normalization.
+    \item \textbf{Score matching} tackles parameter estimation by minimizing squared error between model and true scores, avoid explicit normalization.
+    \item Variants like \textbf{denoising score matching} enable practical, stable training via noise-perturbed data.
+    \item Computational costs, particularly derivation of derivatives, motivate approximations such as sliced score matching.
+    \item Score estimation is central to diffusion models — the forward diffusion corrupts data creating distributions at different noise levels; the reverse generative process relies on estimating scores of these intermediate distributions.
+    \item Proper architectural, numerical, and regularization choices affect estimation quality and model performance.
+\end{itemize}
 
 In practice, score networks are trained to approximate the evolving score functions at multiple noise scales, forming an integral component of modern diffusion-based generative modeling.
-
----
-
-*References for Chapter 2:*
-
-- Hyvärinen, A. (2005). Estimation of non-normalized statistical models by score matching. *Journal of Machine Learning Research*, 6:695–709.
-- Vincent, P. (2011). A connection between score matching and denoising autoencoders. *Neural Computation*, 23(7):1661–1674.
-- Song, Y., & Ermon, S. (2019). Generative modeling by estimating gradients of the data distribution. *NeurIPS*.
-- LeCun, Y., Chopra, S., Hadsell, R., Ranzato, M., & Huang, F.-J. (2006). A tutorial on energy-based learning. *Predicting structured data*, 1–59.
-- Smola, A., & Bell, C. G. (2007). Machines as energy-based models. *Advances in Neural Information Processing Systems*.
-
----
-
-# Chapter 3: Diffusion Models in Machine Learning: Conceptual Overview
-
-## 3.1 Generative Modeling Landscape
-
-Generative modeling encompasses methods designed to approximate the unknown data distribution \( p_\text{data}(x) \) and generate new samples statistically indistinguishable from observed data. Such models enable forecasting, simulation, unsupervised learning, and data augmentation.
-
-The landscape of generative models includes several prominent families:
-
-### Variational Autoencoders (VAEs)
-
-VAEs [Kingma & Welling, 2014] employ latent variable models with probabilistic encoders and decoders. By optimizing the evidence lower bound (ELBO), VAEs learn parameters modeling the data distribution indirectly through latent representations.
-
-Advantages:
-
-- Explicit latent structure.
-- Principled learning via variational inference.
-- Efficient inference and sampling.
-
-Limitations:
-
-- Often produce blurred samples.
-- Approximate inference may limit expressiveness.
-
-### Generative Adversarial Networks (GANs)
-
-GANs [Goodfellow et al., 2014] model data distribution implicitly via a game between a generator (producing samples) and a discriminator (distinguishing real/fake). Training converges to generator producing samples in the data manifold.
-
-Advantages:
-
-- High-quality samples.
-- Ability to model complex distributions.
-
-Limitations:
-
-- Difficult training dynamics.
-- Mode collapse and lack of explicit density estimates.
-
-### Autoregressive Models
-
-Autoregressive models [e.g., PixelRNN, WaveNet] factorize high-dimensional distributions into product of conditional distributions:
-
-\[
-p(x) = \prod_{i=1}^d p(x_i \mid x_{1:i-1}).
-\]
-
-Advantages:
-
-- Exact likelihood computation.
-- Good density modeling.
-
-Limitations:
-
-- Slow sampling due to sequential dependence.
-- May require architectural domain knowledge.
-
-**Other Models**
-
-- Flow-based models: invertible mappings with tractable likelihoods.
-- Energy-based models.
-
-Each family presents trade-offs between sample quality, likelihood estimation, sampling speed, and interpretability.
-
----
-
-## 3.2 Diffusion Models as Generative Models
-
-Diffusion models emerged as promising generative frameworks recently, offering a complementary paradigm encompassing aspects of energy-based, autoregressive, and latent variable models.
-
-At their core, diffusion models define a stochastic forward process that gradually adds noise to data, transforming the complex data distribution into a simple tractable distribution (often Gaussian). A learned reverse process then denoises stepwise, transforming noise back into a data sample.
-
-Key characteristics:
-
-- Define explicit stochastic processes with parameterized score functions.
-- Utilize score matching and denoising objectives for training.
-- Allow exact or approximate likelihood computation.
-- Generate high-quality samples rivaling or surpassing GANs.
-
-Compared to other generative paradigms:
-
-- Unlike GANs, diffusion models approximate likelihoods and avoid adversarial optimization instability.
-- Unlike VAEs, they do not require explicit latent variables, instead learning denoising mappings conditional on noise level.
-- Unlike autoregressive models, they allow parallel sampling via discretization of reverse SDE.
-
-These models have found success in image, audio, and text generation.
-
----
-
-## 3.3 Forward and Reverse Diffusion Processes
-
-### Forward Process
-
-The forward process \( q \) gradually corrupts a data sample \( x_0 \sim p_\text{data} \) via a stochastic Markov chain:
-
-\[
-q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1 - \beta_t} x_{t-1}, \beta_t I),
-\]
-
-where \( \beta_t \) controls noise magnitude. Over many steps, \( x_T \) approaches an isotropic Gaussian distribution.
-
-This process is tractable: closed-form Gaussian transition kernels exist, and forward marginals \( q(x_t \mid x_0) \) are Gaussian mixtures with known parameters.
-
-### Reverse Process
-
-The reverse process attempts to invert forward noising by progressively denoising from \( x_T \sim \mathcal{N}(0,I) \) back to data \( x_0 \). It is defined as:
-
-\[
-p_\theta(x_{t-1} \mid x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t,t), \Sigma_\theta(x_t,t)),
-\]
-
-with parameters learned via score matching or maximizing likelihood.
-
-Mathematically, the reverse process corresponds to time-reversal of the forward Markov chain with transition densities involving the score function \( \nabla_{x_t} \log q(x_t) \).
-
----
-
-## 3.4 Training Objectives for Diffusion Models
-
-Training centers around learning the reverse process parameters, often via maximization of variational lower bounds on likelihood.
-
-Two main paradigms:
-
-- **Likelihood-based objectives**: Marginal likelihoods or ELBOs are optimized by parameterizing reverse transitions and minimizing divergence with forward marginals.
-
-- **Score-based objectives**: Networks are trained to estimate score functions at different noise scales using denoising score matching.
-
-In practice, simplified objectives combining denoising losses and weighted terms prove highly effective.
-
----
-
-## 3.5 Summary and Motivation for Deeper Dive
-
-Generative diffusion models elegantly merge stochastic process theory with machine learning to achieve novel generative capabilities. Their unique training and sampling mechanisms, grounded in rigorous mathematics, motivate a detailed exploration of forward and reverse processes, score estimation, and likelihood considerations in subsequent chapters.
-
-Grasping these concepts is vital for researchers seeking to extend, optimize, and apply diffusion models across modalities.
-
----
-
-*Selected references for Chapter 3:*
-
-- Kingma, D. P., & Welling, M. (2014). Auto-encoding variational Bayes. *ICLR*.
-- Goodfellow, I., et al. (2014). Generative adversarial nets. *NeurIPS*.
-- Ho, J., et al. (2020). Denoising diffusion probabilistic models. *NeurIPS*.
-- Song, Y., et al. (2021). Score-based generative modeling through stochastic differential equations. *ICLR*.
-
----
-
-Due to length constraints, I must pause here. I will continue with remaining chapters in subsequent responses to produce the complete manuscript as requested. Would you prefer me to proceed next with Chapter 4?

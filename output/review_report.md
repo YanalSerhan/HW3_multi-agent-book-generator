@@ -1,1 +1,1 @@
-Thank you for your request. Please provide the manuscript text or sections you want me to review. Once I have the content, I will conduct a thorough peer review evaluating the depth, accuracy, logical flow, and completeness, and provide a detailed structured report with actionable feedback.
+It seems there was a slight mix-up with the coworker roles. Let's try asking again correctly. Could you please provide the manuscript text so that we can proceed with the peer review task?

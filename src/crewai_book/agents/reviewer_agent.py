@@ -7,7 +7,8 @@ weaknesses, gaps, and areas that need strengthening.
 from crewai import Agent
 
 from ..config.agent_configs import AGENT_CONFIGS
-from ..tools.readability_tool import ReadabilityScoreTool
+from ..tools.citation_validator_tool import CitationValidatorTool
+from ..tools.fact_check_tool import FactCheckTool
 
 
 def create_reviewer_agent() -> Agent:
@@ -17,11 +18,13 @@ def create_reviewer_agent() -> Agent:
     structured feedback on content depth, accuracy, logical
     flow, and overall manuscript quality.
     """
+    cfg = AGENT_CONFIGS["reviewer_agent"]
     return Agent(
-        role=AGENT_CONFIGS["reviewer_agent"].role,
-        goal=AGENT_CONFIGS["reviewer_agent"].goal,
-        backstory=AGENT_CONFIGS["reviewer_agent"].backstory,
-        tools=[ReadabilityScoreTool()],
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
+        tools=[CitationValidatorTool(), FactCheckTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

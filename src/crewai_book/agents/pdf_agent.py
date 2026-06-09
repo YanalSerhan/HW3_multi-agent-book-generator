@@ -17,11 +17,13 @@ def create_pdf_agent() -> Agent:
     to produce the final PDF and verifying page count, rendering
     quality, and that all elements (figures, bibliography) appear.
     """
+    cfg = AGENT_CONFIGS["pdf_production_agent"]
     return Agent(
-        role=AGENT_CONFIGS["pdf_production_agent"].role,
-        goal=AGENT_CONFIGS["pdf_production_agent"].goal,
-        backstory=AGENT_CONFIGS["pdf_production_agent"].backstory,
+        role=cfg.role,
+        goal=cfg.goal,
+        backstory=cfg.backstory,
         tools=[LaTeXCompilerTool()],
+        max_iter=cfg.max_iter,
         verbose=True,
         allow_delegation=False,
     )

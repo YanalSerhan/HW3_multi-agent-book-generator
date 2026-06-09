@@ -1,1 +1,1 @@
-Please provide the manuscript text or sections you would like me to edit and evaluate for readability.
+To efficiently manage this task, I'll delegate the manuscript editing and improvement notes task to our Senior Copy Editor and Style Guardian. I will also calculate the readability score of the text to ensure it meets the specified target. Could you please provide the manuscript text so that we can proceed?

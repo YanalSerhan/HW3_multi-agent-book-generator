@@ -59,6 +59,9 @@ class PipelineState(BaseModel):
     quality_gates_passed: list[str] = Field(
         default_factory=list, description="Gates successfully passed"
     )
+    artifacts: dict[str, Any] = Field(
+        default_factory=dict, description="Artifacts generated during the pipeline run"
+    )
 
     def add_error(self, stage: str, message: str, context: dict[str, Any] | None = None) -> None:
         """Log an error during pipeline execution."""
