@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,8 +19,8 @@ class AppSettings(BaseSettings):
     """Application-wide settings loaded from .env and config files."""
 
     # API Keys
-    openai_api_key: str = Field(..., alias="OPENAI_API_KEY")
-    serper_api_key: str = Field(default="", alias="SERPER_API_KEY")
+    openai_api_key: SecretStr = Field(..., alias="OPENAI_API_KEY")
+    serper_api_key: SecretStr = Field(default=SecretStr(""), alias="SERPER_API_KEY")
 
     # App Config
     app_env: str = Field(default="production", alias="APP_ENV")

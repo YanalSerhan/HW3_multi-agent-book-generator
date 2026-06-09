@@ -6,6 +6,7 @@ to build a comprehensive corpus of verified sources on the target topic.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.arxiv_tool import ArXivTool
 from ..tools.web_search_tool import WebSearchTool
 
@@ -18,18 +19,9 @@ def create_research_agent() -> Agent:
     that downstream agents rely on for writing and fact-checking.
     """
     return Agent(
-        role="Senior Research Scientist",
-        goal=(
-            "Conduct exhaustive research on the assigned topic, identifying "
-            "at least 20 high-quality sources from academic papers, textbooks, "
-            "and authoritative web resources."
-        ),
-        backstory=(
-            "You are a seasoned research scientist with 15 years of experience "
-            "in AI and multi-agent systems. You have published in top venues "
-            "and know how to distinguish credible sources from unreliable ones. "
-            "You systematically categorize sources by relevance and quality."
-        ),
+        role=AGENT_CONFIGS["research_agent"].role,
+        goal=AGENT_CONFIGS["research_agent"].goal,
+        backstory=AGENT_CONFIGS["research_agent"].backstory,
         tools=[WebSearchTool(), ArXivTool()],
         verbose=True,
         allow_delegation=False,

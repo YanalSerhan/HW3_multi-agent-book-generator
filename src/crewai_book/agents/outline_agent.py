@@ -6,6 +6,8 @@ sections, and the logical flow of information through the manuscript.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
+
 
 def create_outline_agent() -> Agent:
     """Create and return the Outline Architect Agent.
@@ -15,18 +17,9 @@ def create_outline_agent() -> Agent:
     for the target graduate-level audience.
     """
     return Agent(
-        role="Information Architect",
-        goal=(
-            "Design a comprehensive, well-structured outline for a book "
-            "with 6-8 chapters, each containing 3-5 sections. Ensure "
-            "logical flow from foundational concepts to advanced topics."
-        ),
-        backstory=(
-            "You are a renowned technical editor who has structured over "
-            "50 academic textbooks. You understand how to organize complex "
-            "material into a coherent narrative arc that guides readers "
-            "from fundamentals to cutting-edge developments."
-        ),
+        role=AGENT_CONFIGS["outline_architect_agent"].role,
+        goal=AGENT_CONFIGS["outline_architect_agent"].goal,
+        backstory=AGENT_CONFIGS["outline_architect_agent"].backstory,
         tools=[],
         verbose=True,
         allow_delegation=False,

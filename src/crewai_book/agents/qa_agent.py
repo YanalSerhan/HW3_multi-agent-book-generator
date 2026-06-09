@@ -6,6 +6,7 @@ gates have passed and the manuscript meets every standard.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.readability_tool import ReadabilityScoreTool
 
 
@@ -17,19 +18,9 @@ def create_qa_agent() -> Agent:
     confirms the manuscript is ready for publication.
     """
     return Agent(
-        role="Chief Quality Officer",
-        goal=(
-            "Perform final quality certification. Verify all 10 quality "
-            "gates pass: source count, hallucination check, outline "
-            "completeness, word count, readability, review resolution, "
-            "citation match, compilation, page count, and overall QA."
-        ),
-        backstory=(
-            "You are the chief quality officer for a prestigious academic "
-            "publisher. Nothing ships without your stamp of approval. "
-            "You are thorough, systematic, and uncompromising in your "
-            "standards. Your QA reports are legendary for their detail."
-        ),
+        role=AGENT_CONFIGS["qa_agent"].role,
+        goal=AGENT_CONFIGS["qa_agent"].goal,
+        backstory=AGENT_CONFIGS["qa_agent"].backstory,
         tools=[ReadabilityScoreTool()],
         verbose=True,
         allow_delegation=False,

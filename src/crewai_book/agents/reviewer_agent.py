@@ -6,6 +6,7 @@ weaknesses, gaps, and areas that need strengthening.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.readability_tool import ReadabilityScoreTool
 
 
@@ -17,18 +18,9 @@ def create_reviewer_agent() -> Agent:
     flow, and overall manuscript quality.
     """
     return Agent(
-        role="Peer Reviewer",
-        goal=(
-            "Conduct a thorough peer review of the manuscript. Evaluate "
-            "content depth, accuracy, logical flow, and completeness. "
-            "Identify any gaps, weak arguments, or unsupported claims."
-        ),
-        backstory=(
-            "You are a distinguished professor who has reviewed hundreds "
-            "of papers for top AI conferences. You are constructive but "
-            "rigorous, always providing specific, actionable feedback "
-            "that helps authors improve their work significantly."
-        ),
+        role=AGENT_CONFIGS["reviewer_agent"].role,
+        goal=AGENT_CONFIGS["reviewer_agent"].goal,
+        backstory=AGENT_CONFIGS["reviewer_agent"].backstory,
         tools=[ReadabilityScoreTool()],
         verbose=True,
         allow_delegation=False,

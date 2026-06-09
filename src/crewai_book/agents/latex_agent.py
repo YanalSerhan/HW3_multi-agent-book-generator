@@ -6,6 +6,7 @@ using the memoir class and BibLaTeX for bibliography management.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.latex_compiler_tool import LaTeXCompilerTool
 
 
@@ -17,18 +18,9 @@ def create_latex_agent() -> Agent:
     professional typesetting with proper chapter structure.
     """
     return Agent(
-        role="Typesetting Specialist",
-        goal=(
-            "Convert the manuscript into professional LaTeX source using "
-            "the memoir class. Structure the output as a compilable book "
-            "with chapters, sections, bibliography, and index."
-        ),
-        backstory=(
-            "You are a LaTeX expert who has typeset dozens of academic "
-            "books. You know the memoir class inside out and can produce "
-            "beautiful, professional documents with proper typography, "
-            "headers, footers, and bibliography integration."
-        ),
+        role=AGENT_CONFIGS["latex_formatter_agent"].role,
+        goal=AGENT_CONFIGS["latex_formatter_agent"].goal,
+        backstory=AGENT_CONFIGS["latex_formatter_agent"].backstory,
         tools=[LaTeXCompilerTool()],
         verbose=True,
         allow_delegation=False,

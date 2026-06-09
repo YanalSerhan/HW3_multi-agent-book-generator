@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+
 # pyrefly: ignore [missing-import]
 import pytest
 

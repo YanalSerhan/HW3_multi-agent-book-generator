@@ -45,16 +45,16 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
     state.current_stage = "main"
     main_crew = create_main_crew(topic, out_path)
     main_crew.kickoff()
-    
+
     # --- POST-PROCESSING: Render the Final LaTeX Book ---
     latex_dir = out_path / "latex"
     body_path = latex_dir / "body.tex"
     book_path = latex_dir / "book.tex"
-    
+
     if body_path.exists():
         # Load the generated body
         body_content = body_path.read_text(encoding='utf-8')
-        
+
         # Load the jinja template
         env = Environment(
             loader=FileSystemLoader(TEMPLATE_DIR),
@@ -66,13 +66,13 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
             template = env.get_template("book.tex.j2")
             final_tex = template.render(
                 latex_content=body_content,
-                article={"title": topic, "abstract": f"An automatically generated book on {topic}."}
+                article={"title": topic, "abstract": f"An automatically generated book on {topic}."}  # noqa: E501
             )
             book_path.write_text(final_tex, encoding='utf-8')
             logger.info("Successfully rendered book.tex from Jinja template.")
         except Exception as e:
             logger.error(f"Failed to render Jinja template: {e}")
-            
+
         # Ensure preamble is copied
         preamble_src = TEMPLATE_DIR / "preamble.tex"
         if preamble_src.exists():

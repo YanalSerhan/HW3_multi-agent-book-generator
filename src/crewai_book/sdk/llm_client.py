@@ -16,7 +16,7 @@ class LLMClient(BaseClient):
         super().__init__("openai", gatekeeper)
         self.base_url = "https://api.openai.com/v1"
         self.headers = {
-            "Authorization": f"Bearer {settings.openai_api_key}",
+            "Authorization": f"Bearer {settings.openai_api_key.get_secret_value()}",
             "Content-Type": "application/json",
         }
 

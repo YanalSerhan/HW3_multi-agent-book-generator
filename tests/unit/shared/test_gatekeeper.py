@@ -1,6 +1,8 @@
 import time
+from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
+# pyrefly: ignore [missing-import]
 import pytest
 
 from crewai_book.exceptions.domain import APIConnectionError, RateLimitExceededError
@@ -8,7 +10,7 @@ from crewai_book.shared.gatekeeper import ApiGatekeeper
 
 
 @pytest.fixture
-def mock_config() -> None:
+def mock_config() -> Generator[MagicMock, None, None]:
     """Test docstring."""
     with patch("crewai_book.shared.gatekeeper.config_manager") as mock_mgr:
         mock_mgr.get_rate_limits.return_value = {
@@ -94,6 +96,8 @@ def test_gatekeeper_max_retries_exceeded(mock_config) -> None:
     # Function always fails
     mock_func = MagicMock(side_effect=Exception("Permanent error"))
 
-    with patch("time.sleep"):
-        with pytest.raises(APIConnectionError, match="Failed after 1 retries"):
-            gk.execute(mock_func)
+    with (
+        patch("time.sleep"),
+        pytest.raises(APIConnectionError, match="Failed after 1 retries"),
+    ):
+        gk.execute(mock_func)

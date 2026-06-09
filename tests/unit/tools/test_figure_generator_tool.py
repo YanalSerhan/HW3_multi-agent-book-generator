@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock, patch
-# pyrefly: ignore [missing-import]
-import pytest
 
+# pyrefly: ignore [missing-import]
 from crewai_book.tools.figure_generator_tool import FigureGeneratorTool
 
 

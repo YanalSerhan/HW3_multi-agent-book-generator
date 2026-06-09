@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any
 import os
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,7 +17,6 @@ os.environ["OUTPUT_DIR"] = "output"
 # We must import these after setting environment variables so pydantic can load properly
 from crewai_book.config.settings import AppSettings
 from crewai_book.domain.entities import Article, Chapter, Section
-from crewai_book.domain.state import Bibliography
 
 
 @pytest.fixture

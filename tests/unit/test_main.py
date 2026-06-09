@@ -1,11 +1,12 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 import typer
 from typer.testing import CliRunner
-from unittest.mock import patch, MagicMock
 
 from crewai_book.__main__ import app, version_callback
-from crewai_book.version import __version__
 from crewai_book.domain.state import PipelineState
+from crewai_book.version import __version__
 
 runner = CliRunner()
 
@@ -35,7 +36,7 @@ def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
     """Test a successful run command."""
     mock_state = PipelineState(topic="Test Topic", run_id="test-run-id")
     mock_run_pipeline.return_value = mock_state
-    
+
     result = runner.invoke(app, ["run", "--topic", "Test Topic"])
     assert result.exit_code == 0
     assert "Pipeline completed" in result.stdout
@@ -45,7 +46,7 @@ def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
 def test_app_run_failure(mock_run_pipeline: MagicMock) -> None:
     """Test run command failure handling."""
     mock_run_pipeline.side_effect = Exception("Test Error")
-    
+
     result = runner.invoke(app, ["run", "--topic", "Test Topic"])
     assert result.exit_code == 1
     assert "Pipeline failed" in result.stdout

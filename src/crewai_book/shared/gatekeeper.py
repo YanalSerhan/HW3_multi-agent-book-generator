@@ -5,7 +5,7 @@ from collections.abc import Callable
 from typing import Any
 
 from ..config.settings import config_manager
-from ..exceptions.domain import APIConnectionError, RateLimitExceededError
+from ..exceptions.domain import RateLimitExceededError
 
 
 class ApiGatekeeper:
@@ -64,6 +64,7 @@ class ApiGatekeeper:
 
     def _execute_with_retry(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         """Execute with retry logic for transient failures."""
+        from ..exceptions.domain import APIConnectionError
         attempts = 0
         while attempts <= self.max_retries:
             self._enforce_rate_limit()

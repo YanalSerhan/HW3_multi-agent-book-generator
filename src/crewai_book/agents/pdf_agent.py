@@ -6,6 +6,7 @@ source compiles cleanly and the output meets quality standards.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.latex_compiler_tool import LaTeXCompilerTool
 
 
@@ -17,18 +18,9 @@ def create_pdf_agent() -> Agent:
     quality, and that all elements (figures, bibliography) appear.
     """
     return Agent(
-        role="Production QC Specialist",
-        goal=(
-            "Compile the LaTeX source into a final PDF. Verify the PDF "
-            "has ≥20 pages, all chapters render correctly, the bibliography "
-            "appears, and there are no compilation warnings."
-        ),
-        backstory=(
-            "You are a production manager at an academic publishing house. "
-            "You have overseen the production of thousands of books and "
-            "know every LaTeX compilation pitfall. You catch rendering "
-            "issues that others miss and ensure pixel-perfect output."
-        ),
+        role=AGENT_CONFIGS["pdf_production_agent"].role,
+        goal=AGENT_CONFIGS["pdf_production_agent"].goal,
+        backstory=AGENT_CONFIGS["pdf_production_agent"].backstory,
         tools=[LaTeXCompilerTool()],
         verbose=True,
         allow_delegation=False,

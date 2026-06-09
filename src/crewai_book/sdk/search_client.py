@@ -14,7 +14,10 @@ class SearchClient(BaseClient):
     def __init__(self, gatekeeper: ApiGatekeeper | None = None) -> None:
         """Initialize."""
         super().__init__("serper", gatekeeper)
-        self.headers = {"X-API-KEY": settings.serper_api_key, "Content-Type": "application/json"}
+        self.headers = {
+            "X-API-KEY": settings.serper_api_key.get_secret_value(),
+            "Content-Type": "application/json",
+        }
 
     def _do_search(self, query: str) -> dict[str, Any]:
         """Perform a search query via Serper."""
@@ -34,7 +37,7 @@ class SearchClient(BaseClient):
 
     def search_web(self, query: str) -> list[dict[str, Any]]:
         """Search the web and return results."""
-        if not settings.serper_api_key:
+        if not settings.serper_api_key.get_secret_value():
             self.logger.warning("Serper API key not configured. Returning empty results.")
             return []
 

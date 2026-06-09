@@ -6,6 +6,7 @@ research sources and maintaining consistent voice and quality.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.web_search_tool import WebSearchTool
 
 
@@ -17,18 +18,9 @@ def create_writer_agent() -> Agent:
     maintaining a consistent, authoritative voice throughout.
     """
     return Agent(
-        role="Expert Technical Writer",
-        goal=(
-            "Write the complete manuscript following the provided outline. "
-            "Each section should be 500-800 words, well-cited, and written "
-            "at a graduate reading level (Flesch 60-70)."
-        ),
-        backstory=(
-            "You are a technical author with multiple published textbooks "
-            "in computer science. You excel at explaining complex concepts "
-            "clearly while maintaining academic rigor. You naturally weave "
-            "citations into your prose and use concrete examples."
-        ),
+        role=AGENT_CONFIGS["writer_agent"].role,
+        goal=AGENT_CONFIGS["writer_agent"].goal,
+        backstory=AGENT_CONFIGS["writer_agent"].backstory,
         tools=[WebSearchTool()],
         verbose=True,
         allow_delegation=False,

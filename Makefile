@@ -132,9 +132,19 @@ pdf: ## Compile LaTeX to PDF
 benchmark: ## Run evaluation benchmarks
 	$(PYTEST) $(TEST_DIR)/evaluation -v --tb=short -m benchmark
 
+report: ## Generate the run evaluation report
+	$(PYTHON) scripts/generate_report.py
+
+check-citations: ## Run the citation validation script
+	$(PYTHON) scripts/check_citations.py
+
+validate-latex: ## Run the LaTeX validation script
+	$(PYTHON) scripts/validate_latex.py
+
 # ----------------------------------------------------------------------------
 # Cleanup
 # ----------------------------------------------------------------------------
+
 
 clean: ## Remove generated artifacts and caches
 	rm -rf $(OUTPUT_DIR)/latex/*.aux $(OUTPUT_DIR)/latex/*.log $(OUTPUT_DIR)/latex/*.bbl

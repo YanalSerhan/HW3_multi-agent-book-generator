@@ -4,7 +4,6 @@ Coordinates all 10 agents through the sequential pipeline stages:
 research → outline → writing → editorial → citation → LaTeX → PDF → QA.
 """
 
-import uuid
 from pathlib import Path
 
 from crewai import Crew, Process, Task
@@ -15,10 +14,7 @@ from ..agents.outline_agent import create_outline_agent
 from ..agents.pdf_agent import create_pdf_agent
 from ..agents.qa_agent import create_qa_agent
 from ..agents.writer_agent import create_writer_agent
-from ..domain.state import PipelineState
 from ..observability.logger import get_logger
-from .editorial_crew import create_editorial_crew
-from .research_crew import create_research_crew
 
 logger = get_logger("workflows.main_crew")
 
@@ -76,12 +72,12 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     latex_task = Task(
         description=(
             "Convert the manuscript and figures report into LaTeX source. "
-            "Convert all Markdown tables into proper LaTeX \\begin{table} environments. To prevent table overflow, MUST use \\resizebox{\\textwidth}{!}{...} around your tabular environments. "
+            "Convert all Markdown tables into proper LaTeX \\begin{table} environments. To prevent table overflow, MUST use \\resizebox{\\textwidth}{!}{...} around your tabular environments. "  # noqa: E501
             "CRITICAL: Output ONLY the raw LaTeX source code for the chapters and sections. "
-            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "
+            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "  # noqa: E501
             "Do NOT enclose your output in markdown code blocks."
         ),
-        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",
+        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",  # noqa: E501
         output_file=str(output_dir / "latex" / "body.tex"),
         agent=latex_agent,
     )

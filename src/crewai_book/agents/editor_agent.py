@@ -6,6 +6,7 @@ grammar, and adherence to readability standards.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.readability_tool import ReadabilityScoreTool
 
 
@@ -17,18 +18,9 @@ def create_editor_agent() -> Agent:
     meets the target readability score.
     """
     return Agent(
-        role="Senior Copy Editor",
-        goal=(
-            "Edit the manuscript for clarity, consistency, and correctness. "
-            "Ensure readability score ≥60, fix all grammatical errors, and "
-            "maintain a consistent voice and terminology throughout."
-        ),
-        backstory=(
-            "You are a senior copy editor at a major academic publisher "
-            "with 20 years of experience editing technical manuscripts. "
-            "You have an eye for inconsistency and a talent for making "
-            "complex prose more accessible without losing precision."
-        ),
+        role=AGENT_CONFIGS["editor_agent"].role,
+        goal=AGENT_CONFIGS["editor_agent"].goal,
+        backstory=AGENT_CONFIGS["editor_agent"].backstory,
         tools=[ReadabilityScoreTool()],
         verbose=True,
         allow_delegation=False,

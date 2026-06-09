@@ -21,6 +21,12 @@ repos:
         args: ["--maxkb=500"]
       - id: debug-statements
 
+  # ---------- Secrets ----------
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+
   # ---------- Ruff (Lint + Format) ----------
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.0

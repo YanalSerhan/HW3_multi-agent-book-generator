@@ -6,6 +6,7 @@ to detect and flag potential hallucinations before publication.
 
 from crewai import Agent
 
+from ..config.agent_configs import AGENT_CONFIGS
 from ..tools.fact_check_tool import FactCheckTool
 from ..tools.web_search_tool import WebSearchTool
 
@@ -18,18 +19,9 @@ def create_fact_verification_agent() -> Agent:
     sources, with zero tolerance for hallucinated content.
     """
     return Agent(
-        role="Critical Fact Checker",
-        goal=(
-            "Verify every factual claim in the manuscript against "
-            "independent sources. Flag any claim with fewer than 2 "
-            "corroborating sources as potentially hallucinated."
-        ),
-        backstory=(
-            "You are an investigative journalist turned AI safety researcher. "
-            "You have a reputation for catching fabricated claims that slip "
-            "past other reviewers. You are methodical and skeptical, never "
-            "accepting a claim at face value without verification."
-        ),
+        role=AGENT_CONFIGS["fact_verification_agent"].role,
+        goal=AGENT_CONFIGS["fact_verification_agent"].goal,
+        backstory=AGENT_CONFIGS["fact_verification_agent"].backstory,
         tools=[FactCheckTool(), WebSearchTool()],
         verbose=True,
         allow_delegation=False,

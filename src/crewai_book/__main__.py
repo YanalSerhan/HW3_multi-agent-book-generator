@@ -68,6 +68,7 @@ def run(
         help="Output directory for generated artifacts.",
     ),
 ) -> None:
+    """Run the CrewAI Book Generator pipeline."""
     from crewai_book.workflows.pipeline import run_pipeline
 
     final_topic = topic or "Multi-Agent Systems in AI"
@@ -80,8 +81,29 @@ def run(
 
     try:
         from pathlib import Path
+
+        from crewai_book.observability.agent_tracker import AgentTracker
+        from crewai_book.observability.metrics import MetricsTracker
+
+        metrics = MetricsTracker()
+        tracker = AgentTracker()
+
+        metrics.start_timer("pipeline_execution")
+        tracker.record_activity("System", "pipeline_start", {"topic": final_topic})
+
         state = run_pipeline(final_topic, Path(output_dir))
-        console.print(f"[bold green]Pipeline completed![/bold green] Run ID: {state.run_id}")
+
+        duration = metrics.stop_timer("pipeline_execution")
+        tracker.record_activity(
+            "System",
+            "pipeline_complete",
+            {"run_id": state.run_id, "duration": duration},
+        )
+
+        console.print(
+            f"[bold green]Pipeline completed in {duration:.2f}s![/bold green] "
+            f"Run ID: {state.run_id}"
+        )
     except Exception as e:
         console.print(f"[bold red]Pipeline failed:[/bold red] {e}")
         raise typer.Exit(code=1) from e

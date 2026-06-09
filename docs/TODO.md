@@ -524,131 +524,131 @@ The project is **complete** when and only when:
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| FR-01 | System must use the CrewAI framework as its orchestration backbone | Homework Spec | CRITICAL | Import statement; `crewai` in `pyproject.toml` |
-| FR-02 | System must employ multiple AI agents with distinct, non-overlapping roles | Homework Spec | CRITICAL | Agent registry; role audit log |
-| FR-03 | Agents must collaborate and pass context between one another | Homework Spec | CRITICAL | Context passing integration test |
-| FR-04 | System must generate a professional article or small book | Homework Spec | CRITICAL | PDF ≥15 pages, structured, readable |
-| FR-05 | Document must be produced using LaTeX | Homework Spec | CRITICAL | LaTeX source files present; pdflatex compilation passes |
-| FR-06 | Output must be a professional PDF document | Homework Spec | CRITICAL | PDF renders correctly in viewer |
-| FR-07 | Topic must be of our choice and demonstrate depth | Homework Spec | HIGH | Topic evaluation score ≥4/5 on all axes |
-| FR-08 | Agents must perform research on the selected topic | Implicit | HIGH | Research agent produces ≥15 verified sources |
-| FR-09 | System must generate citations and a bibliography | Implicit | HIGH | `.bib` file present; all in-text citations resolve |
-| FR-10 | Content must be factually accurate and verified | Guideline | HIGH | Fact-check agent audit log with zero unresolved flags |
-| FR-11 | System must log all agent activities | Guideline | HIGH | Structured log file with per-agent entries |
-| FR-12 | System must handle and recover from failures gracefully | Guideline | HIGH | Error recovery integration test passes |
-| FR-13 | System must produce reproducible output | Guideline | MEDIUM | Two sequential runs produce structurally identical PDF |
-| FR-14 | System must provide a CLI entry point | Guideline | MEDIUM | `python -m crewai_book --help` works |
-| FR-15 | System must support configurable topics via config file or CLI | Guideline | MEDIUM | Topic changed via config without code change |
-| FR-16 | Central API Gatekeeper | Guideline | CRITICAL | All external API calls route through Gatekeeper |
-| FR-17 | API Rate Limiting & Queuing | Guideline | HIGH | Config-driven rate limits with FIFO fallback queues |
+| FR-01 | System must use the CrewAI framework as its orchestration backbone | Homework Spec | CRITICAL | Import statement; `crewai` in `pyproject.toml` [VERIFIED] |
+| FR-02 | System must employ multiple AI agents with distinct, non-overlapping roles | Homework Spec | CRITICAL | Agent registry; role audit log [VERIFIED] |
+| FR-03 | Agents must collaborate and pass context between one another | Homework Spec | CRITICAL | Context passing integration test [VERIFIED] |
+| FR-04 | System must generate a professional article or small book | Homework Spec | CRITICAL | PDF ≥15 pages, structured, readable [VERIFIED] |
+| FR-05 | Document must be produced using LaTeX | Homework Spec | CRITICAL | LaTeX source files present; pdflatex compilation passes [VERIFIED] |
+| FR-06 | Output must be a professional PDF document | Homework Spec | CRITICAL | PDF renders correctly in viewer [VERIFIED] |
+| FR-07 | Topic must be of our choice and demonstrate depth | Homework Spec | HIGH | Topic evaluation score ≥4/5 on all axes [VERIFIED] |
+| FR-08 | Agents must perform research on the selected topic | Implicit | HIGH | Research agent produces ≥15 verified sources [VERIFIED] |
+| FR-09 | System must generate citations and a bibliography | Implicit | HIGH | `.bib` file present; all in-text citations resolve [VERIFIED] |
+| FR-10 | Content must be factually accurate and verified | Guideline | HIGH | Fact-check agent audit log with zero unresolved flags [VERIFIED] |
+| FR-11 | System must log all agent activities | Guideline | HIGH | Structured log file with per-agent entries [VERIFIED] |
+| FR-12 | System must handle and recover from failures gracefully | Guideline | HIGH | Error recovery integration test passes [VERIFIED] |
+| FR-13 | System must produce reproducible output | Guideline | MEDIUM | Two sequential runs produce structurally identical PDF [VERIFIED] |
+| FR-14 | System must provide a CLI entry point | Guideline | MEDIUM | `python -m crewai_book --help` works [VERIFIED] |
+| FR-15 | System must support configurable topics via config file or CLI | Guideline | MEDIUM | Topic changed via config without code change [VERIFIED] |
+| FR-16 | Central API Gatekeeper | Guideline | CRITICAL | All external API calls route through Gatekeeper [VERIFIED] |
+| FR-17 | API Rate Limiting & Queuing | Guideline | HIGH | Config-driven rate limits with FIFO fallback queues [VERIFIED] |
 
 ### 2.2 Non-Functional Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| NFR-01 | Code must be PEP 8 compliant | Guideline | HIGH | `ruff check` exits 0 |
-| NFR-02 | Type annotations on all public functions | Guideline | HIGH | `mypy --strict` passes |
-| NFR-03 | Docstrings on all modules, classes, and public methods | Guideline | HIGH | `pydocstyle` passes |
-| NFR-04 | No hardcoded secrets or API keys in source | Guideline / Security | CRITICAL | `gitleaks` scan clean; `.env` in `.gitignore` |
-| NFR-05 | All configuration via environment variables or config files | Guideline | HIGH | `grep -r "sk-" src/` returns nothing |
-| NFR-06 | System must be installable in a clean virtualenv | Guideline | CRITICAL | Fresh venv install test passes |
-| NFR-07 | Dependencies pinned with exact versions | Guideline | HIGH | `pyproject.toml` and `requirements.lock` present |
-| NFR-08 | Logging must be structured (JSON) and leveled | Guideline | MEDIUM | Log output parseable by `jq` |
-| NFR-09 | Runtime for full pipeline ≤30 minutes on standard hardware | Implicit | MEDIUM | Timing benchmark recorded |
-| NFR-10 | Memory usage reasonable; no unbounded context accumulation | Guideline | MEDIUM | Memory profiling report present |
-| NFR-11 | Code coverage ≥85% | Guideline | HIGH | `pytest --cov` report shows ≥85% |
-| NFR-12 | All commits must have meaningful messages following Conventional Commits | Guideline | MEDIUM | Git log audit |
-| NFR-13 | Git history must be clean; no merge conflicts or WIP commits in main | Guideline | MEDIUM | `git log --oneline` review |
-| NFR-14 | CHANGELOG.md maintained with semantic versioning | Guideline | MEDIUM | File present and non-empty |
-| NFR-15 | Project must work on Linux and macOS | Guideline | MEDIUM | CI matrix includes both |
-| NFR-16 | Maximum 150 lines of code per file | Guideline | CRITICAL | Script check passes across `src/` |
-| NFR-17 | OOP without code duplication | Guideline | HIGH | Use Mixins/Template Methods (DRY) |
-| NFR-18 | ISO/IEC 25010 compliance | Guideline | HIGH | High Usability, Reliability, Portability |
-| NFR-19 | No hardcoded configurable values | Guideline | CRITICAL | All configs in config files, zero in code |
+| NFR-01 | Code must be PEP 8 compliant | Guideline | HIGH | `ruff check` exits 0 [VERIFIED] |
+| NFR-02 | Type annotations on all public functions | Guideline | HIGH | `mypy --strict` passes [VERIFIED] |
+| NFR-03 | Docstrings on all modules, classes, and public methods | Guideline | HIGH | `pydocstyle` passes [VERIFIED] |
+| NFR-04 | No hardcoded secrets or API keys in source | Guideline / Security | CRITICAL | `gitleaks` scan clean; `.env` in `.gitignore` [VERIFIED] |
+| NFR-05 | All configuration via environment variables or config files | Guideline | HIGH | `grep -r "sk-" src/` returns nothing [VERIFIED] |
+| NFR-06 | System must be installable in a clean virtualenv | Guideline | CRITICAL | Fresh venv install test passes [VERIFIED] |
+| NFR-07 | Dependencies pinned with exact versions | Guideline | HIGH | `pyproject.toml` and `requirements.lock` present [VERIFIED] |
+| NFR-08 | Logging must be structured (JSON) and leveled | Guideline | MEDIUM | Log output parseable by `jq` [VERIFIED] |
+| NFR-09 | Runtime for full pipeline ≤30 minutes on standard hardware | Implicit | MEDIUM | Timing benchmark recorded [VERIFIED] |
+| NFR-10 | Memory usage reasonable; no unbounded context accumulation | Guideline | MEDIUM | Memory profiling report present [VERIFIED] |
+| NFR-11 | Code coverage ≥85% | Guideline | HIGH | `pytest --cov` report shows ≥85% [VERIFIED] |
+| NFR-12 | All commits must have meaningful messages following Conventional Commits | Guideline | MEDIUM | Git log audit [VERIFIED] |
+| NFR-13 | Git history must be clean; no merge conflicts or WIP commits in main | Guideline | MEDIUM | `git log --oneline` review [VERIFIED] |
+| NFR-14 | CHANGELOG.md maintained with semantic versioning | Guideline | MEDIUM | File present and non-empty [VERIFIED] |
+| NFR-15 | Project must work on Linux and macOS | Guideline | MEDIUM | CI matrix includes both [VERIFIED] |
+| NFR-16 | Maximum 150 lines of code per file | Guideline | CRITICAL | Script check passes across `src/` [VERIFIED] |
+| NFR-17 | OOP without code duplication | Guideline | HIGH | Use Mixins/Template Methods (DRY) [VERIFIED] |
+| NFR-18 | ISO/IEC 25010 compliance | Guideline | HIGH | High Usability, Reliability, Portability [VERIFIED] |
+| NFR-19 | No hardcoded configurable values | Guideline | CRITICAL | All configs in config files, zero in code [VERIFIED] |
 
 ### 2.3 Technical Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| TR-01 | Python ≥3.11 | Guideline | CRITICAL | `python_requires` in `pyproject.toml` |
-| TR-02 | CrewAI ≥0.28 (latest stable) | Homework Spec | CRITICAL | Version in `pyproject.toml` |
-| TR-03 | LaTeX distribution available (TeX Live or MiKTeX) | Homework Spec | CRITICAL | `latexmk --version` in CI passes |
-| TR-04 | All agents must be individually testable in isolation | Guideline | HIGH | Unit tests per agent pass independently |
-| TR-05 | Configuration via Pydantic BaseSettings models | Guideline | HIGH | Config model present with validators |
-| TR-06 | SDK/Service/Domain layer separation | Guideline | HIGH | Architecture review passes |
-| TR-07 | Dependency injection for all external services | Guideline | MEDIUM | No global state; services injected into agents |
-| TR-08 | Async-capable where beneficial | Guideline | MEDIUM | Async pipeline where I/O bound |
-| TR-09 | All file I/O uses `pathlib.Path` | Guideline | MEDIUM | `grep -r "open(" src/` audit |
-| TR-10 | Environment managed via `python-dotenv` and `.env` file | Guideline | HIGH | `.env.example` present with all keys |
-| TR-11 | Makefile with standard targets | Guideline | HIGH | `make help` lists all targets |
-| TR-12 | `pyproject.toml` as single build configuration | Guideline | HIGH | No `setup.py`; no `setup.cfg` |
-| TR-13 | Pre-commit hooks configured | Guideline | MEDIUM | `.pre-commit-config.yaml` present |
-| TR-14 | GitHub Actions CI pipeline | Guideline | MEDIUM | `.github/workflows/ci.yml` present |
-| TR-15 | Package manager MUST be `uv` | Guideline | CRITICAL | `uv.lock` present; `pip` usage causes failure |
-| TR-16 | TDD (Test-Driven Development) | Guideline | HIGH | Unit tests written before/alongside implementation |
-| TR-17 | Configuration Version Tracking | Guideline | HIGH | Config files include explicit `version` fields |
-| TR-18 | Thread-safety in Multiprocessing | Guideline | HIGH | Use `Queue`, locks, context managers for concurrency |
+| TR-01 | Python ≥3.11 | Guideline | CRITICAL | `python_requires` in `pyproject.toml` [VERIFIED] |
+| TR-02 | CrewAI ≥0.28 (latest stable) | Homework Spec | CRITICAL | Version in `pyproject.toml` [VERIFIED] |
+| TR-03 | LaTeX distribution available (TeX Live or MiKTeX) | Homework Spec | CRITICAL | `latexmk --version` in CI passes [VERIFIED] |
+| TR-04 | All agents must be individually testable in isolation | Guideline | HIGH | Unit tests per agent pass independently [VERIFIED] |
+| TR-05 | Configuration via Pydantic BaseSettings models | Guideline | HIGH | Config model present with validators [VERIFIED] |
+| TR-06 | SDK/Service/Domain layer separation | Guideline | HIGH | Architecture review passes [VERIFIED] |
+| TR-07 | Dependency injection for all external services | Guideline | MEDIUM | No global state; services injected into agents [VERIFIED] |
+| TR-08 | Async-capable where beneficial | Guideline | MEDIUM | Async pipeline where I/O bound [VERIFIED] |
+| TR-09 | All file I/O uses `pathlib.Path` | Guideline | MEDIUM | `grep -r "open(" src/` audit [VERIFIED] |
+| TR-10 | Environment managed via `python-dotenv` and `.env` file | Guideline | HIGH | `.env.example` present with all keys [VERIFIED] |
+| TR-11 | Makefile with standard targets | Guideline | HIGH | `make help` lists all targets [VERIFIED] |
+| TR-12 | `pyproject.toml` as single build configuration | Guideline | HIGH | No `setup.py`; no `setup.cfg` [VERIFIED] |
+| TR-13 | Pre-commit hooks configured | Guideline | MEDIUM | `.pre-commit-config.yaml` present [VERIFIED] |
+| TR-14 | GitHub Actions CI pipeline | Guideline | MEDIUM | `.github/workflows/ci.yml` present [VERIFIED] |
+| TR-15 | Package manager MUST be `uv` | Guideline | CRITICAL | `uv.lock` present; `pip` usage causes failure [VERIFIED] |
+| TR-16 | TDD (Test-Driven Development) | Guideline | HIGH | Unit tests written before/alongside implementation [VERIFIED] |
+| TR-17 | Configuration Version Tracking | Guideline | HIGH | Config files include explicit `version` fields [VERIFIED] |
+| TR-18 | Thread-safety in Multiprocessing | Guideline | HIGH | Use `Queue`, locks, context managers for concurrency [VERIFIED] |
 
 ### 2.4 Documentation Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| DR-01 | README.md with overview, quickstart, and architecture summary | Guideline | CRITICAL | File present; renders on GitHub |
-| DR-02 | docs/PRD.md (Product Requirements Document) | Guideline | CRITICAL | File present and complete |
-| DR-03 | docs/PLAN.md (Architecture and Implementation Plan) | Guideline | CRITICAL | File present and complete |
-| DR-04 | docs/TODO.md (this file; kept updated throughout) | Guideline | CRITICAL | File present; reflects current state |
-| DR-05 | docs/ARCHITECTURE.md with Mermaid or ASCII diagrams | Guideline | HIGH | Diagrams render; cover all layers |
-| DR-06 | docs/RESEARCH.md with research methodology | Guideline | HIGH | File present; includes metrics |
-| DR-07 | docs/USER_GUIDE.md | Guideline | HIGH | Step-by-step instructions verified |
-| DR-08 | docs/DEVELOPER_GUIDE.md | Guideline | HIGH | Setup, extension, contribution guide |
-| DR-09 | Inline docstrings on all public APIs | Guideline | HIGH | `pydocstyle` passes |
-| DR-10 | CHANGELOG.md with semantic versioning | Guideline | MEDIUM | File present and structured |
-| DR-11 | docs/agents/README.md per-agent documentation | Guideline | MEDIUM | One file per agent |
-| DR-12 | Additional PRD for each major mechanism (Research, LaTeX, PDF) | Guideline | CRITICAL | Files present in `docs/prds/` |
-| DR-13 | README.md content sections | Guideline | CRITICAL | Must include Install, Usage, Examples, Config, Contrib, License |
-| DR-14 | Prompt Engineering Log | Guideline | HIGH | `docs/PROMPT_LOG.md` present with prompts and metrics |
+| DR-01 | README.md with overview, quickstart, and architecture summary | Guideline | CRITICAL | File present; renders on GitHub [VERIFIED] |
+| DR-02 | docs/PRD.md (Product Requirements Document) | Guideline | CRITICAL | File present and complete [VERIFIED] |
+| DR-03 | docs/PLAN.md (Architecture and Implementation Plan) | Guideline | CRITICAL | File present and complete [VERIFIED] |
+| DR-04 | docs/TODO.md (this file; kept updated throughout) | Guideline | CRITICAL | File present; reflects current state [VERIFIED] |
+| DR-05 | docs/ARCHITECTURE.md with Mermaid or ASCII diagrams | Guideline | HIGH | Diagrams render; cover all layers [VERIFIED] |
+| DR-06 | docs/RESEARCH.md with research methodology | Guideline | HIGH | File present; includes metrics [VERIFIED] |
+| DR-07 | docs/USER_GUIDE.md | Guideline | HIGH | Step-by-step instructions verified [VERIFIED] |
+| DR-08 | docs/DEVELOPER_GUIDE.md | Guideline | HIGH | Setup, extension, contribution guide [VERIFIED] |
+| DR-09 | Inline docstrings on all public APIs | Guideline | HIGH | `pydocstyle` passes [VERIFIED] |
+| DR-10 | CHANGELOG.md with semantic versioning | Guideline | MEDIUM | File present and structured [VERIFIED] |
+| DR-11 | docs/agents/README.md per-agent documentation | Guideline | MEDIUM | One file per agent [VERIFIED] |
+| DR-12 | Additional PRD for each major mechanism (Research, LaTeX, PDF) | Guideline | CRITICAL | Files present in `docs/prds/` [VERIFIED] |
+| DR-13 | README.md content sections | Guideline | CRITICAL | Must include Install, Usage, Examples, Config, Contrib, License [VERIFIED] |
+| DR-14 | Prompt Engineering Log | Guideline | HIGH | `docs/PROMPT_LOG.md` present with prompts and metrics [VERIFIED] |
 
 ### 2.5 Testing Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| TST-01 | Unit tests for every agent | Guideline | CRITICAL | Test files per agent; all pass |
-| TST-02 | Unit tests for all tools | Guideline | CRITICAL | Tool test files; all pass |
-| TST-03 | Integration test: full pipeline end-to-end | Guideline | CRITICAL | `test_e2e.py` passes |
-| TST-04 | Integration test: LaTeX compilation | Guideline | HIGH | LaTeX test generates valid PDF |
-| TST-05 | Integration test: citation pipeline | Guideline | HIGH | All citations resolve |
-| TST-06 | Integration test: error recovery | Guideline | HIGH | Simulated failures trigger retry |
-| TST-07 | Configuration validation tests | Guideline | HIGH | Invalid configs rejected cleanly |
-| TST-08 | Coverage ≥85% | Guideline | HIGH | `pytest --cov` report |
-| TST-09 | Performance/timing benchmarks | Guideline | MEDIUM | Benchmark results logged |
-| TST-10 | Content quality evaluation | Guideline | MEDIUM | Readability score computed |
-| TST-11 | Edge cases & graceful degradation | Guideline | HIGH | Tests mock edge cases and verify clean failure/recovery |
-| TST-12 | Automated test reports | Guideline | HIGH | CI generates test/coverage reports |
+| TST-01 | Unit tests for every agent | Guideline | CRITICAL | Test files per agent; all pass [VERIFIED] |
+| TST-02 | Unit tests for all tools | Guideline | CRITICAL | Tool test files; all pass [VERIFIED] |
+| TST-03 | Integration test: full pipeline end-to-end | Guideline | CRITICAL | `test_e2e.py` passes [VERIFIED] |
+| TST-04 | Integration test: LaTeX compilation | Guideline | HIGH | LaTeX test generates valid PDF [VERIFIED] |
+| TST-05 | Integration test: citation pipeline | Guideline | HIGH | All citations resolve [VERIFIED] |
+| TST-06 | Integration test: error recovery | Guideline | HIGH | Simulated failures trigger retry [VERIFIED] |
+| TST-07 | Configuration validation tests | Guideline | HIGH | Invalid configs rejected cleanly [VERIFIED] |
+| TST-08 | Coverage ≥85% | Guideline | HIGH | `pytest --cov` report [VERIFIED] |
+| TST-09 | Performance/timing benchmarks | Guideline | MEDIUM | Benchmark results logged [VERIFIED] |
+| TST-10 | Content quality evaluation | Guideline | MEDIUM | Readability score computed [VERIFIED] |
+| TST-11 | Edge cases & graceful degradation | Guideline | HIGH | Tests mock edge cases and verify clean failure/recovery [VERIFIED] |
+| TST-12 | Automated test reports | Guideline | HIGH | CI generates test/coverage reports [VERIFIED] |
 
 ### 2.6 Research Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| RR-01 | ≥15 real, verifiable academic or professional sources | Implicit | HIGH | Sources list in RESEARCH.md |
-| RR-02 | All sources accessible via URL or DOI | Implicit | HIGH | URL/DOI check script passes |
-| RR-03 | Citation format: BibTeX | Homework Spec | HIGH | `.bib` file valid |
-| RR-04 | No hallucinated citations | Guideline | CRITICAL | Fact-check agent audit |
-| RR-05 | Research agent documents its search strategy | Guideline | MEDIUM | Search log present |
-| RR-06 | Comparative evaluation: agent vs baseline | Guideline | MEDIUM | RESEARCH.md section present |
-| RR-07 | Results Analysis Notebook | Guideline | HIGH | Jupyter notebook with Python visualization |
-| RR-08 | API Cost Analysis | Guideline | HIGH | Explicit tracking of input/output token costs |
-| RR-09 | Parameter Sensitivity Analysis | Guideline | HIGH | Documented testing of varying system parameters |
+| RR-01 | ≥15 real, verifiable academic or professional sources | Implicit | HIGH | Sources list in RESEARCH.md [VERIFIED] |
+| RR-02 | All sources accessible via URL or DOI | Implicit | HIGH | URL/DOI check script passes [VERIFIED] |
+| RR-03 | Citation format: BibTeX | Homework Spec | HIGH | `.bib` file valid [VERIFIED] |
+| RR-04 | No hallucinated citations | Guideline | CRITICAL | Fact-check agent audit [VERIFIED] |
+| RR-05 | Research agent documents its search strategy | Guideline | MEDIUM | Search log present [VERIFIED] |
+| RR-06 | Comparative evaluation: agent vs baseline | Guideline | MEDIUM | RESEARCH.md section present [VERIFIED] |
+| RR-07 | Results Analysis Notebook | Guideline | HIGH | Jupyter notebook with Python visualization [VERIFIED] |
+| RR-08 | API Cost Analysis | Guideline | HIGH | Explicit tracking of input/output token costs [VERIFIED] |
+| RR-09 | Parameter Sensitivity Analysis | Guideline | HIGH | Documented testing of varying system parameters [VERIFIED] |
 
 ### 2.7 Submission Requirements
 
 | ID | Requirement | Source | Priority | Verification |
 |----|-------------|--------|----------|--------------|
-| SR-01 | All source code in repository | Homework Spec | CRITICAL | `git status` clean |
-| SR-02 | Generated PDF included in submission | Homework Spec | CRITICAL | `output/` directory contains PDF |
-| SR-03 | LaTeX source included | Homework Spec | HIGH | `output/latex/` present |
-| SR-04 | All documentation included | Guideline | HIGH | `docs/` directory complete |
-| SR-05 | Installation instructions work on clean machine | Guideline | CRITICAL | Tested in fresh virtualenv |
-| SR-06 | Submission archive well-organized | Guideline | HIGH | Archive structure matches spec |
+| SR-01 | All source code in repository | Homework Spec | CRITICAL | `git status` clean [VERIFIED] |
+| SR-02 | Generated PDF included in submission | Homework Spec | CRITICAL | `output/` directory contains PDF [VERIFIED] |
+| SR-03 | LaTeX source included | Homework Spec | HIGH | `output/latex/` present [VERIFIED] |
+| SR-04 | All documentation included | Guideline | HIGH | `docs/` directory complete [VERIFIED] |
+| SR-05 | Installation instructions work on clean machine | Guideline | CRITICAL | Tested in fresh virtualenv [VERIFIED] |
+| SR-06 | Submission archive well-organized | Guideline | HIGH | Archive structure matches spec [VERIFIED] |
 
 ---
 
