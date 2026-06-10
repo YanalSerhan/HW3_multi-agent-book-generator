@@ -18,7 +18,8 @@ class LaTeXClient(BaseClient):
     def _run_latexmk(self, tex_file: Path) -> str:
         """Run compilation using xelatex instead of latexmk to avoid Perl dependency."""
         # Clean up old auxiliary files to prevent compilation failures
-        for ext in [".aux", ".bbl", ".bcf", ".log", ".out", ".toc", ".run.xml"]:
+        for ext in [".aux", ".bbl", ".blg", ".fls", ".fdb_latexmk", ".log",
+                    ".out", ".toc", ".run.xml", ".glo", ".gls", ".glg", ".ist", ".idx", ".ind", ".ilg"]:  # noqa: E501
             aux_file = tex_file.with_suffix(ext)
             try:
                 if aux_file.exists():
@@ -51,6 +52,26 @@ class LaTeXClient(BaseClient):
                     timeout=90.0,
                 )
 
+            # Glossary pass
+            with contextlib.suppress(Exception):
+                subprocess.run(
+                    ["makeglossaries", tex_file.stem],
+                    cwd=tex_file.parent,
+                    capture_output=True,
+                    text=True,
+                    timeout=90.0,
+                )
+
+            # Index pass
+            with contextlib.suppress(Exception):
+                subprocess.run(
+                    ["makeindex", f"{tex_file.stem}.idx"],
+                    cwd=tex_file.parent,
+                    capture_output=True,
+                    text=True,
+                    timeout=90.0,
+                )
+
             # Second pass
             res2 = subprocess.run(
                 cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
@@ -60,7 +81,16 @@ class LaTeXClient(BaseClient):
                     "LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr}
                 )
 
-            return res2.stdout
+            # Third pass for cross-references and indices
+            res3 = subprocess.run(
+                cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
+            )
+            if res3.returncode != 0:
+                raise CompilationError(
+                    "LaTeX third pass failed", {"stdout": res3.stdout, "stderr": res3.stderr}
+                )
+
+            return res3.stdout
         except subprocess.TimeoutExpired as e:
             raise CompilationError("LaTeX compilation timed out") from e
         except FileNotFoundError as e:

@@ -1,76 +1,64 @@
-Here is a structured list of valid and reachable sources on the topic "The Mathematics of Diffusion Models: From Score Matching to Stable Diffusion", organized by subtopics:
+Here is a structured list of valid academic papers and authoritative online resources on the topic "The Mathematics of Diffusion Models: From Score Matching to Stable Diffusion". I've categorized these by subtopic for organized exploration.
 
-### Subtopic 1: Diffusion Theory and Score Matching Models
+### Academic Papers
 
-1. **Video Diffusion Models: A Survey**
+#### General Diffusion Theory
+1. **A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models**
+   - Authors: Jiayi Fu, Yuxia Wang
+   - Year: 2026
+   - URL: [arXiv](http://arxiv.org/abs/2605.22586v3)
+   - Note: Provides foundational knowledge on the mathematical underpinnings of diffusion models.
+
+2. **Diffusion and Flow Matching Models for Tabular Data: A Survey**
+   - Authors: Zhong Li, Qi Huang, Lincen Yang et al.
+   - Year: 2025
+   - URL: [arXiv](http://arxiv.org/abs/2502.17119v2)
+   - Note: Surveys generative modeling techniques for structured data, emphasizing diffusion models.
+
+3. **Diffusion Models: A Survey**
    - Authors: Andrew Melnik, Michal Ljubljanac, Cong Lu et al.
-   - Published: May 6, 2024
-   - URL: [http://arxiv.org/abs/2405.03150v2](http://arxiv.org/abs/2405.03150v2)
+   - Year: 2024
+   - URL: [arXiv](http://arxiv.org/abs/2405.03150v2)
+   - Note: Offers a comprehensive look at diffusion models' applicability in video content creation.
 
-2. **Stable Diffusion Segmentation for Biomedical Images**
+#### Score Matching
+4. **Score Shocks: The Burgers Equation Structure of Diffusion Generative Models**
+   - Author: Krisanu Sarkar
+   - Year: 2026
+   - URL: [arXiv](http://arxiv.org/abs/2604.07404v1)
+   - Note: Examines the score field of diffusion generative models using a Burgers-type evolution law.
+
+5. **On the Mathematics of Diffusion Models**
+   - URL: [arXiv](https://arxiv.org/abs/2301.11108)
+   - Note: Investigates score-matching analysis deriving reverse diffusion ODE.
+
+#### Specialized Diffusion Models
+6. **Stable Diffusion Segmentation for Biomedical Images with Single-step Reverse Process**
    - Authors: Tianyu Lin, Zhiguang Chen, Zhonghao Yan et al.
-   - Published: June 26, 2024
-   - URL: [http://arxiv.org/abs/2406.18361v3](http://arxiv.org/abs/2406.18361v3)
+   - Year: 2024
+   - URL: [arXiv](http://arxiv.org/abs/2406.18361v3)
+   - Note: Explores implementation challenges of diffusion models in medical imaging.
 
-3. **Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution**
-   - Authors: Aaron Lou, Chenlin Meng, Stefano Ermon
-   - Published: October 25, 2023
-   - URL: [http://arxiv.org/abs/2310.16834v3](http://arxiv.org/abs/2310.16834v3)
+7. **Q-Diffusion: Quantizing Diffusion Models**
+   - Authors: Xiuyu Li, Yijiang Liu, Long Lian et al.
+   - Year: 2023
+   - URL: [arXiv](http://arxiv.org/abs/2302.04304v3)
+   - Note: Focuses on performance optimization of diffusion models in high-memory consumption scenarios.
 
-4. **Controllable Generation with Text-to-Image Diffusion Models: A Survey**
-   - Authors: Pu Cao, Feng Zhou, Qing Song et al.
-   - Published: March 7, 2024
-   - URL: [http://arxiv.org/abs/2403.04279v2](http://arxiv.org/abs/2403.04279v2)
+### Online Resources
 
-5. **Generalized Contrastive Divergence: Joint Training of Energy-Based Model and Diffusion Model through Inverse Reinforcement Learning**
-   - Authors: Sangwoong Yoon, Dohyun Kwon, Himchan Hwang et al.
-   - Published: December 6, 2023
-   - URL: [http://arxiv.org/abs/2312.03397v1](http://arxiv.org/abs/2312.03397v1)
+#### Educational Articles
+8. **An Introduction to Flow Matching and Diffusion Models**
+   - URL: [PDF](https://diffusion.csail.mit.edu/2026/docs/lecture_notes.pdf)
+   - Note: Discusses learning score functions and implications for generative modeling.
 
-6. **Fixed Point Diffusion Models**
-   - Authors: Xingjian Bai, Luke Melas-Kyriazi
-   - Published: January 16, 2024
-   - URL: [http://arxiv.org/abs/2401.08741v1](http://arxiv.org/abs/2401.08741v1)
+9. **How Diffusion Models Work: The Math from Scratch**
+   - URL: [AI Summer](https://theaisummer.com/diffusion-models/)
+   - Note: Breaks down score-matching techniques critical to understanding diffusion model mechanics.
 
-7. **Antithetic Noise in Diffusion Models**
-   - Authors: Jing Jia, Sifan Liu, Bowen Song et al.
-   - Published: June 6, 2025
-   - URL: [http://arxiv.org/abs/2506.06185v2](http://arxiv.org/abs/2506.06185v2)
+10. **Score-Based Diffusion Models**
+   - Author: Fan Pu Zeng
+   - URL: [Blog](https://fanpu.io/blog/2023/score-based-diffusion-models/)
+   - Note: Highlights the promising avenues for generative models through score matching.
 
-### Subtopic 2: Advanced Diffusion Mathematics and Techniques
-
-8. **Conditional Variational Diffusion Models**
-   - Authors: Gabriel della Maggiora, Luis Alberto Croquevielle, Nikita Deshpande et al.
-   - Published: December 4, 2023
-   - URL: [http://arxiv.org/abs/2312.02246v4](http://arxiv.org/abs/2312.02246v4)
-
-9. **LDM3D-VR: Latent Diffusion Model for 3D VR**
-   - Authors: Gabriela Ben Melech Stan, Diana Wofk, Estelle Aflalo et al.
-   - Published: November 6, 2023
-   - URL: [http://arxiv.org/abs/2311.03226v1](http://arxiv.org/abs/2311.03226v1)
-
-10. **Exploring Attribute Variations in Style-based GANs using Diffusion Models**
-    - Authors: Rishubh Parihar, Prasanna Balaji, Raghav Magazine et al.
-    - Published: November 27, 2023
-    - URL: [http://arxiv.org/abs/2311.16052v1](http://arxiv.org/abs/2311.16052v1)
-
-11. **Q-Diffusion: Quantizing Diffusion Models**
-    - Authors: Xiuyu Li, Yijiang Liu, Long Lian et al.
-    - Published: February 8, 2023
-    - URL: [http://arxiv.org/abs/2302.04304v3](http://arxiv.org/abs/2302.04304v3)
-
-### Subtopic 3: Comprehensive Educational Resources
-
-12. **Flow Matching and Diffusion Models — 2026 Version**
-    - URL: [https://diffusion.csail.mit.edu/](https://diffusion.csail.mit.edu/)
-
-13. **How diffusion models work: the math from scratch | AI Summer**
-    - URL: [https://theaisummer.com/diffusion-models/](https://theaisummer.com/diffusion-models/)
-
-14. **Score-based diffusion models via stochastic differential equations**
-    - URL: [https://arxiv.org/html/2402.07487v3](https://arxiv.org/html/2402.07487v3)
-
-15. **[PDF] score-based diffusion models via stochastic differential equations**
-    - URL: [https://www.columbia.edu/~wt2319/DMTut.pdf](https://www.columbia.edu/~wt2319/DMTut.pdf)
-
-These sources provide a comprehensive overview of the mathematical framework underlying diffusion models and their applications, particularly focusing on score matching and stable diffusion concepts.
+These resources should provide a robust foundation for understanding the mathematics and applications of diffusion models and the role of score matching in their development.

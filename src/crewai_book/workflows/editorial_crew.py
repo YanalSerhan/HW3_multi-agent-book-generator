@@ -30,7 +30,9 @@ def create_editorial_crew(output_dir: Path) -> Crew:
         description=(
             "Edit the manuscript for clarity, consistency, and grammar. "
             "Check readability score for each section and ensure it "
-            "meets the ≥60 Flesch target. Fix any issues found."
+            "STRICTLY meets the ≥60 Flesch Reading Ease target. "
+            "To increase the readability score, actively split long sentences into shorter ones, "
+            "use simpler vocabulary, avoid jargon where possible, and fix any issues found."
         ),
         expected_output="Edited manuscript with improvement notes.",
         output_file=str(output_dir / "manuscript_edited.md"),

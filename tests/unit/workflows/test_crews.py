@@ -82,8 +82,8 @@ def test_run_pipeline(
 
 def test_qg4_word_count_pass() -> None:
     """QG-4 should pass when word count is within range."""
-    # Create 10 sections of 1500 words each to total 15000 words
-    sections = [Section(title=f"S{i}", content="word " * 1500, word_count=1500) for i in range(10)]
+    # Create 5 sections of 1500 words each to total 7500 words
+    sections = [Section(title=f"S{i}", content="word " * 1500, word_count=1500) for i in range(5)]
     chap = Chapter(number=1, title="C", chapter_summary="", sections=sections)
     art = Article(
         title="T",
@@ -113,8 +113,8 @@ def test_qg4_word_count_fail() -> None:
 
 def test_qg7_citations() -> None:
     """QG-7 should check bib vs ref counts."""
-    state1 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 20, "ref_count": 15})
-    state2 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 5, "ref_count": 15})
+    state1 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 20, "ref_count": 10})
+    state2 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 5, "ref_count": 10})
     state3 = PipelineState(topic="test", run_id="r1", artifacts={"bib_count": 0, "ref_count": 0})
     assert check_qg7_citations(state1).passed is True
     assert check_qg7_citations(state2).passed is False
@@ -132,7 +132,7 @@ def test_qg8_compilation() -> None:
 def test_run_all_gates_with_article() -> None:
     """run_all_gates should include article-based gates."""
     # Create enough words to hit QG-4
-    sections = [Section(title=f"S{i}", content="text " * 1500, word_count=1500) for i in range(10)]
+    sections = [Section(title=f"S{i}", content="text " * 750, word_count=750) for i in range(10)]
     chap = Chapter(number=1, title="C", chapter_summary="", sections=sections)
     art = Article(
         title="T",

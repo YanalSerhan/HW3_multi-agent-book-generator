@@ -22,7 +22,7 @@ def test_latex_client_success(mock_run, tmp_path) -> None:
     result = client.compile_pdf(str(test_file))
 
     assert result == "Success log"
-    assert mock_run.call_count == 3
+    assert mock_run.call_count == 6
 
 
 def test_latex_client_file_not_found() -> None:

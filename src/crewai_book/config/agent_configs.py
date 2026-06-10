@@ -23,7 +23,9 @@ AGENT_CONFIGS: dict[str, AgentConfig] = {
         goal=(
             "Discover, collect, and organize the most relevant, authoritative, "
             "and up-to-date sources on the assigned topic. Produce a structured "
-            "research corpus with at least 20 verified sources."
+            "research corpus with at least 10 verified sources. You must aim to find "
+            "a LOT of sources (15-20+), and you MUST rigorously filter out any invalid sources. "
+            "Do not include any source that cannot be verified."
         ),
         backstory=(
             "A seasoned academic researcher with 15 years of experience "

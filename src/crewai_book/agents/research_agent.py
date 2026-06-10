@@ -32,6 +32,7 @@ def create_research_agent() -> Agent:
             ReadabilityScoreTool(),
         ],
         max_iter=cfg.max_iter,
+        max_retry_limit=3,
         verbose=True,
         allow_delegation=False,
     )

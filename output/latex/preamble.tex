@@ -3,22 +3,33 @@
 
 % ── Typography ──────────────────────────────────────────
 \usepackage{graphicx}
+\graphicspath{{figures/}}
 \usepackage[T1]{fontenc}
 \usepackage{palatino}
-\usepackage{microtype}
-\usepackage{setspace}
-\onehalfspacing
+\usepackage[protrusion=true]{microtype}
+\OnehalfSpacing
 
 % ── Tables & Math ───────────────────────────────────────
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{multirow}
 \usepackage{amsmath,amsfonts,amssymb}
+\usepackage{algorithm2e}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{epigraph}
 
 % ── Language & Encoding ────────────────────────────────
+\providecommand\UseMathForPositioningText{}
 \usepackage{polyglossia}
 \setdefaultlanguage{english}
 \setotherlanguage{hebrew}
 \newfontfamily\hebrewfont[Script=Hebrew]{Arial}
+
+
 
 % ── Color ──────────────────────────────────────────────
 \usepackage{xcolor}
@@ -35,10 +46,13 @@
   citecolor=chaptercolor,
   urlcolor=blue!60!black,
 ]{hyperref}
+\usepackage{cleveref}
 
 % ── Index & Glossary ───────────────────────────────────
 \usepackage{makeidx}
 \makeindex
+\usepackage{glossaries}
+\makeglossaries
 
 % ── Chapter Style ──────────────────────────────────────
 \chapterstyle{ell}

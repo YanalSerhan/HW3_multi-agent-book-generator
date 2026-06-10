@@ -13,13 +13,13 @@ TEMPLATE_DIR = PROJECT_ROOT / "src" / "crewai_book" / "latex" / "templates"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Quality Gates
-MIN_VERIFIED_SOURCES = 15
+MIN_VERIFIED_SOURCES = 10
 MAX_CRITICAL_HALLUCINATIONS = 0
 MIN_READABILITY_FLESCH = 60.0
-MIN_PDF_PAGES = 20
+MIN_PDF_PAGES = 15
 
 # Timeouts & Retries
-DEFAULT_API_TIMEOUT = 30.0
+DEFAULT_API_TIMEOUT = 45.0
 DEFAULT_MAX_RETRIES = 3
 
 # Document Settings

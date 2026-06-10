@@ -18,11 +18,23 @@ def parse_bibliography(filepath: Path) -> Bibliography:
         return bib
 
     content = filepath.read_text(encoding="utf-8")
+
+    # Strip markdown code fences that LLMs sometimes wrap BibTeX in
+    content = re.sub(r"```(?:bibtex|bib|latex)?\s*\n?", "", content)
+    content = content.replace("```", "")
+
     # Simple regex to count entries and extract keys
     # Matches @article{key, @book{key, etc.
     entry_pattern = re.compile(r"@\w+\s*\{\s*([^,]+),", re.IGNORECASE)
 
     matches = entry_pattern.findall(content)
+
+    if not matches and content.strip():
+        logger.error(
+            f"Bibliography file exists ({len(content)} bytes) but contains "
+            f"no parseable BibTeX entries. Agent likely output non-BibTeX text. "
+            f"First 100 chars: {content[:100]!r}"
+        )
 
     for i, key in enumerate(matches):
         cit = Citation(
@@ -42,22 +54,25 @@ def parse_hallucination_count(filepath: Path) -> int:
         logger.warning(f"Verification report not found: {filepath}")
         return 0
 
-    content = filepath.read_text(encoding="utf-8").lower()
+    content = filepath.read_text(encoding="utf-8")
 
-    # If the report explicitly states there are no hallucinations/unverified claims, return 0
-    if "no flags for unverifiable claims or hallucinations" in content or "0 hallucinations" in content or "no hallucinations" in content:
+    # Often agents return "0 hallucinations" or "no hallucinations" when none are found.
+    content_lower = content.lower()
+    if "0 hallucinations" in content_lower or "no hallucinations" in content_lower:
         return 0
 
     # Count occurrences of red-flag words
     flags = (
-        content.count("hallucination") + content.count("unverified") + content.count("false claim")
+        content_lower.count("hallucination") +
+        content_lower.count("unverified") +
+        content_lower.count("false claim")
     )
 
     return flags
 
 
 def parse_article(filepath: Path) -> Article:
-    """Naively parse markdown manuscript into Article entity for word count and structure checks."""
+    """Naively parse markdown manuscript into Article entity for checks."""
     if not filepath.exists():
         logger.warning(f"Manuscript not found: {filepath}")
         return Article(title="Unknown", authors=[], abstract="", target_audience="", chapters=[])

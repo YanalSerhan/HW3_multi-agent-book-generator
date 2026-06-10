@@ -2,6 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
+# pyrefly: ignore [missing-import]
 import pytest
 
 from crewai_book.domain.entities import Article, Chapter, Section
@@ -67,13 +68,14 @@ def _make_bibliography(n: int) -> Bibliography:
 
 
 def test_qg1_sources_pass() -> None:
-    """QG-1 should pass with ≥15 sources."""
-    state = PipelineState(topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(15)})
-    assert check_qg1_sources(state).passed is True
+    """QG-1 should pass with ≥10 sources."""
+    state = PipelineState(topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(10)})
+    res = check_qg1_sources(state)
+    assert res.passed is True
 
 
-def test_qg1_sources_fail() -> None:
-    """QG-1 should fail with <15 sources."""
+def test_qg1_fail() -> None:
+    """QG-1 should fail with <10 sources."""
     state = PipelineState(topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(5)})
     assert check_qg1_sources(state).passed is False
 

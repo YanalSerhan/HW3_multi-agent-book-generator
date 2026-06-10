@@ -30,35 +30,76 @@ def create_research_crew(topic: str, output_dir: Path) -> Crew:
     research_task = Task(
         description=(
             f"Conduct comprehensive research on '{topic}'. "
-            "Find at least 20 high-quality sources from academic papers "
-            "and authoritative websites. Organize sources by subtopic."
+            "Find a LOT of high-quality sources (at least 15-20+) from academic papers "
+            "and authoritative websites. You MUST ensure that you do not include ANY invalid "
+            "or broken sources. Validate the URLs and DOIs carefully. Use the arxiv_search tool to find "
+            "academic papers and the web_search tool for other sources. "
+            "For each source include: title, authors, year, URL or DOI, "
+            "and a one-sentence relevance note. Organize sources by subtopic."
         ),
-        expected_output="A structured list of 20+ sources with metadata.",
+        expected_output="A structured list of 10+ sources with metadata.",
         output_file=str(output_dir / "research" / "sources.md"),
         agent=research_agent,
     )
 
     verification_task = Task(
         description=(
-            "Verify all factual claims from the research. "
-            "Cross-reference each claim against at least 2 independent "
-            "sources. Flag any unverified claims."
+            "Review the research sources provided in your context. "
+            "For each source, verify the factual claims by cross-referencing "
+            "against at least 2 independent sources using your tools. "
+            "Use the citation_validator tool to check that DOIs and URLs resolve. "
+            "Assign a confidence score (0.0-1.0) to each source. "
+            "Flag any unverified claims. Do NOT attempt to delegate work to "
+            "other agents — perform the verification yourself using your tools.\n\n"
+            "Output a structured verification report with:\n"
+            "- Each source listed with its confidence score\n"
+            "- Any flagged claims with explanations\n"
+            "- Summary: total sources verified, total hallucinations found (if any)\n"
+            "- End with the line: '0 hallucinations found' if none were detected"
         ),
-        expected_output="Verification report with confidence scores.",
+        expected_output=(
+            "A verification report listing each source with a confidence score, "
+            "flagged claims, and a summary line with hallucination count."
+        ),
         output_file=str(output_dir / "research" / "verification_report.md"),
         agent=fact_agent,
+        context=[research_task],
     )
 
     citation_task = Task(
         description=(
-            "Validate all source citations. Check that every DOI resolves "
-            "and every URL is reachable. Produce a clean bibliography. "
-            "IMPORTANT: Your final output must ONLY contain the raw BibTeX entries. "
-            "Do not output markdown, explanations, or backticks."
+            "You are given a list of verified research sources in your context. "
+            "For EACH source, create a valid BibTeX entry. Use the arxiv_search "
+            "tool to look up proper metadata (authors, year, title, DOI) for each "
+            "source. Use the citation_validator tool to verify each DOI or URL.\n\n"
+            "Your output must contain AT LEAST 10 BibTeX entries.\n\n"
+            "CRITICAL OUTPUT FORMAT RULES:\n"
+            "- Output ONLY raw BibTeX entries, one after another.\n"
+            "- Do NOT include any markdown, explanations, backticks, or commentary.\n"
+            "- Do NOT ask questions or request clarification.\n"
+            "- Each entry must start with @ and end with a closing }.\n"
+            "- Use entry types: @article, @inproceedings, @book, or @misc.\n"
+            "- Example of correct output format:\n\n"
+            "@article{song2021scorebased,\n"
+            "  title={Score-Based Generative Modeling through SDEs},\n"
+            "  author={Yang Song and Jascha Sohl-Dickstein and others},\n"
+            "  journal={arXiv preprint arXiv:2011.13456},\n"
+            "  year={2021}\n"
+            "}\n\n"
+            "@article{ho2020denoising,\n"
+            "  title={Denoising Diffusion Probabilistic Models},\n"
+            "  author={Jonathan Ho and Ajay Jain and Pieter Abbeel},\n"
+            "  journal={NeurIPS},\n"
+            "  year={2020}\n"
+            "}\n"
         ),
-        expected_output="A raw text file containing at least 15 valid BibTeX entries (e.g., @article{...}). No other text.",
+        expected_output=(
+            "A plain text file containing 15+ valid BibTeX entries. "
+            "No markdown, no explanations, no backticks. Only @type{key, ...} entries."
+        ),
         output_file=str(output_dir / "latex" / "references.bib"),
         agent=citation_agent,
+        context=[research_task, verification_task],
     )
 
     logger.info(f"Creating research crew for topic: {topic}")

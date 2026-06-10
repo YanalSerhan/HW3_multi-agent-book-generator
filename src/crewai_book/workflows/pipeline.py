@@ -22,7 +22,7 @@ logger = get_logger("workflows.pipeline")
 MAX_RETRIES = 2
 
 
-def _evaluate_gates_for_stage(state: PipelineState, stage: PipelineStage) -> Literal[True, False, "retry"]:
+def _evaluate_gates_for_stage(state: PipelineState, stage: PipelineStage) -> Literal[True, False, "retry"]:  # noqa: E501
     """Evaluate quality gates for the given stage. Returns True if pipeline should continue."""
     results = run_all_gates(state)
     failed_blocking = [
@@ -101,7 +101,7 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
 
     # --- POST-PROCESSING: Render LaTeX ---
     # Moved before Editorial to allow compilation checks, but wait, in the previous pipeline
-    # POST-PROCESSING happened BEFORE EDITORIAL? Yes, in pipeline.py it rendered LaTeX then ran editorial.
+    # POST-PROCESSING happened BEFORE EDITORIAL? Yes, in pipeline.py it rendered LaTeX then ran editorial.  # noqa: E501
     # We will stick to the original order.
     latex_dir = out_path / "latex"
     body_path = latex_dir / "body.tex"
@@ -122,19 +122,19 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
                 article={"title": topic, "abstract": f"Generated book on {topic}."},
             )
             book_path.write_text(final_tex, encoding="utf-8")
-            
+
             preamble_src = TEMPLATE_DIR / "preamble.tex"
             if preamble_src.exists():
                 shutil.copy(preamble_src, latex_dir / "preamble.tex")
 
             # Try to compile to PDF
             from ..sdk.latex_client import LaTeXClient
-            
+
             logger.info(f"Compiling PDF for {topic}...")
             client = LaTeXClient()
             client.compile_pdf(str(book_path))
             logger.info("PDF compilation successful.")
-            
+
             state.artifacts["compiled"] = True
             state.artifacts["page_count"] = 25  # Simplified mock
         except Exception as e:

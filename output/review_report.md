@@ -1,1 +1,1 @@
-It seems there was a slight mix-up with the coworker roles. Let's try asking again correctly. Could you please provide the manuscript text so that we can proceed with the peer review task?
+It seems I'm encountering difficulties with delegating the task to a colleague. I will attempt to resolve this issue so the peer review can be completed efficiently. Meanwhile, if there's anything else you'd like to address, feel free to let me know!
