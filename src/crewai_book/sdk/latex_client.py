@@ -19,7 +19,7 @@ class LaTeXClient(BaseClient):
         """Run compilation using xelatex instead of latexmk to avoid Perl dependency."""
         # Clean up old auxiliary files to prevent compilation failures
         for ext in [".aux", ".bbl", ".blg", ".fls", ".fdb_latexmk", ".log",
-                    ".out", ".toc", ".run.xml", ".glo", ".gls", ".glg", ".ist", ".idx", ".ind", ".ilg"]:  # noqa: E501
+                    ".out", ".toc", ".run.xml", ".glo", ".gls", ".glg", ".ist", ".idx", ".ind", ".ilg"]:
             aux_file = tex_file.with_suffix(ext)
             try:
                 if aux_file.exists():

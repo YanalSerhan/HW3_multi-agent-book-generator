@@ -35,7 +35,7 @@ help: ## Show this help message
 # ----------------------------------------------------------------------------
 
 install: ## Install all dependencies (production + dev)
-	uv sync
+	uv sync --all-extras
 
 install-prod: ## Install production dependencies only
 	uv sync --no-dev
@@ -78,14 +78,14 @@ test-eval: ## Run evaluation tests
 # ----------------------------------------------------------------------------
 
 lint: ## Run ruff linter
-	ruff check $(SRC_DIR) $(TEST_DIR)
+	uv run ruff check $(SRC_DIR) $(TEST_DIR)
 
 type-check: ## Run mypy type checker
-	mypy $(SRC_DIR)
+	uv run mypy $(SRC_DIR)
 
 format: ## Format code with ruff
-	ruff check --fix $(SRC_DIR) $(TEST_DIR)
-	ruff format $(SRC_DIR) $(TEST_DIR)
+	uv run ruff check --fix $(SRC_DIR) $(TEST_DIR)
+	uv run ruff format $(SRC_DIR) $(TEST_DIR)
 
 check-all: lint type-check test ## Run all checks (lint + type-check + test)
 

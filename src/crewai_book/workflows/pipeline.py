@@ -5,8 +5,6 @@ import uuid
 from pathlib import Path
 from typing import Literal
 
-from jinja2 import Environment, FileSystemLoader
-
 from ..domain.state import PipelineState
 from ..observability.logger import get_logger
 from ..services.content_service import ContentService
@@ -22,7 +20,7 @@ logger = get_logger("workflows.pipeline")
 MAX_RETRIES = 2
 
 
-def _evaluate_gates_for_stage(state: PipelineState, stage: PipelineStage) -> Literal[True, False, "retry"]:  # noqa: E501
+def _evaluate_gates_for_stage(state: PipelineState, stage: PipelineStage) -> Literal[True, False, "retry"]:
     """Evaluate quality gates for the given stage. Returns True if pipeline should continue."""
     results = run_all_gates(state)
     failed_blocking = [
@@ -101,7 +99,7 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
 
     # --- POST-PROCESSING: Render LaTeX ---
     # Moved before Editorial to allow compilation checks, but wait, in the previous pipeline
-    # POST-PROCESSING happened BEFORE EDITORIAL? Yes, in pipeline.py it rendered LaTeX then ran editorial.  # noqa: E501
+    # POST-PROCESSING happened BEFORE EDITORIAL? Yes, in pipeline.py it rendered LaTeX then ran editorial.
     # We will stick to the original order.
     latex_dir = out_path / "latex"
     body_path = latex_dir / "body.tex"
@@ -109,17 +107,18 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
 
     if body_path.exists():
         body_content = body_path.read_text(encoding="utf-8")
-        env = Environment(
-            loader=FileSystemLoader(TEMPLATE_DIR),
-            autoescape=False,
-            trim_blocks=True,
-            lstrip_blocks=True,
-        )
+        from ..latex.renderer import create_jinja_env
+        env = create_jinja_env(template_dir=TEMPLATE_DIR)
         try:
+            from ..config.settings import config_manager
+            setup_config = config_manager.get_setup()
+            cover_metadata = setup_config.get("cover_metadata", {})
+
             template = env.get_template("book.tex.j2")
             final_tex = template.render(
                 latex_content=body_content,
                 article={"title": topic, "abstract": f"Generated book on {topic}."},
+                metadata=cover_metadata
             )
             book_path.write_text(final_tex, encoding="utf-8")
 

@@ -9,6 +9,14 @@ A production-grade multi-agent AI system powered by CrewAI that autonomously gen
 1. Copy `.env.example` to `.env` and add your `OPENAI_API_KEY`.
 2. Run the pipeline: `make run` or `uv run crewai-book run --topic "Your Topic"`
 
+## macOS Setup
+To run this project natively on macOS, ensure you have the following dependencies installed:
+1. **MacTeX**: Install via Homebrew: `brew install --cask mactex-no-gui`
+2. **Verify TeX**: Ensure `xelatex` and `biber` are on your PATH.
+3. **uv**: Install the python package manager: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+4. **Environment**: Copy `.env.example` to `.env` and configure both `OPENAI_API_KEY` and `SERPER_API_KEY`.
+5. **Fonts**: Note that `preamble.tex` relies on the standard `Arial` font to render Hebrew text correctly.
+
 ## Configuration
 All configuration parameters are driven by the `.env` file and `config/settings.json`.
 

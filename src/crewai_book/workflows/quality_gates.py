@@ -134,7 +134,7 @@ def check_qg9_pages(state: PipelineState) -> QualityGateResult:
     compiled = state.artifacts.get("compiled")
     if compiled is False:
         return QualityGateResult(True, "Skipping page count check (compilation failed)")
-        
+
     page_count = state.artifacts.get("page_count")
     if page_count is None:
         return QualityGateResult(False, "Page count not found in state artifacts")

@@ -37,7 +37,7 @@ class ConfigManager:
         """Initialize."""
         self.project_root = Path(__file__).parent.parent.parent.parent
         self.config_dir = self.project_root / "config"
-        self.setup_config = _load_json_config(self.config_dir / "setup.json")
+        self.setup_config = _load_json_config(self.config_dir / "settings.json")
         self.rate_limits_config = _load_json_config(self.config_dir / "rate_limits.json")
 
     def get_setup(self) -> dict[str, Any]:

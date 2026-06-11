@@ -33,10 +33,9 @@ def _latex_escape(text: str) -> str:
         "}": r"\}",
         "~": r"\textasciitilde{}",
         "^": r"\textasciicircum{}",
+        "\\": r"\textbackslash{}",
     }
-    for char, escaped in replacements.items():
-        text = text.replace(char, escaped)
-    return text
+    return "".join(replacements.get(c, c) for c in str(text))
 
 
 def create_jinja_env(template_dir: Path | None = None) -> Environment:
@@ -82,8 +81,12 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
     env = create_jinja_env(template_dir)
 
     try:
+        from ..config.settings import config_manager
+        setup_config = config_manager.get_setup()
+        cover_metadata = setup_config.get("cover_metadata", {})
+
         template = env.get_template("book.tex.j2")
-        rendered = template.render(article=article)
+        rendered = template.render(article=article, metadata=cover_metadata)
         logger.info(f"Rendered LaTeX document: {len(rendered)} chars")
         return rendered
     except Exception as e:

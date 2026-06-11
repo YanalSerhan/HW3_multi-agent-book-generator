@@ -13,19 +13,19 @@
     \centering
     \vspace*{2cm}
     
-    {\Huge\bfseries\color{chaptercolor} {{- article.title -}} \par}
+    {\Huge\bfseries\color{chaptercolor} {{ article.title | latex_escape }} \par}
     \vspace{0.5cm}
-    {\LARGE\itshape Orchestration of AI agents\par}
+    {\LARGE\itshape {{ metadata.course | default('Orchestration of AI agents', true) | latex_escape }}\par}
     
     \vspace{2.5cm}
     
-    {\Large Yanal Serhan \& Nell Khoury\par}
+    {\Large {{ metadata.authors | default('Unknown Author', true) | latex_escape }}\par}
     \vspace{0.5cm}
-    {\large Lecturer: Dr. Yoram Segal\par}
+    {\large Lecturer: {{ metadata.lecturer | default('Unknown Lecturer', true) | latex_escape }}\par}
     
     \vfill
     
-    {\large \today\par}
+    {\large {{ metadata.date | default('\\today', true) }}\par}
 \end{titlingpage}
 
 \begin{abstract}

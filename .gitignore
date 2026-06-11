@@ -88,3 +88,12 @@ desktop.ini
 
 # ---------- User Files ----------
 check.md
+# New ignores
+.env
+*.aux
+*.log
+*.bbl
+temp_gen_*.py
+.coverage
+test_output/
+

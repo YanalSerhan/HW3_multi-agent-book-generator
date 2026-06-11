@@ -228,7 +228,7 @@
 #### Configuration Architecture
 
 - [ ] 🔴 Clear configuration hierarchy is followed
-- [ ] 🔴 `config/setup.json` — main app config (versioned)
+- [ ] 🔴 `config/settings.json` — main app config (versioned)
 - [ ] 🔴 `config/rate_limits.json` — API rate limits (versioned)
 - [ ] 🔴 `config/logging_config.json` — logging configuration
 - [ ] 🔴 `.env` — secrets (git-ignored)

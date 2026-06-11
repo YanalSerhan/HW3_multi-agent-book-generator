@@ -81,14 +81,14 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     latex_task = Task(
         description=(
             "Convert the manuscript and figures report into LaTeX source. "
-            "The manuscript already contains raw LaTeX tables. Preserve them exactly. To prevent table overflow, you MAY add \\resizebox{\\textwidth}{!}{...} around tabular environments if necessary. "  # noqa: E501
-            "Embed EVERY figure from the figures report into the appropriate section using \\begin{figure}. "  # noqa: E501
-            "Ensure all in-text citations are mapped to \\cite{...} commands corresponding to the bibliography. "  # noqa: E501
+            "The manuscript already contains raw LaTeX tables. Preserve them exactly. To prevent table overflow, you MAY add \\resizebox{\\textwidth}{!}{...} around tabular environments if necessary. "
+            "Embed EVERY figure from the figures report into the appropriate section using \\begin{figure}. "
+            "Ensure all in-text citations are mapped to \\cite{...} commands corresponding to the bibliography. "
             "CRITICAL: Output ONLY the raw LaTeX source code for the chapters and sections. "
-            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "  # noqa: E501
+            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "
             "Do NOT enclose your output in markdown code blocks."
         ),
-        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",  # noqa: E501
+        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",
         output_file=str(output_dir / "latex" / "body.tex"),
         agent=latex_agent,
     )

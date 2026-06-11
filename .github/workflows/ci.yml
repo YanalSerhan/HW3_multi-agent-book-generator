@@ -18,7 +18,7 @@ jobs:
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
     - name: Install dependencies
-      run: uv sync
+      run: uv sync --all-extras
     - name: Run linting
       run: make lint
     - name: Run type checking

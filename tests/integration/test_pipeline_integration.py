@@ -1,9 +1,17 @@
 """Integration tests for the complete pipeline execution."""
 
+import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from crewai_book.workflows.pipeline import run_pipeline
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("CI") == "true",
+    reason="Requires OPENAI_API_KEY and LaTeX install"
+)
 
 
 def _simulate_research_crew_kickoff(out_path: Path):
