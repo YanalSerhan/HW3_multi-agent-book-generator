@@ -4,6 +4,8 @@ Conducts thorough literature research using web search and ArXiv tools
 to build a comprehensive corpus of verified sources on the target topic.
 """
 
+from typing import Any
+
 from crewai import Agent
 
 from ..config.agent_configs import AGENT_CONFIGS
@@ -11,6 +13,32 @@ from ..tools.arxiv_tool import ArXivTool
 from ..tools.citation_validator_tool import CitationValidatorTool
 from ..tools.readability_tool import ReadabilityScoreTool
 from ..tools.web_search_tool import WebSearchTool
+
+
+def _get_knowledge_tools() -> list[Any]:
+    """Get dynamic knowledge tools based on configured sources."""
+    try:
+        import os
+        from pathlib import Path
+
+        from crewai_tools import TXTSearchTool
+
+        from ..config.settings import config_manager
+
+        setup_config = config_manager.get_setup()
+        sources = setup_config.get("knowledge_sources", [])
+
+        tools = []
+        for src in sources:
+            src_path = Path(src)
+            # The extractor writes to sources/{stem}_extracted.md
+            md_path = Path("sources") / f"{src_path.stem}_extracted.md"
+            if md_path.exists() and os.getenv("OPENAI_API_KEY"):
+                # Avoid requiring API key if running in CI without it
+                tools.append(TXTSearchTool(txt=str(md_path)))
+        return tools
+    except Exception:
+        return []
 
 
 def create_research_agent() -> Agent:
@@ -30,6 +58,7 @@ def create_research_agent() -> Agent:
             ArXivTool(),
             CitationValidatorTool(),
             ReadabilityScoreTool(),
+            *_get_knowledge_tools(),
         ],
         max_iter=cfg.max_iter,
         max_retry_limit=3,

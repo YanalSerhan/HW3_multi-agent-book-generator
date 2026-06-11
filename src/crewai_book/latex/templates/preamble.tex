@@ -21,24 +21,6 @@
 \usepackage{listings}
 \usepackage{mdframed}
 \usepackage{epigraph}
-
-% ── Language & Encoding ────────────────────────────────
-\providecommand\UseMathForPositioningText{}
-\usepackage{polyglossia}
-\setdefaultlanguage{english}
-\setotherlanguage{hebrew}
-\newfontfamily\hebrewfont[Script=Hebrew]{Arial}
-
-
-
-% ── Color ──────────────────────────────────────────────
-\usepackage{xcolor}
-\definecolor{chaptercolor}{HTML}{003366}
-
-% ── Bibliography (BibLaTeX + Biber) ────────────────────
-\usepackage[style=apa,backend=biber]{biblatex}
-\addbibresource{references.bib}
-
 % ── Hyperlinks ─────────────────────────────────────────
 \usepackage[
   colorlinks=true,
@@ -47,6 +29,21 @@
   urlcolor=blue!60!black,
 ]{hyperref}
 \usepackage{cleveref}
+
+% ── Language & Encoding ────────────────────────────────
+\providecommand\UseMathForPositioningText{}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setotherlanguage{hebrew}
+\newfontfamily\hebrewfont[Script=Hebrew]{Arial}
+
+% ── Color ──────────────────────────────────────────────
+\usepackage{xcolor}
+\definecolor{chaptercolor}{HTML}{003366}
+
+% ── Bibliography (BibLaTeX + Biber) ────────────────────
+\usepackage[style=apa,backend=biber]{biblatex}
+\addbibresource{references.bib}
 
 % ── Index & Glossary ───────────────────────────────────
 \usepackage{makeidx}

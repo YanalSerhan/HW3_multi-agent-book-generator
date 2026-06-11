@@ -5,6 +5,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
+
 from rich.console import Console
 
 console = Console()
@@ -17,12 +18,12 @@ def validate_latex(tex_path: Path) -> int:
         return 1
 
     console.print(f"Validating LaTeX file: {tex_path}")
-    
-    with open(tex_path, "r", encoding="utf-8") as f:
+
+    with open(tex_path, encoding="utf-8") as f:
         content = f.read()
 
     issues = []
-    
+
     # Check brace balancing
     brace_count = 0
     for i, char in enumerate(content):
@@ -41,13 +42,13 @@ def validate_latex(tex_path: Path) -> int:
     # Check environment balancing
     begin_pattern = re.compile(r"\\begin\{([^}]+)\}")
     end_pattern = re.compile(r"\\end\{([^}]+)\}")
-    
+
     environments = []
-    
+
     for match in re.finditer(r"\\(begin|end)\{([^}]+)\}", content):
         tag_type = match.group(1)
         env_name = match.group(2)
-        
+
         if tag_type == "begin":
             environments.append(env_name)
         elif tag_type == "end":
@@ -67,7 +68,7 @@ def validate_latex(tex_path: Path) -> int:
         for issue in issues:
             console.print(f" - [red]{issue}[/red]")
         return 1
-    
+
     console.print("[bold green]LaTeX structure appears valid![/bold green]")
     return 0
 
@@ -76,13 +77,13 @@ def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Validate LaTeX syntax.")
     parser.add_argument(
-        "--file", 
-        type=Path, 
+        "--file",
+        type=Path,
         default=Path("output/latex/book.tex"),
         help="Path to the .tex file"
     )
     args = parser.parse_args()
-    
+
     sys.exit(validate_latex(args.file))
 
 

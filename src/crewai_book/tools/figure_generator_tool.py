@@ -89,7 +89,11 @@ class FigureGeneratorTool(BaseTool):
                 base_module = ast_node.module.split(".")[0]
                 if base_module not in allowlist:
                     return f"FAILED: Security error. Importing from '{ast_node.module}' is not allowed. Allowed modules: {', '.join(allowlist)}"
-            elif isinstance(ast_node, ast.Call) and isinstance(ast_node.func, ast.Name) and ast_node.func.id in dangerous_functions:
+            elif (
+                isinstance(ast_node, ast.Call)
+                and isinstance(ast_node.func, ast.Name)
+                and ast_node.func.id in dangerous_functions
+            ):
                 return f"FAILED: Security error. Calling '{ast_node.func.id}' is not allowed."
 
         # 2. Execute in isolated temp workdir
@@ -105,7 +109,7 @@ class FigureGeneratorTool(BaseTool):
                     "PATH": os.environ.get("PATH", ""),
                     "MPLBACKEND": "Agg",
                     "MPLCONFIGDIR": str(temp_path),
-                    "HOME": str(temp_path)
+                    "HOME": str(temp_path),
                 }
 
                 # 4. Execute with 60s timeout

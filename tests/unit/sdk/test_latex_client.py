@@ -36,6 +36,7 @@ def test_latex_client_file_not_found() -> None:
 def test_latex_client_compilation_error(mock_run, tmp_path) -> None:
     """Test docstring."""
     from crewai_book.exceptions.domain import APIConnectionError
+
     mock_result = MagicMock()
     mock_result.returncode = 1
     mock_result.stdout = "Failure log"
@@ -56,6 +57,7 @@ def test_latex_client_timeout(mock_run, tmp_path) -> None:
     import subprocess
 
     from crewai_book.exceptions.domain import APIConnectionError
+
     mock_run.side_effect = subprocess.TimeoutExpired(cmd="latexmk", timeout=60.0)
 
     test_file = tmp_path / "test.tex"
@@ -70,6 +72,7 @@ def test_latex_client_timeout(mock_run, tmp_path) -> None:
 def test_latex_client_latexmk_not_found(mock_run, tmp_path) -> None:
     """Test docstring."""
     from crewai_book.exceptions.domain import APIConnectionError
+
     mock_run.side_effect = FileNotFoundError()
 
     test_file = tmp_path / "test.tex"

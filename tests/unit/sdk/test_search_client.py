@@ -61,7 +61,7 @@ def test_search_client_invalid_data(mock_client_cls) -> None:
     mock_client_cls.return_value.__enter__.return_value = mock_client
 
     mock_resp = MagicMock()
-    mock_resp.json.return_value = [] # Not a dict
+    mock_resp.json.return_value = []  # Not a dict
     mock_client.post.return_value = mock_resp
 
     client = SearchClient()

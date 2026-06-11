@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from crewai_book.latex.renderer import create_jinja_env
@@ -15,8 +14,8 @@ def test_template_rendering_with_metadata() -> None:
             "authors": "Jane Doe & John Smith",
             "course": "100% \\ done & more",
             "lecturer": "Dr_AI",
-            "date": "2026-01-01"
-        }
+            "date": "2026-01-01",
+        },
     )
 
     # Check escaping of special characters
@@ -30,6 +29,7 @@ def test_template_rendering_with_metadata() -> None:
     assert "{\\Large Jane Doe \\& John Smith\\par}" in out
     assert "{\\LARGE\\itshape 100\\% \\textbackslash{} done \\& more\\par}" in out
 
+
 def test_template_rendering_without_metadata() -> None:
     env = create_jinja_env(template_dir=Path("src/crewai_book/latex/templates"))
     template = env.get_template("book.tex.j2")
@@ -37,7 +37,7 @@ def test_template_rendering_without_metadata() -> None:
     out = template.render(
         article={"title": "Test Title", "abstract": "Test Abstract"},
         latex_content="Body",
-        metadata={}
+        metadata={},
     )
 
     assert "Unknown Author" in out

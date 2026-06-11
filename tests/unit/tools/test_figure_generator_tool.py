@@ -91,6 +91,7 @@ def test_figure_generator_execution_error(mock_run, tmp_path) -> None:
 @patch("crewai_book.tools.figure_generator_tool.subprocess.run")
 def test_figure_generator_timeout(mock_run, tmp_path) -> None:
     import subprocess
+
     mock_run.side_effect = subprocess.TimeoutExpired(cmd="python", timeout=60.0)
 
     with patch("crewai_book.tools.figure_generator_tool.OUTPUT_DIR", tmp_path):
@@ -121,6 +122,7 @@ def test_figure_generator_non_mocked_matplotlib(tmp_path) -> None:
         import matplotlib  # noqa: F401
     except ImportError:
         import pytest
+
         pytest.skip("matplotlib not installed")
 
     with patch("crewai_book.tools.figure_generator_tool.OUTPUT_DIR", tmp_path):

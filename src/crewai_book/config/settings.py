@@ -25,7 +25,6 @@ class AppSettings(BaseSettings):
     # App Config
     app_env: str = Field(default="production", alias="APP_ENV")
     human_review_outline: bool = Field(default=True, alias="HUMAN_REVIEW_OUTLINE")
-    human_review_draft: bool = Field(default=True, alias="HUMAN_REVIEW_DRAFT")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

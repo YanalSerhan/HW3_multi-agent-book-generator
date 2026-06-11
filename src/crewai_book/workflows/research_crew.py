@@ -110,7 +110,6 @@ def create_research_crew(topic: str, output_dir: Path) -> Crew:
     return Crew(
         agents=[research_agent, fact_agent, citation_agent],
         tasks=[research_task, verification_task, citation_task],
-        process=Process.hierarchical,
-        manager_llm="gpt-4o",
+        process=Process.sequential,
         verbose=True,
     )

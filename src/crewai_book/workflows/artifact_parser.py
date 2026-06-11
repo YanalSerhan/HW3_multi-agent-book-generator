@@ -63,9 +63,9 @@ def parse_hallucination_count(filepath: Path) -> int:
 
     # Count occurrences of red-flag words
     flags = (
-        content_lower.count("hallucination") +
-        content_lower.count("unverified") +
-        content_lower.count("false claim")
+        content_lower.count("hallucination")
+        + content_lower.count("unverified")
+        + content_lower.count("false claim")
     )
 
     return flags
@@ -84,24 +84,25 @@ def parse_article(filepath: Path) -> Article:
     current_chapter: Chapter | None = None
     current_section: Section | None = None
 
-    # Simple state machine to parse markdown headers
+    # Simple state machine to parse markdown or latex headers
     for line in lines:
-        if line.startswith("# "):
+        if line.startswith("# ") or line.startswith("\\chapter{"):
             # New chapter
             if current_chapter and current_section:
                 current_section.update_word_count()
             if current_chapter:
                 chapters.append(current_chapter)
 
+            title = line.lstrip("# ").replace("\\chapter{", "").rstrip("}")
             current_chapter = Chapter(
                 number=len(chapters) + 1,
-                title=line.lstrip("# ").strip(),
+                title=title.strip(),
                 chapter_summary="",
                 sections=[],
             )
             current_section = None
 
-        elif line.startswith("## ") or line.startswith("### "):
+        elif line.startswith("## ") or line.startswith("### ") or line.startswith("\\section{") or line.startswith("\\subsection{"):
             # New section
             if current_section:
                 current_section.update_word_count()
@@ -111,7 +112,8 @@ def parse_article(filepath: Path) -> Article:
                     number=1, title="Default", chapter_summary="", sections=[]
                 )
 
-            current_section = Section(title=line.lstrip("# ").strip(), content="")
+            title = line.lstrip("# ").replace("\\section{", "").replace("\\subsection{", "").rstrip("}")
+            current_section = Section(title=title.strip(), content="")
             current_chapter.sections.append(current_section)
 
         else:

@@ -6,5 +6,12 @@
     "authors": "Yanal Serhan & Nell Khoury",
     "course": "Orchestration of AI agents",
     "lecturer": "Dr. Yoram Segal"
+  },
+  "knowledge_sources": [
+    "sources/vae_homework.ipynb"
+  ],
+  "book_length": {
+    "chapter_count": 8,
+    "words_per_section": 325
   }
 }

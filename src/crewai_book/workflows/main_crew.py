@@ -34,13 +34,23 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     pdf_agent = create_pdf_agent()
     qa_agent = create_qa_agent()
 
+    from ..config.settings import config_manager
+
+    setup_config = config_manager.get_setup()
+    book_length = setup_config.get("book_length", {})
+    chapter_count = book_length.get("chapter_count", 8)
+    words_per_section = book_length.get("words_per_section", 200)
+
     outline_task = Task(
         description=(
             f"Create a detailed book outline for '{topic}' with "
-            "8-10 chapters, each having 3-4 sections. Include a chapter "
-            "summary and target word count (200-300 words) for each section. "
+            f"{chapter_count} chapters, each having 3-4 sections. Include a chapter "
+            f"summary and target word count ({words_per_section} words) for each section. "
+            "CRITICAL REQUIRED CHAPTER: You MUST include exactly ONE chapter titled 'פרק בעברית: האינטואיציה ממודלי VAE למודלי דיפוזיה (Hebrew Chapter)' "
+            "— this chapter will be WRITTEN IN THE HEBREW LANGUAGE (עברית), not in English. It is NOT a metaphor or style. "
+            "Its sections cover: ELBO and the reparameterization trick as the VAE foundation; diffusion as a hierarchical VAE; the role of the noise schedule. "
             "Explicitly include LaTeX tables (using \\begin{table}...\\end{table}) for comparative analysis "
-            "in at least half of the chapters. Do NOT use markdown tables or image files for tables."
+            "in at least one chapter. Do NOT use markdown tables or image files for tables."
         ),
         expected_output="Hierarchical outline with chapters, sections, and table markers.",
         output_file=str(output_dir / "outline.md"),
@@ -50,10 +60,19 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     writing_task = Task(
         description=(
             "Write the complete manuscript following the outline. "
-            "Each section should be 200-250 words to hit a total of 7000-8000 words. "
+            f"Each section should be ~{words_per_section} words to hit the target length. "
             "Dive deep into the technical details, providing comprehensive explanations, "
             "examples, and edge cases to significantly increase the word count per section. "
-            "Actively embed LaTeX tables (using \\begin{table}...\\end{table}) for data presentation instead of markdown tables. "
+            "CRITICAL BIDI REQUIREMENT: The chapter covering 'פרק בעברית: האינטואיציה ממודלי VAE למודלי דיפוזיה (Hebrew Chapter)' MUST be written entirely in Hebrew prose "
+            "(using inline English technical terms where appropriate). You MUST wrap the entire text of this Hebrew chapter inside a "
+            "\\begin{hebrew} ... \\end{hebrew} environment block. "
+            "The Hebrew chapter explains the intuition bridge from VAEs to diffusion models: ELBO and the reparameterization trick as the VAE foundation, why diffusion can be seen as a hierarchical VAE, and the role of the noise schedule. Content must be specific to these concepts — generic AI/LLM filler text is a failure. "
+            "You MAY include an OPTIONAL simple two-column English-Hebrew glossary table inside the Hebrew chapter only if rendering-safe.\n"
+            "PROVENANCE FOOTNOTES: For major factual claims (max 2 per page, ~12 total), inject a provenance marker "
+            "using exactly this syntax: [PROVENANCE: bib_key | short quote < 15 words | confidence_score]\n"
+            "Example: [PROVENANCE: ho2020denoising | diffusion models generate high quality images | 0.95]\n"
+            "Every footnoted bib_key MUST exist in the bibliography.\n"
+            "At least one LaTeX table must appear somewhere in the book (using \\begin{table}...\\end{table}) for data presentation instead of markdown tables. "
             "Do NOT use image files for tables. "
             "Actively embed citations matching the bibliography. "
             "Ensure extremely high readability by using very short sentences, simple vocabulary, "
@@ -69,6 +88,8 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "Read the manuscript and identify 2-3 key concepts or architectures that "
             "would benefit from visualization. Generate 2-3 professional figures "
             "(e.g., bar charts, line plots, or block diagrams) using the figure generator tool. "
+            "CRITICAL: You MUST use the figure generator tool to create at least one topic-relevant matplotlib graph "
+            "(e.g., comparing VAE and Diffusion latent spaces or noise schedules) specifically for the Hebrew intuition chapter ('פרק בעברית: האינטואיציה ממודלי VAE למודלי דיפוזיה (Hebrew Chapter)'). "
             "Save them as PNG or PDF files. Provide a summary of the generated figures "
             "including their filenames and suggested captions. "
             "CRITICAL: Do NOT generate tables as images. Tables must be natively formatted in text/LaTeX."
@@ -84,11 +105,12 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "The manuscript already contains raw LaTeX tables. Preserve them exactly. To prevent table overflow, you MAY add \\resizebox{\\textwidth}{!}{...} around tabular environments if necessary. "
             "Embed EVERY figure from the figures report into the appropriate section using \\begin{figure}. "
             "Ensure all in-text citations are mapped to \\cite{...} commands corresponding to the bibliography. "
+            "CRITICAL: The manuscript contains custom tags like [PROVENANCE: ...]. You MUST preserve these tags exactly as they appear in the text, do NOT modify them or convert them to LaTeX macros. "
             "CRITICAL: Output ONLY the raw LaTeX source code for the chapters and sections. "
             "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "
             "Do NOT enclose your output in markdown code blocks."
         ),
-        expected_output="Raw LaTeX body code containing only chapters, sections, and properly formatted tables.",
+        expected_output="Raw LaTeX body code containing only chapters, sections, properly formatted tables, and preserved PROVENANCE tags.",
         output_file=str(output_dir / "latex" / "body.tex"),
         agent=latex_agent,
     )
@@ -96,7 +118,9 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     pdf_task = Task(
         description=(
             "Compile the LaTeX source into a final PDF. Verify the "
-            "output has ≥15 pages and all elements render correctly."
+            "output has ≥15 pages and all elements render correctly. "
+            f"CRITICAL: You MUST invoke the latex_compiler tool with "
+            f"tex_file_path='{output_dir}/latex/book.tex'."
         ),
         expected_output="Compiled PDF with quality verification report.",
         output_file=str(output_dir / "latex" / "pdf_report.md"),

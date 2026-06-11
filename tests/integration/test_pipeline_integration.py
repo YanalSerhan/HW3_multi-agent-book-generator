@@ -9,8 +9,7 @@ import pytest
 from crewai_book.workflows.pipeline import run_pipeline
 
 pytestmark = pytest.mark.skipif(
-    os.getenv("CI") == "true",
-    reason="Requires OPENAI_API_KEY and LaTeX install"
+    os.getenv("CI") == "true", reason="Requires OPENAI_API_KEY and LaTeX install"
 )
 
 
@@ -24,7 +23,9 @@ def _simulate_research_crew_kickoff(out_path: Path):
     # Generate mock bibliography with 10 sources (to pass QG-1)
     bib_content = ""
     for i in range(10):
-        bib_content += f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
+        bib_content += (
+            f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
+        )
     (latex_dir / "references.bib").write_text(bib_content, encoding="utf-8")
 
     # Generate mock verification report with NO hallucinations (to pass QG-2)
@@ -47,12 +48,16 @@ def _simulate_main_crew_kickoff(out_path: Path):
     latex_dir.mkdir(parents=True, exist_ok=True)
     (latex_dir / "body.tex").write_text("This is the LaTeX body.", encoding="utf-8")
 
+    # Simulate pdf_task successfully compiling the PDF
+    (latex_dir / "book.pdf").write_text("Mock PDF content", encoding="utf-8")
+
 
 def _simulate_editorial_crew_kickoff(out_path: Path):
     """Simulates the editorial crew. The readability is evaluated on the manuscript."""
     pass
 
 
+@patch("builtins.input", return_value="y")
 @patch("crewai_book.workflows.pipeline.create_editorial_crew")
 @patch("crewai_book.workflows.pipeline.create_main_crew")
 @patch("crewai_book.workflows.pipeline.create_research_crew")
@@ -62,6 +67,7 @@ def test_pipeline_integration_success(
     mock_research: MagicMock,
     mock_main: MagicMock,
     mock_editorial: MagicMock,
+    mock_input: MagicMock,
     tmp_path: Path,
 ) -> None:
     """Test that the pipeline correctly integrates all stages, parses files, and passes quality gates."""
@@ -71,7 +77,19 @@ def test_pipeline_integration_success(
     mock_research.return_value = mock_research_crew
 
     mock_main_crew = MagicMock()
-    mock_main_crew.kickoff.side_effect = lambda: _simulate_main_crew_kickoff(tmp_path)
+
+    def fake_main_kickoff():
+        _simulate_main_crew_kickoff(tmp_path)
+        if hasattr(mock_main_crew, "tasks"):
+            # run callbacks if present
+            for task in mock_main_crew.tasks:
+                cb = getattr(task, "callback", None)
+                if cb:
+                    cb("Simulated output")
+
+    mock_main_crew.kickoff.side_effect = fake_main_kickoff
+    # Give it mock tasks so callbacks can be attached (latex task is at index 3)
+    mock_main_crew.tasks = [MagicMock() for _ in range(6)]
     mock_main.return_value = mock_main_crew
 
     mock_ed_crew = MagicMock()
@@ -91,7 +109,7 @@ def test_pipeline_integration_success(
     assert state.artifacts["compiled"] is True
 
     # Verify Jinja template actually rendered the book.tex
-    book_tex = (tmp_path / "latex" / "book.tex")
+    book_tex = tmp_path / "latex" / "book.tex"
     assert book_tex.exists()
     assert "This is the LaTeX body." in book_tex.read_text(encoding="utf-8")
 
@@ -101,9 +119,11 @@ def test_pipeline_integration_success(
     mock_editorial.assert_called_once()
 
 
+@patch("builtins.input", return_value="y")
 @patch("crewai_book.workflows.pipeline.create_research_crew")
 def test_pipeline_integration_retry_logic(
     mock_research: MagicMock,
+    mock_input: MagicMock,
     tmp_path: Path,
 ) -> None:
     """Test that the pipeline correctly triggers a retry if a quality gate fails."""
@@ -122,14 +142,18 @@ def test_pipeline_integration_retry_logic(
             for i in range(5):
                 bib_content += f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
             (latex_dir / "references.bib").write_text(bib_content, encoding="utf-8")
-            (research_dir / "verification_report.md").write_text("All claims verified.", encoding="utf-8")
+            (research_dir / "verification_report.md").write_text(
+                "All claims verified.", encoding="utf-8"
+            )
         else:
             # Second run: Passes QG-1 (10 sources)
             bib_content = ""
             for i in range(10):
                 bib_content += f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
             (latex_dir / "references.bib").write_text(bib_content, encoding="utf-8")
-            (research_dir / "verification_report.md").write_text("All claims verified.", encoding="utf-8")
+            (research_dir / "verification_report.md").write_text(
+                "All claims verified.", encoding="utf-8"
+            )
 
     mock_research_crew = MagicMock()
     mock_research_crew.kickoff.side_effect = _failing_then_passing_research
@@ -145,7 +169,9 @@ def test_pipeline_integration_retry_logic(
     # Actually, let's just let it fail at MAIN stage to stop the pipeline, so we can verify RESEARCH retried.
     with patch("crewai_book.workflows.pipeline.create_main_crew") as mock_main:
         mock_main_crew = MagicMock()
-        mock_main_crew.kickoff.side_effect = lambda: (tmp_path / "manuscript.md").write_text("FAIL", encoding="utf-8")
+        mock_main_crew.kickoff.side_effect = lambda: (tmp_path / "manuscript.md").write_text(
+            "FAIL", encoding="utf-8"
+        )
         mock_main.return_value = mock_main_crew
 
         state = run_pipeline("Retry Topic", output_dir=tmp_path)
@@ -155,3 +181,45 @@ def test_pipeline_integration_retry_logic(
         # It should have failed at MAIN stage due to invalid manuscript (word count < 7500)
         # So it aborts or exceeds retries at MAIN stage.
         assert state.current_stage == "main"
+
+@patch("crewai_book.workflows.pipeline.create_research_crew")
+@patch("crewai_book.workflows.pipeline.create_main_crew")
+@patch("builtins.input", side_effect=["y", "n"])
+def test_pipeline_human_review_outline_abort(
+    mock_input: MagicMock,
+    mock_main: MagicMock,
+    mock_research: MagicMock,
+    tmp_path: Path,
+) -> None:
+    """Test that the pipeline correctly aborts when HUMAN_REVIEW_OUTLINE is rejected."""
+    # Ensure setting is True
+    from crewai_book.config.settings import settings
+    settings.human_review_outline = True
+
+    mock_research_crew = MagicMock()
+    mock_research_crew.kickoff.side_effect = lambda: _simulate_research_crew_kickoff(tmp_path)
+    mock_research.return_value = mock_research_crew
+
+    # For main_crew, we want to simulate the outline_task completing.
+    # The callback is attached to tasks[0].
+    mock_main_crew = MagicMock()
+
+    # We will simulate kickoff by calling the callback if it was attached.
+    def fake_kickoff():
+        if hasattr(mock_main_crew, "tasks") and mock_main_crew.tasks:
+            cb = getattr(mock_main_crew.tasks[0], "callback", None)
+            if cb:
+                cb("Simulated Outline Content")
+
+    mock_main_crew.kickoff.side_effect = fake_kickoff
+    # We need to give it a task list so the pipeline can attach the callback
+    mock_task = MagicMock()
+    mock_main_crew.tasks = [mock_task]
+    mock_main.return_value = mock_main_crew
+
+    with pytest.raises(SystemExit) as exit_exc:
+        run_pipeline("Abort Topic", output_dir=tmp_path)
+
+    assert exit_exc.value.code == 0
+    assert mock_input.call_count == 2
+    mock_input.assert_called_with("Approve outline? [y = continue / n = abort run]: ")

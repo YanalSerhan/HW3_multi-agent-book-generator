@@ -4,6 +4,7 @@ Renders Article domain models into compilable LaTeX source
 using Jinja2 templates with custom LaTeX-safe filters.
 """
 
+import re
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -36,6 +37,37 @@ def _latex_escape(text: str) -> str:
         "\\": r"\textbackslash{}",
     }
     return "".join(replacements.get(c, c) for c in str(text))
+
+
+def inject_provenance_footnotes(text: str, bib_keys: set[str]) -> str:
+    """Parse and replace PROVENANCE tags with LaTeX footnotes.
+
+    Format: [PROVENANCE: key | short quote | confidence]
+    """
+    pattern = r"\[PROVENANCE:\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^\]]+?)\]"
+
+    def replacer(match: re.Match[str]) -> str:
+        key = match.group(1).strip()
+        quote = match.group(2).strip()
+        conf = match.group(3).strip()
+
+        if key in bib_keys:
+            escaped_quote = _latex_escape(quote)
+            return f"\\footnote{{Source: \\protect\\cite{{{key}}}. Quote: ``{escaped_quote}''. Confidence: {conf}}}"
+        else:
+            return f"\\protect\\cite{{{key}}}"
+
+    text = re.sub(pattern, replacer, text)
+
+    # Cleanup pass: remove any remaining malformed PROVENANCE tags
+    malformed_pattern = r"\[PROVENANCE:[^\]]*\]"
+
+    def cleanup_replacer(match: re.Match[str]) -> str:
+        malformed_tag = match.group(0)
+        logger.warning(f"Stripping malformed PROVENANCE tag: {malformed_tag}")
+        return ""
+
+    return re.sub(malformed_pattern, cleanup_replacer, text)
 
 
 def create_jinja_env(template_dir: Path | None = None) -> Environment:
@@ -82,6 +114,7 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
 
     try:
         from ..config.settings import config_manager
+
         setup_config = config_manager.get_setup()
         cover_metadata = setup_config.get("cover_metadata", {})
 

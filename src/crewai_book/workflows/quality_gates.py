@@ -147,7 +147,10 @@ def check_qg10_qa_signoff(state: PipelineState) -> QualityGateResult:
     critical_gates = ["QG-1", "QG-2", "QG-7", "QG-8", "QG-9"]
     passed = all(g in state.quality_gates_passed for g in critical_gates)
     return QualityGateResult(
-        passed, "QA signoff: all critical passed" if passed else "QA signoff failed: missing gates (not found in state artifacts)"
+        passed,
+        "QA signoff: all critical passed"
+        if passed
+        else "QA signoff failed: missing gates (not found in state artifacts)",
     )
 
 

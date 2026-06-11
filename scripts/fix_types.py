@@ -5,7 +5,7 @@ for root, dirs, files in os.walk('tests'):
     for file in files:
         if file.endswith('.py'):
             path = os.path.join(root, file)
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 content = f.read()
             content = re.sub(r'def (test_[^:]+?)\(\):', r'def \1() -> None:', content)
             content = re.sub(r'def (test_[^:]+?)\(([^)]+)\):', r'def \1(\2) -> None:', content)

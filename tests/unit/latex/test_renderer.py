@@ -1,7 +1,12 @@
 """Unit tests for the LaTeX renderer."""
 
 from crewai_book.domain.entities import Article, Chapter, Section
-from crewai_book.latex.renderer import _latex_escape, create_jinja_env, render_book
+from crewai_book.latex.renderer import (
+    _latex_escape,
+    create_jinja_env,
+    inject_provenance_footnotes,
+    render_book,
+)
 
 
 def test_latex_escape_special_chars() -> None:
@@ -11,6 +16,30 @@ def test_latex_escape_special_chars() -> None:
     assert _latex_escape("A & B") == r"A \& B"
     assert _latex_escape("item #1") == r"item \#1"
     assert _latex_escape("under_score") == r"under\_score"
+
+
+def test_inject_provenance_footnotes() -> None:
+    """Test provenance footprint parsing and escaping."""
+    bib_keys = {"ho2020denoising"}
+
+    # Valid existing key
+    valid_text = r"Claim [PROVENANCE: ho2020denoising | 100% $done & more | 0.95] here."
+    expected_valid = r"Claim \footnote{Source: \protect\cite{ho2020denoising}. Quote: ``100\% \$done \& more''. Confidence: 0.95} here."
+    assert inject_provenance_footnotes(valid_text, bib_keys) == expected_valid
+
+    # Missing key (should fallback to simple cite)
+    missing_text = r"Claim [PROVENANCE: fakekey | some quote | 0.99] here."
+    expected_missing = r"Claim \protect\cite{fakekey} here."
+    assert inject_provenance_footnotes(missing_text, bib_keys) == expected_missing
+
+    # Unaffected text
+    plain_text = "Just normal text."
+    assert inject_provenance_footnotes(plain_text, bib_keys) == plain_text
+
+    # Malformed tag (e.g. missing pipes or wrong format) should be stripped entirely
+    malformed_text = r"Claim [PROVENANCE: missing_pipes] here. And [PROVENANCE: one | pipe] too."
+    expected_malformed = r"Claim  here. And  too."
+    assert inject_provenance_footnotes(malformed_text, bib_keys) == expected_malformed
 
 
 def test_jinja_env_has_latex_filter() -> None:

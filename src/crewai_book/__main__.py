@@ -50,11 +50,11 @@ def main(
 
 @app.command()
 def run(
-    topic: str | None = typer.Option(
-        None,
+    topic: str = typer.Option(
+        ...,
         "--topic",
         "-t",
-        help="Override the topic from .env configuration.",
+        help="The explicit topic of the book.",
     ),
     document_type: str = typer.Option(
         "book",
@@ -71,7 +71,7 @@ def run(
     """Run the CrewAI Book Generator pipeline."""
     from crewai_book.workflows.pipeline import run_pipeline
 
-    final_topic = topic or "Multi-Agent Systems in AI"
+    final_topic = topic
 
     console.print(f"[bold green]CrewAI Book Generator v{__version__}[/bold green]")
     console.print(f"  Topic: {final_topic}")

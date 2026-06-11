@@ -19,6 +19,7 @@ def test_research_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> N
     from pathlib import Path
 
     from crewai_book.workflows.research_crew import create_research_crew
+
     create_research_crew("test topic", Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
@@ -33,6 +34,7 @@ def test_editorial_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> 
     from pathlib import Path
 
     from crewai_book.workflows.editorial_crew import create_editorial_crew
+
     create_editorial_crew(Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
@@ -47,6 +49,7 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     from pathlib import Path
 
     from crewai_book.workflows.main_crew import create_main_crew
+
     create_main_crew("test topic", Path("test_output"))
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
@@ -54,6 +57,7 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     assert len(call_kwargs.kwargs["tasks"]) == 6
 
 
+@patch("builtins.input", return_value="y")
 @patch("crewai_book.workflows.pipeline.create_editorial_crew")
 @patch("crewai_book.workflows.pipeline.create_main_crew")
 @patch("crewai_book.workflows.pipeline.create_research_crew")
@@ -63,6 +67,7 @@ def test_run_pipeline(
     mock_research: MagicMock,
     mock_main: MagicMock,
     mock_editorial: MagicMock,
+    mock_input: MagicMock,
 ) -> None:
     """run_pipeline should execute all three crews and return state."""
     from crewai_book.workflows.pipeline import run_pipeline
@@ -147,7 +152,7 @@ def test_run_all_gates_with_article() -> None:
         artifacts={
             "article": art,
             "readability_score": 75.0,
-        }
+        },
     )
     gates = run_all_gates(state)
     assert "QG-3" in gates

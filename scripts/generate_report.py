@@ -5,6 +5,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -33,7 +34,7 @@ def generate_report(log_dir: Path) -> int:
     total_tokens = 0
     agents_used = set()
 
-    with open(latest_log, "r", encoding="utf-8") as f:
+    with open(latest_log, encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
@@ -44,7 +45,7 @@ def generate_report(log_dir: Path) -> int:
                     errors += 1
                 elif level == "WARNING":
                     warnings += 1
-                
+
                 # Extract any custom metrics if available
                 extra = entry.get("record", {}).get("extra", {})
                 if "tokens" in extra:
@@ -85,13 +86,13 @@ def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Generate pipeline report.")
     parser.add_argument(
-        "--logs", 
-        type=Path, 
+        "--logs",
+        type=Path,
         default=Path("output/logs"),
         help="Path to the logs directory"
     )
     args = parser.parse_args()
-    
+
     sys.exit(generate_report(args.logs))
 
 

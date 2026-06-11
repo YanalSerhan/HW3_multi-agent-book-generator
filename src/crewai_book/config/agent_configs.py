@@ -25,7 +25,13 @@ AGENT_CONFIGS: dict[str, AgentConfig] = {
             "and up-to-date sources on the assigned topic. Produce a structured "
             "research corpus with at least 10 verified sources. You must aim to find "
             "a LOT of sources (15-20+), and you MUST rigorously filter out any invalid sources. "
-            "Do not include any source that cannot be verified."
+            "Do not include any source that cannot be verified. "
+            "CRITICAL: Prefer grounded material from the provided knowledge sources over general knowledge. "
+            "Prefer peer-reviewed papers and arXiv. Reddit, YouTube, Medium, and vendor marketing pages "
+            "(e.g. IBM, Salesforce 'what is X' pages) are STRICTLY FORBIDDEN and NOT acceptable bibliography "
+            "sources for an academic book. "
+            "Prioritize the seminal papers of the field (e.g., Kingma & Welling 2013 Auto-Encoding Variational Bayes; Ho et al. 2020 DDPM; Song et al. 2021 score-based SDE) over niche applied papers. "
+            "You MUST cite the notebook as [Homework_VAE, 2026] in your text, and include it in the final bibliography."
         ),
         backstory=(
             "A seasoned academic researcher with 15 years of experience "

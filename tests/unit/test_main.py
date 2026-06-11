@@ -10,14 +10,17 @@ from crewai_book.version import __version__
 
 runner = CliRunner()
 
+
 def test_version_callback_true() -> None:
     """Test version callback exits when true."""
     with pytest.raises(typer.Exit):
         version_callback(True)
 
+
 def test_version_callback_false() -> None:
     """Test version callback does nothing when false."""
     version_callback(False)
+
 
 def test_app_version() -> None:
     """Test the --version flag."""
@@ -25,11 +28,13 @@ def test_app_version() -> None:
     assert result.exit_code == 0
     assert __version__ in result.stdout
 
+
 def test_app_info() -> None:
     """Test the info command."""
     result = runner.invoke(app, ["info"])
     assert result.exit_code == 0
     assert "CrewAI Book Generator" in result.stdout
+
 
 @patch("crewai_book.workflows.pipeline.run_pipeline")
 def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
@@ -41,6 +46,7 @@ def test_app_run_success(mock_run_pipeline: MagicMock) -> None:
     assert result.exit_code == 0
     assert "Pipeline completed" in result.stdout
     assert "test-run-id" in result.stdout
+
 
 @patch("crewai_book.workflows.pipeline.run_pipeline")
 def test_app_run_failure(mock_run_pipeline: MagicMock) -> None:

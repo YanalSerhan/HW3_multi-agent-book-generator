@@ -59,9 +59,9 @@ def sample_research_corpus() -> dict[str, Any]:
                 "url": "https://arxiv.org/abs/1706.03762",
                 "abstract": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...",
                 "relevance_score": 0.95,
-                "credibility_score": 0.99
+                "credibility_score": 0.99,
             }
-        ]
+        ],
     }
 
 
@@ -72,13 +72,10 @@ def sample_manuscript() -> Article:
         title="Introduction to ML",
         content="Machine learning is fascinating.",
         word_count=5,
-        citations=[]
+        citations=[],
     )
     chapter = Chapter(
-        number=1,
-        title="Introduction",
-        sections=[section],
-        chapter_summary="A brief intro."
+        number=1, title="Introduction", sections=[section], chapter_summary="A brief intro."
     )
     return Article(
         title="Test Book",
