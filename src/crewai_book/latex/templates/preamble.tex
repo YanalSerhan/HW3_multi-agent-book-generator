@@ -36,6 +36,11 @@
 \setdefaultlanguage{english}
 \setotherlanguage{hebrew}
 \newfontfamily\hebrewfont[Script=Hebrew]{Arial}
+\newfontfamily\hebrewfontsf[Script=Hebrew]{Arial}
+\newfontfamily\hebrewfonttt[Script=Hebrew]{Arial}
+\usepackage[Hebrew]{ucharclasses}
+\setTransitionTo{Hebrew}{\hebrewfont}
+\setTransitionFrom{Hebrew}{\normalfont}
 
 % ── Color ──────────────────────────────────────────────
 \usepackage{xcolor}
@@ -57,6 +62,7 @@
 \setsubsecheadstyle{\large\bfseries\color{chaptercolor!80!black}}
 
 % ── Headers & Footers ─────────────────────────────────
+\setlength{\headheight}{30pt}
 \makepagestyle{bookstyle}
 \makeevenhead{bookstyle}{\thepage}{}{\leftmark}
 \makeoddhead{bookstyle}{\rightmark}{}{\thepage}

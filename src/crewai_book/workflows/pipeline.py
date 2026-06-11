@@ -50,7 +50,7 @@ def _evaluate_gates_for_stage(
     return "retry"
 
 
-def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path) -> None:
+def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path, run_notes: str = "") -> None:
     """Generate the telemetry appendix with charts and metrics."""
     try:
         import matplotlib
@@ -69,6 +69,11 @@ def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path) -> None:
         gates = len(state.quality_gates_passed)
         hallucinations = state.artifacts.get("hallucination_count", "N/A")
         latency = state.artifacts.get("latency", {})
+        
+        # Token estimation disclaimer
+        disclaimer = ""
+        if state.artifacts.get("tokens_estimated", False):
+            disclaimer = "\\textit{Note: Token figures estimated from output sizes; per-call usage not captured in this run.}\\\\"
 
         # 2. Render Matplotlib Chart
         fig_path = latex_dir / "figures" / "telemetry_chart.png"
@@ -99,6 +104,7 @@ def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path) -> None:
 This appendix provides a deterministic snapshot of the multi-agent pipeline's telemetry and performance metrics.
 
 \\section{{Execution Metrics}}
+{disclaimer}
 \\begin{{table}}[h]
 \\centering
 \\begin{{tabular}}{{|l|l|}}
@@ -115,6 +121,8 @@ Hallucinations Detected & {hallucinations} \\\\ \\hline
 
 \\section{{Performance Analysis}}
 {chart_latex}
+
+{f"\\section{{Run Notes}}\n{run_notes}" if run_notes else ""}
 """
         (latex_dir / "telemetry.tex").write_text(tex, encoding="utf-8")
     except Exception as e:
