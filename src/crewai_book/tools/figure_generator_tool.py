@@ -46,57 +46,97 @@ class FigureGeneratorTool(BaseTool):
 
     def _run(self, python_code: str, filename: str, **kwargs: Any) -> str:
         """Execute the python code to generate the figure."""
+        import os
+        import shutil
+        import tempfile
+        from pathlib import Path
+
         if not filename.endswith((".png", ".pdf")):
             return "FAILED: Filename must end with .png or .pdf"
+
+        # Prevent path traversal
+        if "/" in filename or "\\" in filename or filename.startswith("."):
+            return "FAILED: Invalid filename. Must be a simple basename without path separators."
 
         # Setup output directory
         figures_dir = OUTPUT_DIR / "latex" / "figures"
         figures_dir.mkdir(parents=True, exist_ok=True)
-        target_path = figures_dir / filename
+        final_target_path = figures_dir / filename
 
-        # Inject the correct save path into the code
-        # We replace the filename in the code with the absolute target path
-        # To be safe, we just tell the script to save to the current working directory
-        # and we set cwd to the figures directory.
-
-        # Verify the code is valid Python syntax
+        # 1. AST Sandbox: Check import allowlist, dangerous functions, and imports at top
+        allowlist = {"matplotlib", "seaborn", "numpy", "pandas", "math", "random"}
+        dangerous_functions = {"__import__", "exec", "eval", "compile"}
         try:
-            ast.parse(python_code)
+            tree = ast.parse(python_code)
         except SyntaxError as e:
             return f"FAILED: Invalid Python syntax: {e}"
 
-        # Write code to a temporary script
-        script_path = figures_dir / f"temp_gen_{filename}.py"
-        try:
-            with open(script_path, "w", encoding="utf-8") as f:
-                f.write(python_code)
+        seen_non_import = False
+        for node in tree.body:
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                if seen_non_import:
+                    return "FAILED: Security error. All imports must be at the top of the module."
+            else:
+                seen_non_import = True
 
-            # Execute the script
-            result = subprocess.run(
-                [sys.executable, script_path.name],
-                cwd=figures_dir,
-                capture_output=True,
-                text=True,
-                timeout=30.0,
-            )
+        for ast_node in ast.walk(tree):
+            if isinstance(ast_node, ast.Import):
+                for alias in ast_node.names:
+                    base_module = alias.name.split(".")[0]
+                    if base_module not in allowlist:
+                        return f"FAILED: Security error. Importing '{alias.name}' is not allowed. Allowed modules: {', '.join(allowlist)}"
+            elif isinstance(ast_node, ast.ImportFrom) and ast_node.module:
+                base_module = ast_node.module.split(".")[0]
+                if base_module not in allowlist:
+                    return f"FAILED: Security error. Importing from '{ast_node.module}' is not allowed. Allowed modules: {', '.join(allowlist)}"
+            elif isinstance(ast_node, ast.Call) and isinstance(ast_node.func, ast.Name) and ast_node.func.id in dangerous_functions:
+                return f"FAILED: Security error. Calling '{ast_node.func.id}' is not allowed."
 
-            if result.returncode != 0:
-                return (
-                    "FAILED: Code execution error:\n"
-                    f"Stdout:\n{result.stdout}\nStderr:\n{result.stderr}"
+        # 2. Execute in isolated temp workdir
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            script_path = temp_path / f"temp_gen_{filename}.py"
+            try:
+                with open(script_path, "w", encoding="utf-8") as f:
+                    f.write(python_code)
+
+                # 3. Minimal subprocess env
+                minimal_env = {
+                    "PATH": os.environ.get("PATH", ""),
+                    "MPLBACKEND": "Agg",
+                    "MPLCONFIGDIR": str(temp_path),
+                    "HOME": str(temp_path)
+                }
+
+                # 4. Execute with 60s timeout
+                result = subprocess.run(
+                    [sys.executable, script_path.name],
+                    cwd=temp_path,
+                    env=minimal_env,
+                    capture_output=True,
+                    text=True,
+                    timeout=60.0,
                 )
 
-            if not target_path.exists():
-                return (
-                    f"FAILED: The code executed successfully but the file '{filename}' "
-                    f"was not created. Make sure your code actually saves to '{filename}'."
-                )
+                if result.returncode != 0:
+                    return (
+                        "FAILED: Code execution error:\n"
+                        f"Stdout:\n{result.stdout}\nStderr:\n{result.stderr}"
+                    )
 
-            return f"SUCCESS: Figure generated and saved to {target_path}"
-        except subprocess.TimeoutExpired:
-            return "FAILED: Code execution timed out after 30 seconds."
-        except Exception as e:
-            return f"FAILED: Unexpected error: {e}"
-        finally:
-            if script_path.exists():
-                script_path.unlink()
+                generated_file = temp_path / filename
+                if not generated_file.exists():
+                    return (
+                        f"FAILED: The code executed successfully but the file '{filename}' "
+                        f"was not created. Make sure your code actually saves to '{filename}' "
+                        "in the current working directory."
+                    )
+
+                # Move generated file to final destination
+                shutil.move(str(generated_file), str(final_target_path))
+                return f"SUCCESS: Figure generated and saved to {final_target_path}"
+
+            except subprocess.TimeoutExpired:
+                return "FAILED: Code execution timed out after 60 seconds."
+            except Exception as e:
+                return f"FAILED: Unexpected error: {e}"
