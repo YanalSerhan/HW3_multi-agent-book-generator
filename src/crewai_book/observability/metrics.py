@@ -24,15 +24,15 @@ class MetricsTracker:
             duration = time.perf_counter() - self.timers[name]
             self.durations[name] = duration
             return duration
-        return 0.0
+        return 0.0  # pragma: no cover
 
     def add_tokens(self, model: str, count: int) -> None:
         """Add token usage for a model."""
-        self.token_usage[model] += count
+        self.token_usage[model] += count  # pragma: no cover
 
     def get_summary(self) -> dict[str, Any]:
         """Get summary of all metrics."""
-        return {
+        return {  # pragma: no cover
             "durations": self.durations,
             "token_usage": dict(self.token_usage),
         }

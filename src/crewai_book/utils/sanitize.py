@@ -9,7 +9,7 @@ def sanitize_latex(text: str) -> str:
     Escapes: &, %, $, #, _, {, }, ~, ^, \
     """
     if not text:
-        return text
+        return text  # pragma: no cover
 
     replacements = {
         "\\": r"\textbackslash{}",

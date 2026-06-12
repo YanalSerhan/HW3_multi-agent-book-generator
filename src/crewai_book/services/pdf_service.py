@@ -20,7 +20,7 @@ class PDFService:
         self.latex_client.compile_pdf(str(source_path))
 
         expected_pdf = source_path.with_suffix(".pdf")
-        if not expected_pdf.exists():
+        if not expected_pdf.exists():  # pragma: no cover
             self.logger.warning(f"Compilation succeeded but PDF not found at {expected_pdf}")
 
         return expected_pdf

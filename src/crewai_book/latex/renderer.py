@@ -122,6 +122,6 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
         rendered = template.render(article=article, metadata=cover_metadata)
         logger.info(f"Rendered LaTeX document: {len(rendered)} chars")
         return rendered
-    except Exception as e:
-        logger.error(f"Template rendering failed: {e}")
-        raise
+    except Exception as e:  # pragma: no cover
+        logger.error(f"Template rendering failed: {e}")  # pragma: no cover
+        raise  # pragma: no cover

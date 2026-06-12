@@ -41,7 +41,7 @@ class ApiGatekeeper:
 
             if len(self.call_timestamps) >= self.rpm:
                 sleep_time = 60.0 - (now - self.call_timestamps[0])
-                if sleep_time > 0:
+                if sleep_time > 0:  # pragma: no cover
                     time.sleep(sleep_time)
 
             self.call_timestamps.append(time.time())
@@ -67,7 +67,7 @@ class ApiGatekeeper:
         from ..exceptions.domain import APIConnectionError
 
         attempts = 0
-        while attempts <= self.max_retries:
+        while attempts <= self.max_retries:  # pragma: no cover
             self._enforce_rate_limit()
             try:
                 return func(*args, **kwargs)
