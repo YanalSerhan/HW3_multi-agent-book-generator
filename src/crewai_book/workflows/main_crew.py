@@ -29,7 +29,7 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
 
     outline_agent = create_outline_agent()
     writer_agent = create_writer_agent()
-    figure_agent = create_figure_agent()
+    figure_agent = create_figure_agent(output_dir=output_dir)
     latex_agent = create_latex_agent()
     pdf_agent = create_pdf_agent()
     qa_agent = create_qa_agent()
@@ -68,10 +68,6 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "\\begin{hebrew} ... \\end{hebrew} environment block. "
             "The Hebrew chapter explains the intuition bridge from VAEs to diffusion models: ELBO and the reparameterization trick as the VAE foundation, why diffusion can be seen as a hierarchical VAE, and the role of the noise schedule. Content must be specific to these concepts — generic AI/LLM filler text is a failure. "
             "You MAY include an OPTIONAL simple two-column English-Hebrew glossary table inside the Hebrew chapter only if rendering-safe.\n"
-            "PROVENANCE FOOTNOTES: For major factual claims (max 2 per page, ~12 total), inject a provenance marker "
-            "using exactly this syntax: [PROVENANCE: bib_key | short quote < 15 words | confidence_score]\n"
-            "Example: [PROVENANCE: ho2020denoising | diffusion models generate high quality images | 0.95]\n"
-            "Every footnoted bib_key MUST exist in the bibliography.\n"
             "At least one LaTeX table must appear somewhere in the book (using \\begin{table}...\\end{table}) for data presentation instead of markdown tables. "
             "Do NOT use image files for tables. "
             "Actively embed citations matching the bibliography. "
@@ -79,6 +75,19 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "and active voice to achieve a high readability score."
         ),
         expected_output="Complete manuscript text for all chapters with tables and citations.",
+        output_file=str(output_dir / "manuscript_draft.md"),
+        agent=writer_agent,
+    )
+
+    provenance_task = Task(
+        description=(
+            "Review the drafted manuscript and inject PROVENANCE markers for major factual claims. "
+            "You MUST add ~1-2 of these markers per page for key technical claims using EXACTLY this syntax: "
+            "[PROVENANCE: bib_key | short quote < 15 words | confidence_score]\n"
+            "Example: [PROVENANCE: ho2020denoising | diffusion models generate high quality images | 0.95]\n"
+            "Every footnoted bib_key MUST exist in the bibliography."
+        ),
+        expected_output="Final manuscript text with provenance markers injected.",
         output_file=str(output_dir / "manuscript.md"),
         agent=writer_agent,
     )
@@ -120,7 +129,7 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "Compile the LaTeX source into a final PDF. Verify the "
             "output has ≥15 pages and all elements render correctly. "
             f"CRITICAL: You MUST invoke the latex_compiler tool with "
-            f"tex_file_path='{output_dir}/latex/book.tex'."
+            f"tex_file_path='{output_dir.resolve()}/latex/book.tex'."
         ),
         expected_output="Compiled PDF with quality verification report.",
         output_file=str(output_dir / "latex" / "pdf_report.md"),
@@ -140,7 +149,7 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
 
     return Crew(
         agents=[outline_agent, writer_agent, figure_agent, latex_agent, pdf_agent, qa_agent],
-        tasks=[outline_task, writing_task, figure_task, latex_task, pdf_task, qa_task],
+        tasks=[outline_task, writing_task, provenance_task, figure_task, latex_task, pdf_task, qa_task],
         process=Process.sequential,
         verbose=True,
     )

@@ -43,6 +43,7 @@ class FigureGeneratorTool(BaseTool):
         "image and return the absolute path to the saved file."
     )
     args_schema: type[BaseModel] = FigureGeneratorInput
+    output_dir: Any = None
 
     def _run(self, python_code: str, filename: str, **kwargs: Any) -> str:
         """Execute the python code to generate the figure."""
@@ -59,7 +60,8 @@ class FigureGeneratorTool(BaseTool):
             return "FAILED: Invalid filename. Must be a simple basename without path separators."
 
         # Setup output directory
-        figures_dir = OUTPUT_DIR / "latex" / "figures"
+        base_out = Path(self.output_dir) if self.output_dir else OUTPUT_DIR
+        figures_dir = base_out / "latex" / "figures"
         figures_dir.mkdir(parents=True, exist_ok=True)
         final_target_path = figures_dir / filename
 

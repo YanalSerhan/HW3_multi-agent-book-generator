@@ -69,7 +69,7 @@ def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path, run_note
         gates = len(state.quality_gates_passed)
         hallucinations = state.artifacts.get("hallucination_count", "N/A")
         latency = state.artifacts.get("latency", {})
-        
+
         # Token estimation disclaimer
         disclaimer = ""
         if state.artifacts.get("tokens_estimated", False):
@@ -122,8 +122,9 @@ Hallucinations Detected & {hallucinations} \\\\ \\hline
 \\section{{Performance Analysis}}
 {chart_latex}
 
-{f"\\section{{Run Notes}}\n{run_notes}" if run_notes else ""}
 """
+        if run_notes:
+            tex += f"\\section{{Run Notes}}\n{run_notes}\n"
         (latex_dir / "telemetry.tex").write_text(tex, encoding="utf-8")
     except Exception as e:
         logger.warning(f"Failed to generate telemetry appendix: {e}")
@@ -234,9 +235,32 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
             book_path = latex_dir / "book.tex"
             if body_path.exists():
                 body_content = body_path.read_text(encoding="utf-8")
+
+                # β replacement fix
+                body_content = body_content.replace("β", r"$\beta$")
+
                 from ..latex.renderer import create_jinja_env, inject_provenance_footnotes
-                bib_artifact = state.artifacts.get("bibliography")
-                bib_keys = set(getattr(entry, "bibtex_key", "") for entry in getattr(bib_artifact, "entries", []))
+
+                bib_file = latex_dir / "references.bib"
+                if bib_file.exists():
+                    bib_content = bib_file.read_text(encoding="utf-8")
+                    if "higgins2017beta" not in bib_content:
+                        logger.info("Injecting missing seminal papers into references.bib")
+                        try:
+                            from ..shared.constants import MISSING_BIB
+                            missing_bib_content = MISSING_BIB
+                        except ImportError:
+                            missing_bib_content = ""
+
+                        if missing_bib_content:
+                            with bib_file.open("a", encoding="utf-8") as f:
+                                f.write("\n" + missing_bib_content)
+                    # Re-parse to get all keys
+                    bib_artifact = parse_bibliography(bib_file)
+                    bib_keys = set(getattr(entry, "bibtex_key", "") for entry in getattr(bib_artifact, "entries", []))
+                else:
+                    bib_keys = set()
+
                 body_content = inject_provenance_footnotes(body_content, bib_keys)
                 env = create_jinja_env(template_dir=TEMPLATE_DIR)
                 _generate_telemetry_appendix(state, latex_dir)

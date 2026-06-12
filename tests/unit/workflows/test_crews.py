@@ -54,7 +54,7 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     mock_crew.assert_called_once()
     call_kwargs = mock_crew.call_args
     assert len(call_kwargs.kwargs["agents"]) == 6
-    assert len(call_kwargs.kwargs["tasks"]) == 6
+    assert len(call_kwargs.kwargs["tasks"]) == 7
 
 
 @patch("builtins.input", return_value="y")
