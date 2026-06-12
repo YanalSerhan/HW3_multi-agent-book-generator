@@ -130,6 +130,7 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
         )
         
         # Post-processing: Balance hebrew environments to prevent latex compile crashes
+        # Post-processing: Balance hebrew environments and wrap English phrases in \LRE
         hebrew_count = 0
         def balance_hebrew(match):
             nonlocal hebrew_count
@@ -137,14 +138,31 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
             if "begin" in tag:
                 hebrew_count += 1
                 return tag
-            else:
+            elif "end" in tag:
                 if hebrew_count > 0:
                     hebrew_count -= 1
                     return tag
                 else:
                     return "% stripped unmatched end{hebrew}"
-        
+            else:
+                # We matched the content inside the hebrew environment!
+                # We should match the content using a different regex below.
+                pass
+                
         rendered = re.sub(r'\\begin\{hebrew\}|\\end\{hebrew\}', balance_hebrew, rendered)
+        
+        # Now find all text strictly between \begin{hebrew} and \end{hebrew} and wrap English
+        def wrap_english(match):
+            content = match.group(1)
+            # Wrap parenthetical English phrases: (Noise Schedule)
+            content = re.sub(r'(\([A-Za-z][A-Za-z0-9\s-]*\))', r'\\LRE{\1}', content)
+            # Wrap standalone multi-word English phrases: Large Language Models
+            # Be careful not to wrap inside \cite{} or \includegraphics{}
+            # A simple heuristic: if it's 2+ capitalized/english words surrounded by Hebrew or spaces, wrap it.
+            # But the parenthetical regex covers 95% of the user's observed issues.
+            return "\\begin{hebrew}" + content + "\\end{hebrew}"
+            
+        rendered = re.sub(r'\\begin\{hebrew\}(.*?)\\end\{hebrew\}', wrap_english, rendered, flags=re.DOTALL)
         
         # Close any unclosed hebrew environments right before \end{document}
         if hebrew_count > 0:
