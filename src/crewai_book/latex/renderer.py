@@ -59,6 +59,15 @@ def inject_provenance_footnotes(text: str, bib_keys: set[str]) -> str:
 
     text = re.sub(pattern, replacer, text)
 
+    # Pass 2: catch hallucinated bold citations like **kingma2014autoencoding**
+    def bold_replacer(match: re.Match[str]) -> str:
+        key = match.group(1).strip()
+        if key in bib_keys:
+            return f"\\protect\\cite{{{key}}}"
+        return match.group(0)
+
+    text = re.sub(r"\*\*([a-zA-Z0-9_\-]+)\*\*", bold_replacer, text)
+
     # Cleanup pass: remove any remaining malformed PROVENANCE tags
     malformed_pattern = r"\[PROVENANCE:[^\]]*\]"
 

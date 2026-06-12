@@ -145,11 +145,21 @@ class NotebookExtractor:
 
         cells = notebook_data.get("cells", [])
 
+        last_markdown_header = "Extracted Code Snippet"
+        
         # We want to select interesting cells (with images or long code).
         for cell in cells:
             cell_type = cell.get("cell_type")
             source = cell.get("source", [])
             source_text = "".join(source) if isinstance(source, list) else str(source)
+
+            if cell_type == "markdown" and source_text.strip():
+                lines = source_text.strip().splitlines()
+                if lines:
+                    # Clean up the markdown header for LaTeX safety (escape _ and &)
+                    header = lines[0].lstrip('#').strip().replace('_', '\\_').replace('&', '\\&')
+                    if header:
+                        last_markdown_header = header
 
             if cell_type == "code" and source_text.strip():
                 # Check if it has an image output
@@ -163,10 +173,18 @@ class NotebookExtractor:
 
                 # Only include cells that are either substantial or have images
                 if len(source_text.splitlines()) > 5 or has_image:
-                    tex_content.append("\\begin{lstlisting}[language=Python]")
-                    tex_content.append(source_text.strip())
-                    tex_content.append("\\end{lstlisting}")
                     cells_processed += 1
+                    tex_content.append(f"\\section*{{{last_markdown_header}}}")
+                    tex_content.append("\\begin{lstlisting}[language=Python]")
+                    
+                    code_lines = source_text.strip().splitlines()
+                    if len(code_lines) > 15:
+                        truncated_code = "\n".join(code_lines[:15]) + "\n\n# ... (Code truncated for brevity)"
+                    else:
+                        truncated_code = "\n".join(code_lines)
+                        
+                    tex_content.append(truncated_code)
+                    tex_content.append("\\end{lstlisting}")
 
                     for output in outputs:
                         data = output.get("data", {})

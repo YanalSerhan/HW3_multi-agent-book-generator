@@ -177,7 +177,7 @@ def _render_latex_callback(output: Any, out_path: Path, state: PipelineState) ->
 
     body_content = inject_provenance_footnotes(body_content, bib_keys)
     env = create_jinja_env(template_dir=TEMPLATE_DIR)
-    _generate_telemetry_appendix(state, latex_dir)
+    # _generate_telemetry_appendix(state, latex_dir)
 
     hw_notebook = Path("sources/vae_homework.ipynb")
     if hw_notebook.exists():
