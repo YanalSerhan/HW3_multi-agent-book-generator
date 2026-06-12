@@ -264,6 +264,12 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
                 body_content = inject_provenance_footnotes(body_content, bib_keys)
                 env = create_jinja_env(template_dir=TEMPLATE_DIR)
                 _generate_telemetry_appendix(state, latex_dir)
+
+                hw_notebook = Path("sources/vae_homework.ipynb")
+                if hw_notebook.exists():  # pragma: no cover
+                    from ..tools.nb_extractor import NotebookExtractor
+                    extractor = NotebookExtractor()
+                    extractor.extract_latex(hw_notebook, latex_dir / "appendix_notebook.tex")
                 try:
                     from ..config.settings import config_manager
                     setup_config = config_manager.get_setup()

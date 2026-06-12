@@ -43,9 +43,11 @@
 \newfontfamily\hebrewfont[Script=Hebrew]{Arial}
 \newfontfamily\hebrewfontsf[Script=Hebrew]{Arial}
 \newfontfamily\hebrewfonttt[Script=Hebrew]{Arial}
-\usepackage[Hebrew]{ucharclasses}
+\usepackage[Hebrew, BasicLatin]{ucharclasses}
 \setTransitionTo{Hebrew}{\hebrewfont}
 \setTransitionFrom{Hebrew}{\normalfont}
+\setTransitionTo{BasicLatin}{\beginL}
+\setTransitionFrom{BasicLatin}{\endL}
 
 % ── Color ──────────────────────────────────────────────
 \usepackage{xcolor}

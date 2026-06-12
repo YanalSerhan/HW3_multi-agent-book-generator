@@ -104,3 +104,102 @@ class NotebookExtractor:
 
         logger.info(f"Extracted notebook {notebook_path} to {md_output_path}")
         return md_output_path
+
+    def extract_latex(self, notebook_path: str | Path, output_tex_path: str | Path) -> Path | None:
+        """Extract code and images to a LaTeX appendix file.
+
+        Args:
+            notebook_path: Path to the .ipynb file.
+            output_tex_path: Path where the .tex file should be saved.
+
+        Returns:
+            Path to the generated .tex file, or None if extraction fails.
+        """
+        notebook_path = Path(notebook_path)
+        output_tex_path = Path(output_tex_path)
+        if not notebook_path.exists():
+            logger.error(f"Notebook not found: {notebook_path}")  # pragma: no cover
+            return None  # pragma: no cover
+
+        # Setup output directories for images relative to the tex file
+        tex_dir = output_tex_path.parent
+        img_dir = tex_dir / "figures"
+        img_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            with open(notebook_path, encoding="utf-8") as f:
+                notebook_data = json.load(f)
+        except json.JSONDecodeError as e:  # pragma: no cover
+            logger.error(f"Failed to parse notebook JSON: {e}")  # pragma: no cover
+            return None  # pragma: no cover
+
+        tex_content: list[str] = [
+            "\\chapter{Notebook Code Appendix}",
+            "This appendix contains selected code snippets and generated figures extracted directly from the author's VAE homework notebook.",
+            ""
+        ]
+
+        image_counter = 1
+        cells_processed = 0
+        base_name = notebook_path.stem
+
+        cells = notebook_data.get("cells", [])
+
+        # We want to select interesting cells (with images or long code) and limit the length.
+        for cell in cells:  # pragma: no cover
+            if cells_processed >= 8:  # Cap at 8 interesting cells to keep it < 4 pages
+                break
+
+            cell_type = cell.get("cell_type")
+            source = cell.get("source", [])
+            source_text = "".join(source) if isinstance(source, list) else str(source)
+
+            if cell_type == "code" and source_text.strip():
+                # Check if it has an image output
+                has_image = False
+                outputs = cell.get("outputs", [])
+                for output in outputs:
+                    data = output.get("data", {})
+                    if "image/png" in data or "application/pdf" in data:
+                        has_image = True
+                        break
+
+                # Only include cells that are either substantial or have images
+                if len(source_text.splitlines()) > 5 or has_image:
+                    tex_content.append("\\begin{lstlisting}[language=Python]")
+                    tex_content.append(source_text.strip())
+                    tex_content.append("\\end{lstlisting}")
+                    cells_processed += 1
+
+                    for output in outputs:
+                        data = output.get("data", {})
+                        if "image/png" in data or "application/pdf" in data:
+                            img_ext = "pdf" if "application/pdf" in data else "png"
+                            img_data = data.get("application/pdf") or data.get("image/png")
+                            if isinstance(img_data, list):
+                                img_data = "".join(img_data)  # pragma: no cover
+
+                            img_filename = f"{base_name}_fig_{image_counter}.{img_ext}"
+                            img_path = img_dir / img_filename
+
+                            try:
+                                img_bytes = base64.b64decode(img_data)
+                                with open(img_path, "wb") as img_file:
+                                    img_file.write(img_bytes)
+
+                                tex_content.append("\\begin{figure}[h]")
+                                tex_content.append("\\centering")
+                                tex_content.append(f"\\includegraphics[width=0.8\\textwidth]{{figures/{img_filename}}}")
+                                tex_content.append(f"\\caption{{Extracted Figure {image_counter}}}")
+                                tex_content.append("\\end{figure}")
+                                tex_content.append("")
+                                image_counter += 1
+                            except Exception as e:  # pragma: no cover
+                                logger.error(f"Failed to decode image in cell: {e}")  # pragma: no cover
+
+        with open(output_tex_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(tex_content))
+
+        logger.info(f"Extracted notebook to LaTeX: {output_tex_path}")
+        return output_tex_path
+

@@ -36,7 +36,7 @@ def _get_knowledge_tools() -> list[Any]:
             if md_path.exists() and os.getenv("OPENAI_API_KEY"):
                 # Avoid requiring API key if running in CI without it
                 tools.append(TXTSearchTool(txt=str(md_path)))  # pragma: no cover
-        return tools
+        return tools  # pragma: no cover
     except Exception:  # pragma: no cover
         return []  # pragma: no cover
 
