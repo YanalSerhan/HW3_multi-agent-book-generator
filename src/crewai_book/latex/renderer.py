@@ -120,6 +120,15 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
 
         template = env.get_template("book.tex.j2")
         rendered = template.render(article=article, metadata=cover_metadata)
+        
+        # Post-processing: wrap tables in adjustbox so they don't overflow the page
+        rendered = re.sub(
+            r'(\\begin\{tabular\}.*?\\end\{tabular\})',
+            r'\\begin{adjustbox}{max width=\\textwidth,center}\n\1\n\\end{adjustbox}',
+            rendered,
+            flags=re.DOTALL
+        )
+        
         logger.info(f"Rendered LaTeX document: {len(rendered)} chars")
         return rendered
     except Exception as e:

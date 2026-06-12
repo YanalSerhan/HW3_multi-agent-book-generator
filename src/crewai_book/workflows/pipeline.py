@@ -183,8 +183,8 @@ def _render_latex_callback(output: Any, out_path: Path, state: PipelineState) ->
     if hw_notebook.exists():
         from ..tools.nb_extractor import NotebookExtractor
 
-        extractor = NotebookExtractor()
-        extractor.extract_latex(hw_notebook, latex_dir / "appendix_notebook.tex")
+        # extractor = NotebookExtractor()
+        # extractor.extract_latex(hw_notebook, latex_dir / "appendix_notebook.tex")
     try:
         from ..config.settings import config_manager
 
