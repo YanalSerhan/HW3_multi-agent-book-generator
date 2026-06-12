@@ -44,11 +44,9 @@
 \newfontfamily\hebrewfont[Script=Hebrew]{Arial}
 \newfontfamily\hebrewfontsf[Script=Hebrew]{Arial}
 \newfontfamily\hebrewfonttt[Script=Hebrew]{Arial}
-\usepackage[Hebrew, BasicLatin]{ucharclasses}
+\usepackage[Hebrew]{ucharclasses}
 \setTransitionTo{Hebrew}{\hebrewfont}
 \setTransitionFrom{Hebrew}{\normalfont}
-\setTransitionTo{BasicLatin}{\beginL}
-\setTransitionFrom{BasicLatin}{\endL}
 
 % ── Color ──────────────────────────────────────────────
 \usepackage{xcolor}
@@ -107,8 +105,9 @@
 % ── Headers & Footers ─────────────────────────────────
 \setlength{\headheight}{30pt}
 \makepagestyle{bookstyle}
-\makeevenhead{bookstyle}{\BookTitle}{}{\leftmark}
-\makeoddhead{bookstyle}{\BookTitle}{}{\leftmark}
+\makeheadrule{bookstyle}{\textwidth}{\normalrulethickness}
+\makeevenhead{bookstyle}{\sffamily\color{gray}\BookTitle}{}{\sffamily\color{gray}\leftmark}
+\makeoddhead{bookstyle}{\sffamily\color{gray}\BookTitle}{}{\sffamily\color{gray}\leftmark}
 \makeevenfoot{bookstyle}{}{\thepage}{}
 \makeoddfoot{bookstyle}{}{\thepage}{}
 \pagestyle{bookstyle}
