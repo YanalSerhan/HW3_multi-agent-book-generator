@@ -129,6 +129,27 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
             flags=re.DOTALL
         )
         
+        # Post-processing: Balance hebrew environments to prevent latex compile crashes
+        hebrew_count = 0
+        def balance_hebrew(match):
+            nonlocal hebrew_count
+            tag = match.group(0)
+            if "begin" in tag:
+                hebrew_count += 1
+                return tag
+            else:
+                if hebrew_count > 0:
+                    hebrew_count -= 1
+                    return tag
+                else:
+                    return "% stripped unmatched end{hebrew}"
+        
+        rendered = re.sub(r'\\begin\{hebrew\}|\\end\{hebrew\}', balance_hebrew, rendered)
+        
+        # Close any unclosed hebrew environments right before \end{document}
+        if hebrew_count > 0:
+            rendered = rendered.replace("\\end{document}", ("\\end{hebrew}\n" * hebrew_count) + "\\end{document}")
+        
         logger.info(f"Rendered LaTeX document: {len(rendered)} chars")
         return rendered
     except Exception as e:
