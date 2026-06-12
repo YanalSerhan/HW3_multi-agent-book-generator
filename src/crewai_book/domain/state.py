@@ -38,7 +38,7 @@ class Bibliography(BaseModel):
             if citation.doi and existing.doi == citation.doi:
                 return
             if existing.title.lower() == citation.title.lower():
-                return  # pragma: no cover
+                return
         self.entries.append(citation)
 
 

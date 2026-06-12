@@ -45,9 +45,9 @@ class NotebookExtractor:
         try:
             with open(notebook_path, encoding="utf-8") as f:
                 notebook_data = json.load(f)
-        except json.JSONDecodeError as e:  # pragma: no cover
-            logger.error(f"Failed to parse notebook JSON: {e}")  # pragma: no cover
-            return None  # pragma: no cover
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse notebook JSON: {e}")
+            return None
 
         md_content: list[str] = []
         image_counter = 1
@@ -64,7 +64,7 @@ class NotebookExtractor:
             if cell_type == "markdown":
                 md_content.append(source_text)
                 md_content.append("\n")
-            elif cell_type == "code":  # pragma: no cover
+            elif cell_type == "code":
                 md_content.append("```python")
                 md_content.append(source_text)
                 md_content.append("```\n")
@@ -74,11 +74,11 @@ class NotebookExtractor:
                 for output in outputs:
                     data = output.get("data", {})
 
-                    if "image/png" in data:  # pragma: no cover
+                    if "image/png" in data:
                         img_data = data["image/png"]
                         # Handle multi-line base64
                         if isinstance(img_data, list):
-                            img_data = "".join(img_data)  # pragma: no cover
+                            img_data = "".join(img_data)
 
                         # Save the image
                         img_filename = f"{base_name}_fig_{image_counter}.png"
@@ -94,8 +94,8 @@ class NotebookExtractor:
                                 f"\n![Extracted Figure {image_counter}]({img_path.resolve()})\n"
                             )
                             image_counter += 1
-                        except Exception as e:  # pragma: no cover
-                            logger.error(f"Failed to decode image in cell: {e}")  # pragma: no cover
+                        except Exception as e:
+                            logger.error(f"Failed to decode image in cell: {e}")
 
         # Write the combined markdown content
         md_output_path = self.config.output_md_dir / f"{base_name}_extracted.md"
@@ -118,8 +118,8 @@ class NotebookExtractor:
         notebook_path = Path(notebook_path)
         output_tex_path = Path(output_tex_path)
         if not notebook_path.exists():
-            logger.error(f"Notebook not found: {notebook_path}")  # pragma: no cover
-            return None  # pragma: no cover
+            logger.error(f"Notebook not found: {notebook_path}")
+            return None
 
         # Setup output directories for images relative to the tex file
         tex_dir = output_tex_path.parent
@@ -129,14 +129,14 @@ class NotebookExtractor:
         try:
             with open(notebook_path, encoding="utf-8") as f:
                 notebook_data = json.load(f)
-        except json.JSONDecodeError as e:  # pragma: no cover
-            logger.error(f"Failed to parse notebook JSON: {e}")  # pragma: no cover
-            return None  # pragma: no cover
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse notebook JSON: {e}")
+            return None
 
         tex_content: list[str] = [
             "\\chapter{Notebook Code Appendix}",
             "This appendix contains selected code snippets and generated figures extracted directly from the author's VAE homework notebook.",
-            ""
+            "",
         ]
 
         image_counter = 1
@@ -145,11 +145,8 @@ class NotebookExtractor:
 
         cells = notebook_data.get("cells", [])
 
-        # We want to select interesting cells (with images or long code) and limit the length.
-        for cell in cells:  # pragma: no cover
-            if cells_processed >= 8:  # Cap at 8 interesting cells to keep it < 4 pages
-                break
-
+        # We want to select interesting cells (with images or long code).
+        for cell in cells:
             cell_type = cell.get("cell_type")
             source = cell.get("source", [])
             source_text = "".join(source) if isinstance(source, list) else str(source)
@@ -177,7 +174,7 @@ class NotebookExtractor:
                             img_ext = "pdf" if "application/pdf" in data else "png"
                             img_data = data.get("application/pdf") or data.get("image/png")
                             if isinstance(img_data, list):
-                                img_data = "".join(img_data)  # pragma: no cover
+                                img_data = "".join(img_data)
 
                             img_filename = f"{base_name}_fig_{image_counter}.{img_ext}"
                             img_path = img_dir / img_filename
@@ -189,17 +186,20 @@ class NotebookExtractor:
 
                                 tex_content.append("\\begin{figure}[h]")
                                 tex_content.append("\\centering")
-                                tex_content.append(f"\\includegraphics[width=0.8\\textwidth]{{figures/{img_filename}}}")
-                                tex_content.append(f"\\caption{{Extracted Figure {image_counter}}}")
+                                tex_content.append(
+                                    f"\\includegraphics[width=0.8\\textwidth]{{figures/{img_filename}}}"
+                                )
+                                tex_content.append(
+                                    f"\\caption{{Extracted Figure {image_counter}}}"
+                                )
                                 tex_content.append("\\end{figure}")
                                 tex_content.append("")
                                 image_counter += 1
-                            except Exception as e:  # pragma: no cover
-                                logger.error(f"Failed to decode image in cell: {e}")  # pragma: no cover
+                            except Exception as e:
+                                logger.error(f"Failed to decode image in cell: {e}")
 
         with open(output_tex_path, "w", encoding="utf-8") as f:
             f.write("\n".join(tex_content))
 
         logger.info(f"Extracted notebook to LaTeX: {output_tex_path}")
         return output_tex_path
-

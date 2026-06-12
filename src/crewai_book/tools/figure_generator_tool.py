@@ -89,7 +89,7 @@ class FigureGeneratorTool(BaseTool):
                         return f"FAILED: Security error. Importing '{alias.name}' is not allowed. Allowed modules: {', '.join(allowlist)}"
             elif isinstance(ast_node, ast.ImportFrom) and ast_node.module:
                 base_module = ast_node.module.split(".")[0]
-                if base_module not in allowlist:  # pragma: no cover
+                if base_module not in allowlist:
                     return f"FAILED: Security error. Importing from '{ast_node.module}' is not allowed. Allowed modules: {', '.join(allowlist)}"
             elif (
                 isinstance(ast_node, ast.Call)

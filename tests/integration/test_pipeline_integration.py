@@ -108,10 +108,12 @@ def test_pipeline_integration_success(
     assert state.artifacts["hallucination_count"] == 0
     assert state.artifacts["compiled"] is True
 
-    # Verify Jinja template actually rendered the book.tex
+    # Verify Jinja template actually rendered the book.tex and body.tex was written
     book_tex = tmp_path / "latex" / "book.tex"
+    body_tex = tmp_path / "latex" / "body.tex"
     assert book_tex.exists()
-    assert "This is the LaTeX body." in book_tex.read_text(encoding="utf-8")
+    assert body_tex.exists()
+    assert "Simulated output" in body_tex.read_text(encoding="utf-8")
 
     # Verify crews were called
     mock_research.assert_called_once()
@@ -182,6 +184,7 @@ def test_pipeline_integration_retry_logic(
         # So it aborts or exceeds retries at MAIN stage.
         assert state.current_stage == "main"
 
+
 @patch("crewai_book.workflows.pipeline.create_research_crew")
 @patch("crewai_book.workflows.pipeline.create_main_crew")
 @patch("builtins.input", side_effect=["y", "n"])
@@ -194,6 +197,7 @@ def test_pipeline_human_review_outline_abort(
     """Test that the pipeline correctly aborts when HUMAN_REVIEW_OUTLINE is rejected."""
     # Ensure setting is True
     from crewai_book.config.settings import settings
+
     settings.human_review_outline = True
 
     mock_research_crew = MagicMock()

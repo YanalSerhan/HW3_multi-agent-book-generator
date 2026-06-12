@@ -98,3 +98,7 @@ temp_gen_*.py
 test_output/
 
 output_final/
+output/
+output_v2/
+final_submission/
+scratch/

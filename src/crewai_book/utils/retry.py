@@ -50,7 +50,7 @@ def retry_recoverable(max_attempts: int = 3, initial_backoff: float = 1.0) -> Ca
                     time.sleep(delay)
                     delay *= 2  # Exponential backoff
 
-            return None  # pragma: no cover
+            return None
 
         return cast(T, wrapper)
 

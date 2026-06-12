@@ -64,15 +64,14 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "Dive deep into the technical details, providing comprehensive explanations, "
             "examples, and edge cases to significantly increase the word count per section. "
             "CRITICAL BIDI REQUIREMENT: The chapter covering 'פרק בעברית: האינטואיציה ממודלי VAE למודלי דיפוזיה (Hebrew Chapter)' MUST be written entirely in Hebrew prose "
-            "(using inline English technical terms where appropriate). You MUST wrap the entire text of this Hebrew chapter inside a "
-            "\\begin{hebrew} ... \\end{hebrew} environment block. "
+            "(using inline English technical terms where appropriate). You MUST NOT use \\begin{hebrew} in your output. Just write raw markdown. "
             "The Hebrew chapter explains the intuition bridge from VAEs to diffusion models: ELBO and the reparameterization trick as the VAE foundation, why diffusion can be seen as a hierarchical VAE, and the role of the noise schedule. Content must be specific to these concepts — generic AI/LLM filler text is a failure. "
-            "You MAY include an OPTIONAL simple two-column English-Hebrew glossary table inside the Hebrew chapter only if rendering-safe.\n"
+            "The Hebrew must be grammatically correct, natural academic Hebrew, as written by a native speaker. Ensure letters are written in their natural logical order, do NOT reverse them. "
+            "You MAY include an OPTIONAL simple two-column English-Hebrew glossary table inside the Hebrew chapter.\n"
             "At least one LaTeX table must appear somewhere in the book (using \\begin{table}...\\end{table}) for data presentation instead of markdown tables. "
-            "Do NOT use image files for tables. "
             "Actively embed citations matching the bibliography. "
             "Ensure extremely high readability by using very short sentences, simple vocabulary, "
-            "and active voice to achieve a high readability score."
+            "and active voice."
         ),
         expected_output="Complete manuscript text for all chapters with tables and citations.",
         output_file=str(output_dir / "manuscript_draft.md"),
@@ -98,9 +97,10 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
             "would benefit from visualization. Generate 2-3 professional figures "
             "(e.g., bar charts, line plots, or block diagrams) using the figure generator tool. "
             "CRITICAL: You MUST use the figure generator tool to create at least one topic-relevant matplotlib graph "
-            "(e.g., comparing VAE and Diffusion latent spaces or noise schedules) specifically for the Hebrew intuition chapter ('פרק בעברית: האינטואיציה ממודלי VAE למודלי דיפוזיה (Hebrew Chapter)'). "
+            "(e.g., comparing VAE and Diffusion latent spaces or noise schedules) specifically for the Hebrew intuition chapter. "
             "Save them as PNG or PDF files. Provide a summary of the generated figures "
             "including their filenames and suggested captions. "
+            "CRITICAL: The suggested caption for any figure in the Hebrew chapter MUST be written entirely in Hebrew (עברית). Do NOT write English captions for the Hebrew chapter! "
             "CRITICAL: Do NOT generate tables as images. Tables must be natively formatted in text/LaTeX."
         ),
         expected_output="A list of generated figures with their filenames and captions.",
@@ -111,13 +111,15 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
     latex_task = Task(
         description=(
             "Convert the manuscript and figures report into LaTeX source. "
-            "The manuscript already contains raw LaTeX tables. Preserve them exactly. To prevent table overflow, you MAY add \\resizebox{\\textwidth}{!}{...} around tabular environments if necessary. "
-            "Embed EVERY figure from the figures report into the appropriate section using \\begin{figure}. "
+            "The manuscript already contains raw LaTeX tables. Preserve them exactly. "
+            "Embed EVERY figure from the figures report into the appropriate section using \\begin{figure}[H] and \\centering. "
+            "This [H] placement is CRITICAL to prevent large empty spaces above figures. "
             "Ensure all in-text citations are mapped to \\cite{...} commands corresponding to the bibliography. "
-            "CRITICAL: The manuscript contains custom tags like [PROVENANCE: ...]. You MUST preserve these tags exactly as they appear in the text, do NOT modify them or convert them to LaTeX macros. "
+            "CRITICAL: The manuscript contains a Hebrew chapter. You MUST wrap the entire Hebrew chapter content, INCLUDING the \\chapter{...} and \\section{...} commands, "
+            "inside a \\begin{hebrew} ... \\end{hebrew} environment block. This is mandatory for RTL title formatting. "
+            "CRITICAL: The manuscript contains custom tags like [PROVENANCE: ...]. You MUST preserve these tags exactly as they appear in the text. "
             "CRITICAL: Output ONLY the raw LaTeX source code for the chapters and sections. "
-            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content. "
-            "Do NOT enclose your output in markdown code blocks."
+            "Do NOT output \\documentclass, \\begin{document}, or any preamble. Just output the \\chapter, \\section, and text content."
         ),
         expected_output="Raw LaTeX body code containing only chapters, sections, properly formatted tables, and preserved PROVENANCE tags.",
         output_file=str(output_dir / "latex" / "body.tex"),
@@ -149,7 +151,15 @@ def create_main_crew(topic: str, output_dir: Path) -> Crew:
 
     return Crew(
         agents=[outline_agent, writer_agent, figure_agent, latex_agent, pdf_agent, qa_agent],
-        tasks=[outline_task, writing_task, provenance_task, figure_task, latex_task, pdf_task, qa_task],
+        tasks=[
+            outline_task,
+            writing_task,
+            provenance_task,
+            figure_task,
+            latex_task,
+            pdf_task,
+            qa_task,
+        ],
         process=Process.sequential,
         verbose=True,
     )

@@ -37,7 +37,11 @@ Here is a factual claim with nasty characters [PROVENANCE: ho2020 | 100% & $# | 
     # Assert the footnote was injected and escaped
     assert r"\footnote{" in processed_text
     assert r"Source: \protect\cite{ho2020}." in processed_text
-    assert r"Quote: ``100\% \backslash \& \backslash \$\#''" in processed_text or r"Quote: ``100\% \& \$\#''" in processed_text or r"100\% \hyperlink" not in processed_text # Just check basic presence of escaping
+    assert (
+        r"Quote: ``100\% \backslash \& \backslash \$\#''" in processed_text
+        or r"Quote: ``100\% \& \$\#''" in processed_text
+        or r"100\% \hyperlink" not in processed_text
+    )  # Just check basic presence of escaping
 
     # 4. Setup directories
     latex_dir = Path("scratch/test_latex")
@@ -60,6 +64,7 @@ Here is a factual claim with nasty characters [PROVENANCE: ho2020 | 100% & $# | 
 
     # 6. Render full book via Jinja
     from crewai_book.latex.renderer import create_jinja_env
+
     env = create_jinja_env(TEMPLATE_DIR)
     template = env.get_template("book.tex.j2")
 

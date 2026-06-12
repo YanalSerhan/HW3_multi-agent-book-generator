@@ -39,9 +39,9 @@ class LaTeXClient(BaseClient):
             aux_file = tex_file.with_suffix(ext)
             try:
                 if aux_file.exists():
-                    aux_file.unlink()  # pragma: no cover
-            except OSError:  # pragma: no cover
-                pass  # pragma: no cover
+                    aux_file.unlink()
+            except OSError:
+                pass
 
         cmd = ["xelatex", "-interaction=nonstopmode", "-halt-on-error", tex_file.name]
         self.logger.info(f"Running LaTeX compilation in {tex_file.parent}: {' '.join(cmd)}")
@@ -93,7 +93,7 @@ class LaTeXClient(BaseClient):
                 cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
             )
             if res2.returncode != 0:
-                raise CompilationError(  # pragma: no cover
+                raise CompilationError(
                     "LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr}
                 )
 
@@ -102,7 +102,7 @@ class LaTeXClient(BaseClient):
                 cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
             )
             if res3.returncode != 0:
-                raise CompilationError(  # pragma: no cover
+                raise CompilationError(
                     "LaTeX third pass failed", {"stdout": res3.stdout, "stderr": res3.stderr}
                 )
 

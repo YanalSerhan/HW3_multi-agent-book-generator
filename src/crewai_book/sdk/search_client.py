@@ -42,7 +42,7 @@ class SearchClient(BaseClient):
             return []
 
         data = self._execute(self._do_search, query)
-        if isinstance(data, dict):  # pragma: no cover
+        if isinstance(data, dict):
             organic = data.get("organic", [])
             if isinstance(organic, list):
                 return organic

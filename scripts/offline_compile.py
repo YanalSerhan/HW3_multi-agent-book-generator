@@ -1,7 +1,7 @@
 import sys
 import shutil
 import re
-import sys
+import argparse
 from pathlib import Path
 
 # Add project root to path so we can import crewai_book
@@ -105,8 +105,14 @@ def parse_real_logs(log_path: Path) -> tuple[PipelineState, str]:
 
 
 def main():
-    use_mock = "--test" in sys.argv
-    latex_dir = Path("output_final/latex")
+    parser = argparse.ArgumentParser(description="Offline LaTeX Compile Script")
+    parser.add_argument("--test", action="store_true", help="Run in mock mode")
+    parser.add_argument("--output-dir", default="output_final", help="Directory containing the output to compile")
+    args = parser.parse_args()
+
+    use_mock = args.test
+    output_dir = Path(args.output_dir)
+    latex_dir = output_dir / "latex"
     if not latex_dir.exists():
         print(f"Error: {latex_dir} does not exist.")
         sys.exit(1)
@@ -189,7 +195,7 @@ def main():
         _generate_telemetry_appendix(mock_state, latex_dir)
     else:
         print("Parsing real log files for telemetry...")
-        real_state, run_notes = parse_real_logs(Path("output_final/logs/pipeline.log"))
+        real_state, run_notes = parse_real_logs(output_dir / "logs/pipeline.log")
         _generate_telemetry_appendix(real_state, latex_dir, run_notes=run_notes)
 
     # Check for missing \includegraphics targets
@@ -204,7 +210,7 @@ def main():
         print(f"WARNING: The following {len(missing_figures)} figures are referenced but missing from {latex_dir}:")
         for f in missing_figures:
             print(f"  - {f}")
-        print("Remedy: Run 'cp output/latex/figures/*.png output_final/latex/figures/' if they were generated in the default dir.")
+        print(f"Remedy: Run 'cp output/latex/figures/*.png {latex_dir}/figures/' if they were generated in the default dir.")
     else:
         print("All referenced figures found.")
 

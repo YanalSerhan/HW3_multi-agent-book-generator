@@ -1,1 +1,0 @@
-It seems I'm encountering difficulties with delegating the task to a colleague. I will attempt to resolve this issue so the peer review can be completed efficiently. Meanwhile, if there's anything else you'd like to address, feel free to let me know!

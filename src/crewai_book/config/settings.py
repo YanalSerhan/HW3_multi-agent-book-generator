@@ -12,7 +12,7 @@ def _load_json_config(file_path: Path) -> dict[str, Any]:
         with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
             return data if isinstance(data, dict) else {}
-    return {}  # pragma: no cover
+    return {}
 
 
 class AppSettings(BaseSettings):

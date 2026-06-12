@@ -35,10 +35,10 @@ def _get_knowledge_tools() -> list[Any]:
             md_path = Path("sources") / f"{src_path.stem}_extracted.md"
             if md_path.exists() and os.getenv("OPENAI_API_KEY"):
                 # Avoid requiring API key if running in CI without it
-                tools.append(TXTSearchTool(txt=str(md_path)))  # pragma: no cover
-        return tools  # pragma: no cover
-    except Exception:  # pragma: no cover
-        return []  # pragma: no cover
+                tools.append(TXTSearchTool(txt=str(md_path)))
+        return tools
+    except Exception:
+        return []
 
 
 def create_research_agent() -> Agent:

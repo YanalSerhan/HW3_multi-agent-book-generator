@@ -14,8 +14,8 @@ def parse_bibliography(filepath: Path) -> Bibliography:
     """Parse a BibTeX file into a Bibliography object."""
     bib = Bibliography()
     if not filepath.exists():
-        logger.warning(f"Bibliography file not found: {filepath}")  # pragma: no cover
-        return bib  # pragma: no cover
+        logger.warning(f"Bibliography file not found: {filepath}")
+        return bib
 
     content = filepath.read_text(encoding="utf-8")
 
@@ -30,7 +30,7 @@ def parse_bibliography(filepath: Path) -> Bibliography:
     matches = entry_pattern.findall(content)
 
     if not matches and content.strip():
-        logger.error(  # pragma: no cover
+        logger.error(
             f"Bibliography file exists ({len(content)} bytes) but contains "
             f"no parseable BibTeX entries. Agent likely output non-BibTeX text. "
             f"First 100 chars: {content[:100]!r}"
@@ -51,8 +51,8 @@ def parse_bibliography(filepath: Path) -> Bibliography:
 def parse_hallucination_count(filepath: Path) -> int:
     """Scan verification report for unverified claims or hallucinations."""
     if not filepath.exists():
-        logger.warning(f"Verification report not found: {filepath}")  # pragma: no cover
-        return 0  # pragma: no cover
+        logger.warning(f"Verification report not found: {filepath}")
+        return 0
 
     content = filepath.read_text(encoding="utf-8")
 
@@ -74,8 +74,8 @@ def parse_hallucination_count(filepath: Path) -> int:
 def parse_article(filepath: Path) -> Article:
     """Naively parse markdown manuscript into Article entity for checks."""
     if not filepath.exists():
-        logger.warning(f"Manuscript not found: {filepath}")  # pragma: no cover
-        return Article(title="Unknown", authors=[], abstract="", target_audience="", chapters=[])  # pragma: no cover
+        logger.warning(f"Manuscript not found: {filepath}")
+        return Article(title="Unknown", authors=[], abstract="", target_audience="", chapters=[])
 
     content = filepath.read_text(encoding="utf-8")
     lines = content.splitlines()
@@ -102,17 +102,27 @@ def parse_article(filepath: Path) -> Article:
             )
             current_section = None
 
-        elif line.startswith("## ") or line.startswith("### ") or line.startswith("\\section{") or line.startswith("\\subsection{"):
+        elif (
+            line.startswith("## ")
+            or line.startswith("### ")
+            or line.startswith("\\section{")
+            or line.startswith("\\subsection{")
+        ):
             # New section
             if current_section:
                 current_section.update_word_count()
 
             if not current_chapter:
-                current_chapter = Chapter(  # pragma: no cover
+                current_chapter = Chapter(
                     number=1, title="Default", chapter_summary="", sections=[]
                 )
 
-            title = line.lstrip("# ").replace("\\section{", "").replace("\\subsection{", "").rstrip("}")
+            title = (
+                line.lstrip("# ")
+                .replace("\\section{", "")
+                .replace("\\subsection{", "")
+                .rstrip("}")
+            )
             current_section = Section(title=title.strip(), content="")
             current_chapter.sections.append(current_section)
 
@@ -122,7 +132,7 @@ def parse_article(filepath: Path) -> Article:
                 current_section.content += line + "\n"
             elif current_chapter:
                 # Text before any section
-                if not current_chapter.sections:  # pragma: no cover
+                if not current_chapter.sections:
                     current_section = Section(title="Introduction", content="")
                     current_chapter.sections.append(current_section)
                 current_chapter.sections[-1].content += line + "\n"

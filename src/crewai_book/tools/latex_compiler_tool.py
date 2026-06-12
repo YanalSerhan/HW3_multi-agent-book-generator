@@ -37,6 +37,6 @@ class LaTeXCompilerTool(BaseTool):
         client = LaTeXClient()
         try:
             output = client.compile_pdf(tex_file_path)
-            return f"SUCCESS: PDF compiled successfully.\n{output[:500]}"  # pragma: no cover
+            return f"SUCCESS: PDF compiled successfully.\n{output[:500]}"
         except Exception as e:
             return f"FAILED: LaTeX compilation error: {e}"

@@ -19,11 +19,11 @@ class CitationService:
             lines.append(f"  author={{{authors_str}}},")
             lines.append(f"  year={{{cit.year}}},")
             if cit.venue:
-                lines.append(f"  journal={{{cit.venue}}},")  # pragma: no cover
-            if cit.doi:  # pragma: no cover
+                lines.append(f"  journal={{{cit.venue}}},")
+            if cit.doi:
                 lines.append(f"  doi={{{cit.doi}}},")
             if cit.url:
-                lines.append(f"  url={{{cit.url}}},")  # pragma: no cover
+                lines.append(f"  url={{{cit.url}}},")
             lines.append("}")
             lines.append("")
 

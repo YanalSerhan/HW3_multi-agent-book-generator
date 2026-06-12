@@ -58,7 +58,7 @@ class FactCheckTool(BaseTool):
             claim_words = set(claim.lower().split())
             combined = f"{title} {snippet}"
             overlap = sum(1 for w in claim_words if w in combined)
-            if overlap >= len(claim_words) * 0.3:  # pragma: no cover
+            if overlap >= len(claim_words) * 0.3:
                 corroborating += 1
                 sources.append(result.get("title", "Unknown"))
 
@@ -76,6 +76,6 @@ class FactCheckTool(BaseTool):
         """Assess confidence based on corroborating source count."""
         if count >= 3:
             return "HIGH"
-        if count >= 1:  # pragma: no cover
-            return "MEDIUM"  # pragma: no cover
-        return "LOW"  # pragma: no cover
+        if count >= 1:
+            return "MEDIUM"
+        return "LOW"

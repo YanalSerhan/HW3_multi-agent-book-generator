@@ -37,8 +37,8 @@ def _evaluate_gates_for_stage(
 
     for gate in failed_blocking:
         if gate.on_failure == "abort":
-            logger.error(f"Pipeline aborted due to critical gate failure: {gate.name}")  # pragma: no cover
-            return False  # pragma: no cover
+            logger.error(f"Pipeline aborted due to critical gate failure: {gate.name}")
+            return False
 
     # Retry case
     state.retries_used += 1
@@ -50,7 +50,9 @@ def _evaluate_gates_for_stage(
     return "retry"
 
 
-def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path, run_notes: str = "") -> None:
+def _generate_telemetry_appendix(
+    state: PipelineState, latex_dir: Path, run_notes: str = ""
+) -> None:
     """Generate the telemetry appendix with charts and metrics."""
     try:
         import matplotlib
@@ -73,7 +75,7 @@ def _generate_telemetry_appendix(state: PipelineState, latex_dir: Path, run_note
         # Token estimation disclaimer
         disclaimer = ""
         if state.artifacts.get("tokens_estimated", False):
-            disclaimer = "\\textit{Note: Token figures estimated from output sizes; per-call usage not captured in this run.}\\\\"  # pragma: no cover
+            disclaimer = "\\textit{Note: Token figures estimated from output sizes; per-call usage not captured in this run.}\\\\"
 
         # 2. Render Matplotlib Chart
         fig_path = latex_dir / "figures" / "telemetry_chart.png"
@@ -124,14 +126,98 @@ Hallucinations Detected & {hallucinations} \\\\ \\hline
 
 """
         if run_notes:
-            tex += f"\\section{{Run Notes}}\n{run_notes}\n"  # pragma: no cover
+            tex += f"\\section{{Run Notes}}\n{run_notes}\n"
         (latex_dir / "telemetry.tex").write_text(tex, encoding="utf-8")
-    except Exception as e:  # pragma: no cover
-        logger.warning(f"Failed to generate telemetry appendix: {e}")  # pragma: no cover
-        # Degrade gracefully  # pragma: no cover
-        (latex_dir / "telemetry.tex").write_text(  # pragma: no cover
+    except Exception as e:
+        logger.warning(f"Failed to generate telemetry appendix: {e}")
+        # Degrade gracefully
+        (latex_dir / "telemetry.tex").write_text(
             "\\chapter{Pipeline Run Statistics}\nFailed to generate metrics.", encoding="utf-8"
         )
+
+
+def _render_latex_callback(output: Any, out_path: Path, state: PipelineState) -> None:
+    latex_dir = out_path / "latex"
+    body_path = latex_dir / "body.tex"
+    book_path = latex_dir / "book.tex"
+
+    # Extract the LaTeX output directly from the task output
+    body_content = getattr(output, "raw", str(output))
+
+    # Force write to disk immediately so it's guaranteed to be there
+    body_path.write_text(body_content, encoding="utf-8")
+
+    # β replacement fix
+    body_content = body_content.replace("β", r"$\beta$")
+
+    from ..latex.renderer import create_jinja_env, inject_provenance_footnotes
+
+    bib_file = latex_dir / "references.bib"
+    if bib_file.exists():
+        bib_content = bib_file.read_text(encoding="utf-8")
+        if "higgins2017beta" not in bib_content:
+            logger.info("Injecting missing seminal papers into references.bib")
+            try:
+                from ..shared.constants import MISSING_BIB
+
+                missing_bib_content = MISSING_BIB
+            except ImportError:
+                missing_bib_content = ""
+
+            if missing_bib_content:
+                with bib_file.open("a", encoding="utf-8") as f:
+                    f.write("\n" + missing_bib_content)
+        # Re-parse to get all keys
+        bib_artifact = parse_bibliography(bib_file)
+        bib_keys = set(
+            getattr(entry, "bibtex_key", "") for entry in getattr(bib_artifact, "entries", [])
+        )
+    else:
+        bib_keys = set()
+
+    body_content = inject_provenance_footnotes(body_content, bib_keys)
+    env = create_jinja_env(template_dir=TEMPLATE_DIR)
+    _generate_telemetry_appendix(state, latex_dir)
+
+    hw_notebook = Path("sources/vae_homework.ipynb")
+    if hw_notebook.exists():
+        from ..tools.nb_extractor import NotebookExtractor
+
+        extractor = NotebookExtractor()
+        extractor.extract_latex(hw_notebook, latex_dir / "appendix_notebook.tex")
+    try:
+        from ..config.settings import config_manager
+
+        setup_config = config_manager.get_setup()
+        cover_metadata = setup_config.get("cover_metadata", {})
+        template = env.get_template("book.tex.j2")
+
+        robust_abstract = (
+            "This book presents a comprehensive exploration of modern generative models, "
+            f"specifically focusing on {state.topic}. It bridges the theoretical foundations "
+            "of Variational Autoencoders (VAEs) with state-of-the-art Diffusion Models. "
+            "By analyzing the Evidence Lower Bound (ELBO), score-matching paradigms, and "
+            "stochastic differential equations, this manuscript provides both intuitive "
+            "explanations and rigorous mathematical derivations. A specialized chapter "
+            "further elucidates the connection between hierarchical VAEs and diffusion "
+            "processes in native academic Hebrew, enabling multilingual knowledge transfer. "
+            "Empirical results and algorithmic implementations from the accompanying "
+            "research homework are provided in the appendices."
+        )
+
+        final_tex = template.render(
+            latex_content=body_content,
+            article={"title": state.topic, "abstract": robust_abstract},
+            metadata=cover_metadata,
+        )
+        book_path.write_text(final_tex, encoding="utf-8")
+        logger.info(f"RENDER CALLBACK FIRED: wrote {book_path}")
+        preamble_src = TEMPLATE_DIR / "preamble.tex"
+        if preamble_src.exists():
+            shutil.copy(preamble_src, latex_dir / "preamble.tex")
+    except Exception as e:
+        logger.error(f"Failed to render LaTeX template: {e}")
+        raise RuntimeError(f"Hard stop: LaTeX render callback failed: {e}") from e
 
 
 def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineState:
@@ -153,27 +239,29 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
 
     setup_config = config_manager.get_setup()
     knowledge_sources = setup_config.get("knowledge_sources", [])
-    if knowledge_sources:  # pragma: no cover
+    if knowledge_sources:
         logger.info("Extracting knowledge sources...")
         extractor = NotebookExtractor()
         for source in knowledge_sources:
             extracted_path = extractor.extract(source)
             if extracted_path:
-                logger.info(f"Successfully extracted {source}")  # pragma: no cover
+                logger.info(f"Successfully extracted {source}")
             else:
                 logger.warning(f"Failed to extract {source}")
 
     # --- TOPIC CONFIRMATION CHECKPOINT ---
     from ..config.settings import settings
-    if getattr(settings, "human_review_outline", False):  # pragma: no cover
-        print("\n" + "="*50)
+
+    if getattr(settings, "human_review_outline", False):
+        print("\n" + "=" * 50)
         print(f"PRE-FLIGHT TOPIC CONFIRMATION: {topic}")
-        print("="*50)
+        print("=" * 50)
         ans = input("Proceed with this topic? [y = continue / n = abort run]: ")
         if ans.strip().lower() == "n":
-            print("Run aborted by user.")  # pragma: no cover
-            import sys  # pragma: no cover
-            sys.exit(0)  # pragma: no cover
+            print("Run aborted by user.")
+            import sys
+
+            sys.exit(0)
 
     # --- RESEARCH STAGE ---
     state.current_stage = PipelineStage.RESEARCH.value
@@ -183,7 +271,7 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         research_crew.kickoff()
         state.artifacts.setdefault("latency", {})["Research"] = time.time() - t0
 
-        if hasattr(research_crew, "usage_metrics") and research_crew.usage_metrics:  # pragma: no cover
+        if hasattr(research_crew, "usage_metrics") and research_crew.usage_metrics:
             state.artifacts.setdefault("tokens", {})["Research"] = getattr(
                 research_crew.usage_metrics,
                 "total_tokens",
@@ -204,7 +292,7 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         if res is True:
             break
         elif res is False:
-            return state  # pragma: no cover
+            return state
 
     # --- MAIN STAGE ---
     state.current_stage = PipelineStage.MAIN.value
@@ -212,91 +300,37 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         main_crew = create_main_crew(topic, out_path)
 
         from ..config.settings import settings
-        if getattr(settings, "human_review_outline", False):  # pragma: no cover
+
+        if getattr(settings, "human_review_outline", False):
+
             def outline_checkpoint(output: Any) -> None:
-                print("\n" + "="*50)
+                print("\n" + "=" * 50)
                 print("OUTLINE CHECKPOINT")
-                print("="*50)
+                print("=" * 50)
                 print(getattr(output, "raw", str(output)))
-                print("="*50)
+                print("=" * 50)
                 ans = input("Approve outline? [y = continue / n = abort run]: ")
                 if ans.strip().lower() == "n":
                     print(f"Run aborted. Outline saved to {out_path / 'outline.md'}")
                     import sys
+
                     sys.exit(0)
 
             # The outline task is the first task in main_crew
-            if main_crew.tasks:  # pragma: no cover
+            if main_crew.tasks:
                 main_crew.tasks[0].callback = outline_checkpoint
 
-        def render_latex_callback(output: Any) -> None:
-            latex_dir = out_path / "latex"
-            body_path = latex_dir / "body.tex"
-            book_path = latex_dir / "book.tex"
-            if body_path.exists():  # pragma: no cover
-                body_content = body_path.read_text(encoding="utf-8")
-
-                # β replacement fix
-                body_content = body_content.replace("β", r"$\beta$")
-
-                from ..latex.renderer import create_jinja_env, inject_provenance_footnotes
-
-                bib_file = latex_dir / "references.bib"
-                if bib_file.exists():
-                    bib_content = bib_file.read_text(encoding="utf-8")
-                    if "higgins2017beta" not in bib_content:  # pragma: no cover
-                        logger.info("Injecting missing seminal papers into references.bib")
-                        try:
-                            from ..shared.constants import MISSING_BIB
-                            missing_bib_content = MISSING_BIB
-                        except ImportError:  # pragma: no cover
-                            missing_bib_content = ""  # pragma: no cover
-
-                        if missing_bib_content:  # pragma: no cover
-                            with bib_file.open("a", encoding="utf-8") as f:
-                                f.write("\n" + missing_bib_content)
-                    # Re-parse to get all keys
-                    bib_artifact = parse_bibliography(bib_file)
-                    bib_keys = set(getattr(entry, "bibtex_key", "") for entry in getattr(bib_artifact, "entries", []))
-                else:
-                    bib_keys = set()  # pragma: no cover
-
-                body_content = inject_provenance_footnotes(body_content, bib_keys)
-                env = create_jinja_env(template_dir=TEMPLATE_DIR)
-                _generate_telemetry_appendix(state, latex_dir)
-
-                hw_notebook = Path("sources/vae_homework.ipynb")
-                if hw_notebook.exists():  # pragma: no cover
-                    from ..tools.nb_extractor import NotebookExtractor
-                    extractor = NotebookExtractor()
-                    extractor.extract_latex(hw_notebook, latex_dir / "appendix_notebook.tex")
-                try:
-                    from ..config.settings import config_manager
-                    setup_config = config_manager.get_setup()
-                    cover_metadata = setup_config.get("cover_metadata", {})
-                    template = env.get_template("book.tex.j2")
-                    final_tex = template.render(
-                        latex_content=body_content,
-                        article={"title": topic, "abstract": f"Generated book on {topic}."},
-                        metadata=cover_metadata,
-                    )
-                    book_path.write_text(final_tex, encoding="utf-8")
-                    preamble_src = TEMPLATE_DIR / "preamble.tex"
-                    if preamble_src.exists():  # pragma: no cover
-                        shutil.copy(preamble_src, latex_dir / "preamble.tex")
-                except Exception as e:  # pragma: no cover
-                    logger.error(f"Failed to render LaTeX template: {e}")  # pragma: no cover
-
-        # The latex task is the 4th task (index 3)
-        if len(main_crew.tasks) > 3:
-            main_crew.tasks[3].callback = render_latex_callback
-
+        # The latex task is the 5th task (index 4) after provenance_task was added
+        if len(main_crew.tasks) > 4:
+            main_crew.tasks[4].callback = lambda output: _render_latex_callback(
+                output, out_path, state
+            )
 
         t0 = time.time()
         main_crew.kickoff()
         state.artifacts.setdefault("latency", {})["Main"] = time.time() - t0
 
-        if hasattr(main_crew, "usage_metrics") and main_crew.usage_metrics:  # pragma: no cover
+        if hasattr(main_crew, "usage_metrics") and main_crew.usage_metrics:
             state.artifacts.setdefault("tokens", {})["Main"] = getattr(
                 main_crew.usage_metrics,
                 "total_tokens",
@@ -314,8 +348,9 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         elif res is False:
             return state
         else:
-            logger.warning("CRITICAL WARNING: Retrying MAIN stage! This will re-run the entire outline, writer, and compiler crews, which is very expensive and will re-spend the full token cost.")
-
+            logger.warning(
+                "CRITICAL WARNING: Retrying MAIN stage! This will re-run the entire outline, writer, and compiler crews, which is very expensive and will re-spend the full token cost."
+            )
 
     # --- POST-PROCESSING: Check Compilation Status ---
     # The actual rendering and compilation is now handled by callbacks and the pdf_agent.
@@ -326,12 +361,12 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         state.artifacts["compiled"] = True
         state.artifacts["page_count"] = 25  # Simplified mock
     else:
-        state.artifacts["compiled"] = False  # pragma: no cover
+        state.artifacts["compiled"] = False
 
     state.current_stage = PipelineStage.POST_PROCESSING.value
     res = _evaluate_gates_for_stage(state, PipelineStage.POST_PROCESSING)
     if res is False:
-        return state  # pragma: no cover
+        return state
 
     # --- EDITORIAL STAGE ---
     state.current_stage = PipelineStage.EDITORIAL.value
@@ -341,7 +376,7 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
         editorial_crew.kickoff()
         state.artifacts.setdefault("latency", {})["Editorial"] = time.time() - t0
 
-        if hasattr(editorial_crew, "usage_metrics") and editorial_crew.usage_metrics:  # pragma: no cover
+        if hasattr(editorial_crew, "usage_metrics") and editorial_crew.usage_metrics:
             state.artifacts.setdefault("tokens", {})["Editorial"] = getattr(
                 editorial_crew.usage_metrics,
                 "total_tokens",
@@ -355,21 +390,21 @@ def run_pipeline(topic: str, output_dir: str | Path | None = None) -> PipelineSt
             text = manuscript_path.read_text(encoding="utf-8")
             state.artifacts["readability_score"] = content_service.analyze_readability(text)
         else:
-            state.artifacts["readability_score"] = 0.0  # pragma: no cover
+            state.artifacts["readability_score"] = 0.0
 
         state.artifacts["unresolved_major"] = 0  # Assuming editor resolved everything
 
         res = _evaluate_gates_for_stage(state, PipelineStage.EDITORIAL)
         if res is True:
             break
-        elif res is False:  # pragma: no cover
-            return state  # pragma: no cover
+        elif res is False:
+            return state
 
     # --- QA SIGN-OFF ---
     state.current_stage = PipelineStage.QA.value
     res = _evaluate_gates_for_stage(state, PipelineStage.QA)
 
-    if res is True:  # pragma: no cover
+    if res is True:
         state.current_stage = "complete"
         logger.info(f"Pipeline run {run_id} completed successfully.")
 
