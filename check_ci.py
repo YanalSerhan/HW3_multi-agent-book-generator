@@ -1,7 +1,7 @@
-import urllib.request
 import json
-import time
 import sys
+import time
+import urllib.request
 
 REPO = "YanalSerhan/HW3_multi-agent-book-generator"
 COMMIT = "669695d"

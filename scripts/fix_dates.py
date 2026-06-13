@@ -1,5 +1,5 @@
-import subprocess
 import os
+import subprocess
 
 dates = [
     "2026-06-11T10:15:00+03:00",
@@ -28,8 +28,8 @@ for date in dates:
     env = os.environ.copy()
     env["GIT_COMMITTER_DATE"] = date
     env["GIT_AUTHOR_DATE"] = date
-    run('git commit --amend --no-edit --date="{}"'.format(date), env=env)
-    
+    run(f'git commit --amend --no-edit --date="{date}"', env=env)
+
     # Continue rebase. If it fails, we are at the end.
     res = subprocess.run("git rebase --continue", shell=True, env=env)
     if res.returncode != 0:

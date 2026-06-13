@@ -1,7 +1,7 @@
 import os
 import re
 
-for root, dirs, files in os.walk('tests'):
+for root, _dirs, files in os.walk('tests'):
     for file in files:
         if file.endswith('.py'):
             path = os.path.join(root, file)

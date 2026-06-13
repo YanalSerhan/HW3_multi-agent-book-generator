@@ -24,7 +24,7 @@ class SearchClient(BaseClient):
         try:
             with httpx.Client(timeout=15.0) as client:
                 response = client.post(
-                    "https://google.serper.dev/search",
+                    settings.serper_api_url,
                     json={"q": query, "num": 10},
                     headers=self.headers,
                 )

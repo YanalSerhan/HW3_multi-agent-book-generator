@@ -18,35 +18,29 @@ This section loads libraries and configurations for various tasks for this cours
 
 ```python
 ## Standard libraries
-import os
 import math
-import numpy as np
-import pandas as pd
 from collections import defaultdict
 
 ## Imports for plotting
 import matplotlib.pyplot as plt
+import numpy as np
+
 plt.set_cmap('cividis')
 %matplotlib inline
-from IPython.display import set_matplotlib_formats
 %config InlineBackend.figure_formats = ['svg', 'pdf']
-from matplotlib.colors import to_rgb
-import seaborn as sns
 
 ## Progress bar
-from tqdm.notebook import tqdm
-
 ## PyTorch
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.utils.data as data
 import torch.optim as optim
+import torch.utils.data as data
 
 # Torchvision
 import torchvision
-from torchvision.datasets import MNIST
 from torchvision import transforms
+from torchvision.datasets import MNIST
+from tqdm.notebook import tqdm
 
 # Path to the folder where the datasets are/should be downloaded (e.g. MNIST)
 DATASET_PATH = "../data"
@@ -89,7 +83,7 @@ print('Test size:',       len(test_loader.dataset))
 def show_imgs(imgs):
     num_imgs = imgs.shape[0] if isinstance(imgs, torch.Tensor) else len(imgs)
     nrow = min(num_imgs, 4)
-    ncol = int(math.ceil(num_imgs / nrow))
+    ncol = math.ceil(num_imgs / nrow)
     imgs = torchvision.utils.make_grid(imgs, nrow=nrow, pad_value=0.5)
     imgs = imgs.clamp(0, 1)
     np_imgs = imgs.cpu().numpy()
@@ -102,7 +96,7 @@ show_imgs([train_set[i][0] for i in range(8)])
 ```
 
 
-![Extracted Figure 1](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_1.pdf)
+![Extracted Figure 1](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_1.pdf)
 
 ## Question 1: VAE Implementation and Training
 
@@ -168,8 +162,7 @@ class VAE(nn.Module):
         return self.decoder_conv(h)
 
     def calc_elbo(self, x):
-        """
-        Computes the negative ELBO = rec_loss + KLD.
+        """Computes the negative ELBO = rec_loss + KLD.
 
         Reconstruction loss: -log p(x|z) with fixed var=0.01
           = 1/(2*0.01) * ||x_hat - x||^2  (summed over pixels, averaged over batch)
@@ -217,7 +210,7 @@ class VAE(nn.Module):
     @torch.no_grad()
     def validation_step(self, loader):
         results = [self.calc_elbo(imgs.to(device)) for imgs, _ in tqdm(loader, leave=False)]
-        elbos, recs, klds = zip(*results)
+        elbos, recs, klds = zip(*results, strict=False)
         self.log('val_elbo',  torch.tensor([l.item() for l in elbos]).mean().item())
         self.log('val_recon', torch.tensor([l.item() for l in recs]).mean().item())
         self.log('val_KLD',   torch.tensor([l.item() for l in klds]).mean().item())
@@ -226,7 +219,7 @@ class VAE(nn.Module):
     @torch.no_grad()
     def test_step(self, loader):
         results = [self.calc_elbo(imgs.to(device)) for imgs, _ in tqdm(loader, leave=False)]
-        elbos, recs, klds = zip(*results)
+        elbos, recs, klds = zip(*results, strict=False)
         self.log('test_elbo',  torch.tensor([l.item() for l in elbos]).mean().item())
         self.log('test_recon', torch.tensor([l.item() for l in recs]).mean().item())
         self.log('test_KLD',   torch.tensor([l.item() for l in klds]).mean().item())
@@ -247,7 +240,7 @@ class VAE(nn.Module):
 
 ```python
 model = VAE(latent_dim=32).to(device)
-print('Num params: {:,}'.format(sum(p.numel() for p in model.parameters())))
+print(f'Num params: {sum(p.numel() for p in model.parameters()):,}')
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.99)
@@ -350,7 +343,7 @@ plt.show()
 ```
 
 
-![Extracted Figure 2](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_2.pdf)
+![Extracted Figure 2](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_2.pdf)
 
 ```python
 samples = model.sample(num_samples=8)
@@ -359,7 +352,7 @@ show_imgs(samples)
 ```
 
 
-![Extracted Figure 3](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_3.pdf)
+![Extracted Figure 3](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_3.pdf)
 
 ## Question 2 - Latent Space Traversals
 
@@ -436,7 +429,7 @@ plt.show()
 ```
 
 
-![Extracted Figure 4](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_4.pdf)
+![Extracted Figure 4](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_4.pdf)
 
 The latent space interpolation (odd rows) produces smooth, realistic transitions between digits - the model generates valid-looking digits at every step because the VAE learned a structured continuous latent space where nearby points decode to similar images.
 
@@ -541,7 +534,7 @@ for i in range(len(test_imgs)):
                 snapshots.append((it+1, x_t.squeeze().cpu().numpy()))
 
         fig, axes = plt.subplots(1, len(snapshots), figsize=(len(snapshots)*2, 2))
-        for ax, (it, img) in zip(axes, snapshots):
+        for ax, (it, img) in zip(axes, snapshots, strict=False):
             ax.imshow(img, cmap='gray', vmin=0, vmax=1)
             ax.set_title(f'iter {it}', fontsize=9)
             ax.axis('off')
@@ -559,10 +552,10 @@ plot_inpainting(
 ```
 
 
-![Extracted Figure 5](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_5.pdf)
+![Extracted Figure 5](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_5.pdf)
 
 
-![Extracted Figure 6](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_6.pdf)
+![Extracted Figure 6](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_6.pdf)
 
 **Method (b) - MAP Estimate of z via Gradient Descent**
 
@@ -626,10 +619,10 @@ plot_inpainting(
 ```
 
 
-![Extracted Figure 7](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_7.pdf)
+![Extracted Figure 7](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_7.pdf)
 
 
-![Extracted Figure 8](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_8.pdf)
+![Extracted Figure 8](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_8.pdf)
 
 **Method (c) - Pixel Optimisation via Gradient Descent**
 
@@ -690,10 +683,10 @@ plot_inpainting(
 ```
 
 
-![Extracted Figure 9](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_9.pdf)
+![Extracted Figure 9](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_9.pdf)
 
 
-![Extracted Figure 10](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_10.pdf)
+![Extracted Figure 10](C:\Users\yanal\OneDrive\Desktop\HW3_multi-agent-book-generator\sources\extracted_figures\vae_homework_fig_10.pdf)
 
 **Comparison of the Three Methods**
 

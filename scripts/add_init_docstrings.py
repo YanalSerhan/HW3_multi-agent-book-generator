@@ -27,7 +27,7 @@ def process_file(path):
         with open(path, 'w', encoding='utf-8') as f:
             f.write('\n'.join(lines))
 
-for root, dirs, files in os.walk('src'):
+for root, _dirs, files in os.walk('src'):
     for file in files:
         if file.endswith('.py'):
             process_file(os.path.join(root, file))

@@ -1,19 +1,19 @@
-import sys
-import shutil
-import re
 import argparse
+import re
+import shutil
+import sys
 from pathlib import Path
 
 # Add project root to path so we can import crewai_book
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+from crewai_book.config.settings import config_manager
+from crewai_book.domain.state import PipelineState
 from crewai_book.latex.renderer import create_jinja_env
 from crewai_book.sdk.latex_client import LaTeXClient
-from crewai_book.config.settings import config_manager
 from crewai_book.workflows.artifact_parser import parse_bibliography
 from crewai_book.workflows.pipeline import _generate_telemetry_appendix
-from crewai_book.domain.state import PipelineState
 
 MISSING_BIB = r"""
 @article{higgins2017beta,
@@ -83,7 +83,7 @@ def parse_real_logs(log_path: Path) -> tuple[PipelineState, str]:
         "latency": {"Research": 312, "Main": 845, "QA": 45}
     }
     state.quality_gates_passed = ["QG-1", "QG-2", "QG-3 (Failed/Retried)", "QG-4 (Failed/Retried)", "QG-7"]
-    
+
     # Try to parse the real log file if it exists
     if log_path.exists():
         content = log_path.read_text(encoding="utf-8")
@@ -93,14 +93,14 @@ def parse_real_logs(log_path: Path) -> tuple[PipelineState, str]:
         #     state.artifacts["latency"] = {m[0]: int(m[1]) for m in latency_matches}
         if "LiteLLM" in content or "usage_metrics" in content:
             state.artifacts["tokens_estimated"] = False
-    
+
     run_notes = (
         "The pipeline initially ran the main generation stages successfully, but encountered a failure at the "
         "compile handoff stage. Specifically, QG-3 and QG-4 registered 0 chapters and 0 words, triggering a retry "
         "of the main stage. To prevent re-spending token costs, the run was manually aborted. The final book was "
         "produced via the offline recovery path, salvaging the valid manuscript generated in the first pass."
     )
-    
+
     return state, run_notes
 
 
@@ -129,14 +129,14 @@ def main():
 
     # Parse bibliography for provenance keys
     bib_file = latex_dir / "references.bib"
-    
+
     if bib_file.exists():
         bib_content = bib_file.read_text(encoding="utf-8")
         if "higgins2017beta" not in bib_content:
             print("Appending missing BibTeX entries to references.bib...")
             with bib_file.open("a", encoding="utf-8") as f:
                 f.write("\n" + MISSING_BIB)
-            
+
         bib = parse_bibliography(bib_file)
         bib_keys = set(entry.bibtex_key for entry in bib.entries)
     else:
@@ -144,7 +144,7 @@ def main():
 
     # Process Provenance Markers manually to count
     body_content = body_file.read_text(encoding="utf-8")
-    
+
     # 1. Convert well-formed markers
     converted_count = 0
     pattern = r"\[PROVENANCE:\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^\]]+?)\]"
@@ -173,7 +173,7 @@ def main():
         return ""
 
     body_content = re.sub(malformed_pattern, cleanup_replacer, body_content)
-    
+
     # Replace unicode beta with LaTeX math beta if it's not already in math mode
     body_content = body_content.replace("β", r"$\beta$")
 
@@ -223,7 +223,7 @@ def main():
         metadata=cover_metadata
     )
     (latex_dir / "book.tex").write_text(final_tex, encoding="utf-8")
-    
+
     # Copy preamble
     preamble_src = project_root / "src/crewai_book/latex/templates/preamble.tex"
     shutil.copy(preamble_src, latex_dir / "preamble.tex")
@@ -240,17 +240,17 @@ def main():
     log_file = latex_dir / "book.log"
     if log_file.exists():
         log_content = log_file.read_text(encoding="utf-8", errors="replace")
-        
+
         # Count pages
         # Output written to book.pdf (25 pages).
         page_match = re.search(r"Output written on [^\(]+\(\s*(\d+)\s*pages", log_content)
         pages = page_match.group(1) if page_match else "Unknown"
-        
+
         # Count unresolved citations
         unresolved = len(re.findall(r"LaTeX Warning: Citation .* undefined", log_content))
         unresolved += len(re.findall(r"Package biblatex Warning: No (?:author|year|title|date|publisher|journal) in", log_content))
-        
-        print(f"\n--- PDF Report ---")
+
+        print("\n--- PDF Report ---")
         print(f"Total Pages: {pages}")
         print(f"Unresolved Citations/Warnings: {unresolved}")
     else:

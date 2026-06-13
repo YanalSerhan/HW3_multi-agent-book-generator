@@ -10,6 +10,7 @@ import httpx
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
+from ..config.settings import settings
 from ..observability.logger import get_logger
 
 
@@ -47,7 +48,7 @@ class CitationValidatorTool(BaseTool):
     @staticmethod
     def _validate_doi(doi: str, logger: Any) -> str:
         """Check if a DOI resolves via doi.org."""
-        resolve_url = f"https://doi.org/{doi}"
+        resolve_url = f"{settings.doi_resolve_url}/{doi}"
         ua = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "

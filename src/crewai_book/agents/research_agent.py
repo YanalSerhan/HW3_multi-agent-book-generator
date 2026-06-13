@@ -18,12 +18,11 @@ from ..tools.web_search_tool import WebSearchTool
 def _get_knowledge_tools() -> list[Any]:
     """Get dynamic knowledge tools based on configured sources."""
     try:
-        import os
         from pathlib import Path
 
         from crewai_tools import TXTSearchTool
 
-        from ..config.settings import config_manager
+        from ..config.settings import config_manager, settings
 
         setup_config = config_manager.get_setup()
         sources = setup_config.get("knowledge_sources", [])
@@ -33,7 +32,7 @@ def _get_knowledge_tools() -> list[Any]:
             src_path = Path(src)
             # The extractor writes to sources/{stem}_extracted.md
             md_path = Path("sources") / f"{src_path.stem}_extracted.md"
-            if md_path.exists() and os.getenv("OPENAI_API_KEY"):
+            if md_path.exists() and settings.openai_api_key.get_secret_value():
                 # Avoid requiring API key if running in CI without it
                 tools.append(TXTSearchTool(txt=str(md_path)))
         return tools

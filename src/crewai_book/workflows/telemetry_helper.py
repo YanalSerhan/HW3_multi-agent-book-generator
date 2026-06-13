@@ -13,11 +13,6 @@ def generate_telemetry_appendix(
 ) -> None:
     """Generate the telemetry appendix with charts and metrics."""
     try:
-        import matplotlib
-
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-
         tokens = (
             sum(state.artifacts.get("tokens", {}).values())
             if "tokens" in state.artifacts
@@ -40,22 +35,31 @@ def generate_telemetry_appendix(
 
         chart_latex = "% No latency data available to plot."
         if latency:
-            stages = list(latency.keys())
-            times = list(latency.values())
-            plt.figure(figsize=(8, 4))
-            plt.bar(stages, times, color="skyblue")
-            plt.title("Pipeline Stage Latency (seconds)")
-            plt.ylabel("Seconds")
-            plt.tight_layout()
-            plt.savefig(fig_path)
-            plt.close()
-            chart_latex = r"""
+            try:
+                import matplotlib
+
+                matplotlib.use("Agg")
+                import matplotlib.pyplot as plt
+
+                stages = list(latency.keys())
+                times = list(latency.values())
+                plt.figure(figsize=(8, 4))
+                plt.bar(stages, times, color="skyblue")
+                plt.title("Pipeline Stage Latency (seconds)")
+                plt.ylabel("Seconds")
+                plt.tight_layout()
+                plt.savefig(fig_path)
+                plt.close()
+                chart_latex = r"""
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{telemetry_chart.png}
     \caption{Pipeline Latency by Stage}
 \end{figure}
 """
+            except ImportError as e:
+                logger.warning(f"Matplotlib not available, skipping chart: {e}")
+                chart_latex = "% Matplotlib not installed, skipping chart."
 
         tex = f"""
 \\chapter{{Pipeline Run Statistics}}

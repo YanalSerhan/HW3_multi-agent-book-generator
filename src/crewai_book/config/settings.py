@@ -22,6 +22,11 @@ class AppSettings(BaseSettings):
     openai_api_key: SecretStr = Field(..., alias="OPENAI_API_KEY")
     serper_api_key: SecretStr = Field(default=SecretStr(""), alias="SERPER_API_KEY")
 
+    # API URLs
+    openai_api_url: str = Field(..., alias="OPENAI_API_URL")
+    serper_api_url: str = Field(..., alias="SERPER_API_URL")
+    doi_resolve_url: str = Field(..., alias="DOI_RESOLVE_URL")
+
     # App Config
     app_env: str = Field(default="production", alias="APP_ENV")
     human_review_outline: bool = Field(default=True, alias="HUMAN_REVIEW_OUTLINE")

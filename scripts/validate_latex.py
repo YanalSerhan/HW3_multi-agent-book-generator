@@ -40,8 +40,8 @@ def validate_latex(tex_path: Path) -> int:
         issues.append(f"Unmatched opening brace '{{' (Count: {brace_count})")
 
     # Check environment balancing
-    begin_pattern = re.compile(r"\\begin\{([^}]+)\}")
-    end_pattern = re.compile(r"\\end\{([^}]+)\}")
+    re.compile(r"\\begin\{([^}]+)\}")
+    re.compile(r"\\end\{([^}]+)\}")
 
     environments = []
 
