@@ -342,7 +342,7 @@ uv run python -m crewai_book run \
 
 ## 🧪 Testing & Quality Verification
 
-The codebase features a robust test suite covering all units, layout engines, and compilation pipelines. **Latest run shows 125 tests passing with 91.72% total code coverage**, well above the 85% requirement.
+The codebase features a robust test suite covering all units, layout engines, and compilation pipelines. **Latest run shows 165 tests passing with 93.86% total code coverage**, well above the 85% requirement.
 
 Run the test suite:
 ```bash
