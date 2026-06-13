@@ -6,6 +6,7 @@ import os
 from typing import Any
 from unittest.mock import MagicMock
 
+# pyrefly: ignore [missing-import]
 import pytest
 
 # Set test environment variables before anything else loads
@@ -13,6 +14,9 @@ os.environ["OPENAI_API_KEY"] = "sk-mock-key-for-testing"
 os.environ["SERPER_API_KEY"] = "mock-serper-key"
 os.environ["TOPIC"] = "Test Topic"
 os.environ["OUTPUT_DIR"] = "output"
+os.environ["OPENAI_API_URL"] = "https://api.openai.com/v1"
+os.environ["SERPER_API_URL"] = "https://google.serper.dev/search"
+os.environ["DOI_RESOLVE_URL"] = "https://doi.org"
 
 # We must import these after setting environment variables so pydantic can load properly
 from crewai_book.config.settings import AppSettings
@@ -43,6 +47,9 @@ def sample_settings() -> AppSettings:
     return AppSettings(
         OPENAI_API_KEY="sk-test-key",
         SERPER_API_KEY="test-serper-key",
+        OPENAI_API_URL="https://api.openai.com/v1",
+        SERPER_API_URL="https://google.serper.dev/search",
+        DOI_RESOLVE_URL="https://doi.org",
     )
 
 
