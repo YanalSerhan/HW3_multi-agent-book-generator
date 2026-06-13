@@ -14,6 +14,12 @@ OUTPUT_DIR = Path("output").resolve()
 
 # Fallback missing bibliography entries for seminal VAE/Diffusion papers
 MISSING_BIB = r"""
+@article{kingma2014autoencoding,
+  title={Auto-Encoding Variational Bayes},
+  author={Kingma, Diederik P and Welling, Max},
+  journal={ICLR},
+  year={2014}
+}
 @article{higgins2017beta,
   title={beta-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework},
   author={Higgins, Irina and Matthey, Loic and Pal, Arka and Burgess, Christopher and Glorot, Xavier and Botvinick, Matthew and Mohamed, Shakir and Lerchner, Alexander},
@@ -67,6 +73,12 @@ MISSING_BIB = r"""
   author={Saharia, Chitwan and Chan, William and Saxena, Saurabh and Li, Lala and Whang, Jay and Denton, Emily and Ghasemipour, Seyed Kamyar Seyed and Ayan, Burcu Karagol and Cer, Daniel and Boston, Sara and others},
   journal={NeurIPS},
   year={2022}
+}
+@article{bowman2016generating,
+  title={Generating Sentences from a Continuous Space},
+  author={Bowman, Samuel R and Vilnis, Luke and Vinyals, Oriol and Dai, Andrew M and Jozefowicz, Rafal and Bengio, Samy},
+  journal={arXiv preprint arXiv:1511.06349},
+  year={2016}
 }
 """
 

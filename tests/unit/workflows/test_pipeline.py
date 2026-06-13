@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from crewai_book.domain.state import PipelineState
-from crewai_book.workflows.pipeline import _render_latex_callback
+from crewai_book.workflows.pipeline_utils import _render_latex_callback
 
 
 class MockOutput:

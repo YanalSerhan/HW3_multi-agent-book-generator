@@ -8,7 +8,7 @@ from crewai_book.domain.state import PipelineState
 from crewai_book.latex.renderer import inject_provenance_footnotes
 from crewai_book.sdk.latex_client import LaTeXClient
 from crewai_book.shared.constants import TEMPLATE_DIR
-from crewai_book.workflows.pipeline import _generate_telemetry_appendix
+from crewai_book.workflows.pipeline_utils import _generate_telemetry_appendix
 
 
 @pytest.mark.skipif(not shutil.which("xelatex"), reason="xelatex not installed")

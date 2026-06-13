@@ -70,3 +70,21 @@ def test_render_book_produces_latex() -> None:
     assert r"\documentclass" in output
     assert "Test Book" in output
     assert r"\printbibliography" in output
+
+
+def test_post_process_latex_math_protection() -> None:
+    r"""post_process_latex should protect math mode from \LRE and fix nested packages."""
+    from crewai_book.latex.post_processor import post_process_latex
+
+    # Text in Hebrew environment containing English words and math blocks
+    raw = r"""
+\begin{hebrew}
+מקסם את הלוג-סבירות \( \log p_\theta(x) \), אבל (VAEs) and (ELBO)
+\end{hebrew}
+"""
+    # Let's run post_process_latex. It should wrap (VAEs) and (ELBO) in \LRE, but not (x) inside math mode.
+    processed = post_process_latex(raw)
+    assert r"\( \log p_\theta(x) \)" in processed
+    assert r"\LRE{(VAEs)}" in processed
+    assert r"\LRE{(ELBO)}" in processed
+    assert r"\LRE{(x)}" not in processed

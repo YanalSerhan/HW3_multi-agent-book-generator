@@ -101,6 +101,9 @@ def show_imgs(imgs):
 show_imgs([train_set[i][0] for i in range(8)])
 ```
 
+
+![Extracted Figure 1](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_1.pdf)
+
 ## Question 1: VAE Implementation and Training
 
 We implement a Variational Autoencoder consisting of:
@@ -346,11 +349,17 @@ plt.tight_layout()
 plt.show()
 ```
 
+
+![Extracted Figure 2](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_2.pdf)
+
 ```python
 samples = model.sample(num_samples=8)
 print('Generated samples from prior p(z) = N(0,I):')
 show_imgs(samples)
 ```
+
+
+![Extracted Figure 3](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_3.pdf)
 
 ## Question 2 - Latent Space Traversals
 
@@ -425,6 +434,9 @@ for row_pair, (d1, d2) in enumerate(pairs_digits):
 plt.tight_layout(h_pad=0.5)
 plt.show()
 ```
+
+
+![Extracted Figure 4](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_4.pdf)
 
 The latent space interpolation (odd rows) produces smooth, realistic transitions between digits - the model generates valid-looking digits at every step because the VAE learned a structured continuous latent space where nearby points decode to similar images.
 
@@ -546,6 +558,12 @@ plot_inpainting(
 )
 ```
 
+
+![Extracted Figure 5](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_5.pdf)
+
+
+![Extracted Figure 6](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_6.pdf)
+
 **Method (b) - MAP Estimate of z via Gradient Descent**
 
 Instead of using the encoder, we directly optimise the latent vector z to find the one that best explains the observed top half. We minimise:
@@ -607,6 +625,12 @@ plot_inpainting(
 )
 ```
 
+
+![Extracted Figure 7](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_7.pdf)
+
+
+![Extracted Figure 8](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_8.pdf)
+
 **Method (c) - Pixel Optimisation via Gradient Descent**
 
 We keep the entire VAE frozen and directly optimise the missing pixel values. We parameterise the free pixels through a sigmoid so they stay in [0,1]:
@@ -664,6 +688,12 @@ plot_inpainting(
     'Method (c) - Pixel Optimisation via Gradient Descent'
 )
 ```
+
+
+![Extracted Figure 9](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_9.pdf)
+
+
+![Extracted Figure 10](/Users/nellkhoury/HW3_multi-agent-book-generator/sources/extracted_figures/vae_homework_fig_10.pdf)
 
 **Comparison of the Three Methods**
 

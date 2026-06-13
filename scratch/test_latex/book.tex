@@ -51,41 +51,10 @@ Here is a factual claim with nasty characters \footnote{Source: \protect\cite{ho
 \end{hebrew}
 
 
-\chapter{Hebrew-English BiDi Section}
-This chapter demonstrates advanced mixed Right-To-Left (Hebrew) and Left-To-Right (English) text handling, as well as complex mathematical formatting. Modern LaTeX makes it seamless to switch between left-to-right (LTR) and right-to-left (RTL) paradigms within the same document, or even the same paragraph, which is essential for globalized academic research.
-
-\section{Advanced BiDi Text Integration}
-\begin{hebrew}
-בעידן המודרני של בינה מלאכותית (Artificial Intelligence), אנו עדים להתפתחות מואצת של מודלים שפתיים גדולים (Large Language Models - LLMs). טכנולוגיות אלו מאפשרות עיבוד שפה טבעית (Natural Language Processing) ברמה שלא נראתה כמותה בעבר. חשוב לציין כי שילוב של טקסטים אנגליים ועבריים באותו משפט (Inline BiDi) הוא אתגר טכני לא קטן. למשל, כאשר מדברים על Frameworks כגון CrewAI או LangChain, יש לוודא שהכיווניות (Directionality) נשמרת בצורה נאותה. אלגוריתמים מתקדמים לומדים את המבנה התחבירי של מספר שפות במקביל (Multilingual Learning), ומסוגלים לייצר טקסט קוהרנטי וזורם תוך שמירה על כללי הטיפוגרפיה. בנוסף, מערכות אלו נדרשות להתמודד עם אלמנטים נוספים כמו מספרים (12345), משוואות מתמטיות, וציטוטים, כל זאת מבלי לפגוע בקריאות של המסמך.
-\end{hebrew}
-
-\section{Mathematical Formulation in RTL Context}
-When formulating algorithms for BiDi processing, standard LTR math blocks are often maintained even within RTL paragraphs. The following is a professionally typeset mathematical equation demonstrating a complex cost function for a multilingual model:
-\begin{equation}
-\mathcal{L}(\theta) = -\frac{1}{N} \sum_{i=1}^{N} \sum_{j=1}^{V} y_{ij} \log(\hat{y}_{ij}(\theta)) + \lambda \| \theta \|_2^2
-\end{equation}
-Where $\mathcal{L}(\theta)$ is the loss, $N$ is the number of samples, and $V$ is the vocabulary size. The inclusion of the regularization term $\lambda \| \theta \|_2^2$ ensures the model does not overfit to specific language syntactic structures.
-
-% ── Back Matter ────────────────────────────────────────
-\backmatter
-
-\printbibliography[heading=bibintoc,title={References}]
-
-\printglossaries
-
-\printindex
-
-\appendix
-\chapter{System Architecture Diagrams}
-This appendix contains the system architecture diagrams for the CrewAI pipeline.
-
-\chapter{Full Agent Prompts}
-This appendix contains the Role, Goal, and Backstory for each agent in the system.
-
-\chapter{Raw Research Corpus}
-This appendix contains the annotated source list from the research phase.
-
-\IfFileExists{telemetry.tex}{\input{telemetry.tex}}{}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+\printbibliography
 \IfFileExists{appendix_notebook.tex}{\input{appendix_notebook.tex}}{}
 
 \end{document}

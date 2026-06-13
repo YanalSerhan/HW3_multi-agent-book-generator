@@ -3,6 +3,7 @@ from pathlib import Path
 
 from ..exceptions.domain import CompilationError
 from ..shared.gatekeeper import ApiGatekeeper
+from .aux_processor import post_process_aux_files
 from .base import BaseClient
 
 
@@ -56,6 +57,9 @@ class LaTeXClient(BaseClient):
                     "LaTeX first pass failed", {"stdout": res1.stdout, "stderr": res1.stderr}
                 )
 
+            # Post-process TOC, LOF, LOT files
+            post_process_aux_files(tex_file, self.logger)
+
             # Bibliography pass
             import contextlib
 
@@ -97,6 +101,9 @@ class LaTeXClient(BaseClient):
                     "LaTeX second pass failed", {"stdout": res2.stdout, "stderr": res2.stderr}
                 )
 
+            # Post-process TOC, LOF, LOT files before final pass
+            post_process_aux_files(tex_file, self.logger)
+
             # Third pass for cross-references and indices
             res3 = subprocess.run(
                 cmd, cwd=tex_file.parent, capture_output=True, text=True, timeout=90.0
@@ -105,6 +112,9 @@ class LaTeXClient(BaseClient):
                 raise CompilationError(
                     "LaTeX third pass failed", {"stdout": res3.stdout, "stderr": res3.stderr}
                 )
+
+            # Post-process TOC, LOF, LOT files one final time to leave clean files on disk
+            post_process_aux_files(tex_file, self.logger)
 
             return res3.stdout
         except subprocess.TimeoutExpired as e:

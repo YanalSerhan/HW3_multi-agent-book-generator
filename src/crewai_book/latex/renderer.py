@@ -11,6 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from ..domain.entities import Article
 from ..observability.logger import get_logger
+from .post_processor import post_process_latex
 
 logger = get_logger("latex.renderer")
 
@@ -67,6 +68,19 @@ def inject_provenance_footnotes(text: str, bib_keys: set[str]) -> str:
         return match.group(0)
 
     text = re.sub(r"\*\*([a-zA-Z0-9_\-]+)\*\*", bold_replacer, text)
+
+    # Pass 3: catch raw standalone bib keys
+    for key in bib_keys:
+        # We want to match the key only if it's not already inside a \cite{}
+        # A simple way is to use a negative lookbehind for {
+        pattern = rf"(?<!\{{)\b{re.escape(key)}\b(?!}})"
+        def repl(m: re.Match[str], k: str = key) -> str:
+            return rf"\protect\cite{{{k}}}"
+
+        text = re.sub(pattern, repl, text)
+
+    # Pass 4: remove \LRE{} wrappers around simple math variables which break xelatex
+    text = re.sub(r"\\LRE\{(\s*\(*[a-zA-Z]\)*\s*)\}", r"\1", text)
 
     # Cleanup pass: remove any remaining malformed PROVENANCE tags
     malformed_pattern = r"\[PROVENANCE:[^\]]*\]"
@@ -129,54 +143,9 @@ def render_book(article: Article, template_dir: Path | None = None) -> str:
 
         template = env.get_template("book.tex.j2")
         rendered = template.render(article=article, metadata=cover_metadata)
-        
-        # Post-processing: wrap tables in adjustbox so they don't overflow the page
-        rendered = re.sub(
-            r'(\\begin\{tabular\}.*?\\end\{tabular\})',
-            r'\\begin{adjustbox}{max width=\\textwidth,center}\n\1\n\\end{adjustbox}',
-            rendered,
-            flags=re.DOTALL
-        )
-        
-        # Post-processing: Balance hebrew environments to prevent latex compile crashes
-        # Post-processing: Balance hebrew environments and wrap English phrases in \LRE
-        hebrew_count = 0
-        def balance_hebrew(match):
-            nonlocal hebrew_count
-            tag = match.group(0)
-            if "begin" in tag:
-                hebrew_count += 1
-                return tag
-            elif "end" in tag:
-                if hebrew_count > 0:
-                    hebrew_count -= 1
-                    return tag
-                else:
-                    return "% stripped unmatched end{hebrew}"
-            else:
-                # We matched the content inside the hebrew environment!
-                # We should match the content using a different regex below.
-                pass
-                
-        rendered = re.sub(r'\\begin\{hebrew\}|\\end\{hebrew\}', balance_hebrew, rendered)
-        
-        # Now find all text strictly between \begin{hebrew} and \end{hebrew} and wrap English
-        def wrap_english(match):
-            content = match.group(1)
-            # Wrap parenthetical English phrases: (Noise Schedule)
-            content = re.sub(r'(\([A-Za-z][A-Za-z0-9\s-]*\))', r'\\LRE{\1}', content)
-            # Wrap standalone multi-word English phrases: Large Language Models
-            # Be careful not to wrap inside \cite{} or \includegraphics{}
-            # A simple heuristic: if it's 2+ capitalized/english words surrounded by Hebrew or spaces, wrap it.
-            # But the parenthetical regex covers 95% of the user's observed issues.
-            return "\\begin{hebrew}" + content + "\\end{hebrew}"
-            
-        rendered = re.sub(r'\\begin\{hebrew\}(.*?)\\end\{hebrew\}', wrap_english, rendered, flags=re.DOTALL)
-        
-        # Close any unclosed hebrew environments right before \end{document}
-        if hebrew_count > 0:
-            rendered = rendered.replace("\\end{document}", ("\\end{hebrew}\n" * hebrew_count) + "\\end{document}")
-        
+
+        rendered = post_process_latex(rendered)
+
         logger.info(f"Rendered LaTeX document: {len(rendered)} chars")
         return rendered
     except Exception as e:

@@ -45,7 +45,10 @@
 
 {{ latex_content }}
 
-
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+\printbibliography
 \IfFileExists{appendix_notebook.tex}{\input{appendix_notebook.tex}}{}
 
 \end{document}

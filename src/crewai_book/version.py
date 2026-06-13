@@ -5,4 +5,4 @@ All other references to the version (pyproject.toml, CLI, docs) should
 read from this module.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.00"

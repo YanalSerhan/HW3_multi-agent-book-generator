@@ -7,7 +7,7 @@ packages = ["src/crewai_book"]
 
 [project]
 name = "crewai-book-generator"
-version = "0.1.0"
+version = "1.00"
 description = "Multi-agent LaTeX book/article generator powered by CrewAI"
 readme = "README.md"
 license = "MIT"

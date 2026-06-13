@@ -58,9 +58,9 @@ def _simulate_editorial_crew_kickoff(out_path: Path):
 
 
 @patch("builtins.input", return_value="y")
-@patch("crewai_book.workflows.pipeline.create_editorial_crew")
-@patch("crewai_book.workflows.pipeline.create_main_crew")
-@patch("crewai_book.workflows.pipeline.create_research_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_editorial_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_main_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_research_crew")
 @patch("crewai_book.sdk.latex_client.LaTeXClient.compile_pdf")
 def test_pipeline_integration_success(
     mock_compile: MagicMock,
@@ -122,7 +122,7 @@ def test_pipeline_integration_success(
 
 
 @patch("builtins.input", return_value="y")
-@patch("crewai_book.workflows.pipeline.create_research_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_research_crew")
 def test_pipeline_integration_retry_logic(
     mock_research: MagicMock,
     mock_input: MagicMock,
@@ -169,7 +169,7 @@ def test_pipeline_integration_retry_logic(
         pass
 
     # Actually, let's just let it fail at MAIN stage to stop the pipeline, so we can verify RESEARCH retried.
-    with patch("crewai_book.workflows.pipeline.create_main_crew") as mock_main:
+    with patch("crewai_book.workflows.pipeline_stages.create_main_crew") as mock_main:
         mock_main_crew = MagicMock()
         mock_main_crew.kickoff.side_effect = lambda: (tmp_path / "manuscript.md").write_text(
             "FAIL", encoding="utf-8"
@@ -185,8 +185,8 @@ def test_pipeline_integration_retry_logic(
         assert state.current_stage == "main"
 
 
-@patch("crewai_book.workflows.pipeline.create_research_crew")
-@patch("crewai_book.workflows.pipeline.create_main_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_research_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_main_crew")
 @patch("builtins.input", side_effect=["y", "n"])
 def test_pipeline_human_review_outline_abort(
     mock_input: MagicMock,

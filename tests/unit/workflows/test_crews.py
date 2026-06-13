@@ -4,11 +4,11 @@ from unittest.mock import MagicMock, patch
 
 from crewai_book.domain.entities import Article, Chapter, Section
 from crewai_book.domain.state import PipelineState
+from crewai_book.workflows.gates_runner import run_all_gates
 from crewai_book.workflows.quality_gates import (
     check_qg4_word_count,
     check_qg7_citations,
     check_qg8_compilation,
-    run_all_gates,
 )
 
 
@@ -43,7 +43,7 @@ def test_editorial_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> 
 
 
 @patch("crewai_book.workflows.main_crew.Crew")
-@patch("crewai_book.workflows.main_crew.Task")
+@patch("crewai_book.workflows.main_tasks.Task")
 def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
     """Main crew should be created with 5 agents and 5 tasks."""
     from pathlib import Path
@@ -58,11 +58,13 @@ def test_main_crew_creation(mock_task: MagicMock, mock_crew: MagicMock) -> None:
 
 
 @patch("builtins.input", return_value="y")
-@patch("crewai_book.workflows.pipeline.create_editorial_crew")
-@patch("crewai_book.workflows.pipeline.create_main_crew")
-@patch("crewai_book.workflows.pipeline.create_research_crew")
-@patch("crewai_book.workflows.pipeline._evaluate_gates_for_stage")
+@patch("crewai_book.workflows.pipeline_stages.create_editorial_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_main_crew")
+@patch("crewai_book.workflows.pipeline_stages.create_research_crew")
+@patch("crewai_book.workflows.pipeline._evaluate_gates_for_stage", return_value=True)
+@patch("crewai_book.workflows.pipeline_stages._evaluate_gates_for_stage", return_value=True)
 def test_run_pipeline(
+    mock_eval2: MagicMock,
     mock_evaluate: MagicMock,
     mock_research: MagicMock,
     mock_main: MagicMock,

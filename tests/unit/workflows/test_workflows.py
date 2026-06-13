@@ -7,13 +7,13 @@ import pytest
 
 from crewai_book.domain.entities import Article, Chapter, Section
 from crewai_book.domain.state import Bibliography, Citation, PipelineState
+from crewai_book.workflows.gates_runner import run_all_gates
 from crewai_book.workflows.quality_gates import (
     check_qg1_sources,
     check_qg2_hallucinations,
     check_qg3_outline,
     check_qg5_readability,
     check_qg9_pages,
-    run_all_gates,
 )
 from crewai_book.workflows.retry_handler import retry_with_backoff
 

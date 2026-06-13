@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from crewai_book.domain.state import PipelineState
-from crewai_book.workflows.pipeline import _generate_telemetry_appendix
+from crewai_book.workflows.pipeline_utils import _generate_telemetry_appendix
 
 
 def test_generate_telemetry_appendix_success(tmp_path: Path) -> None:
