@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+# pyrefly: ignore [missing-import]
 import pytest
 
 from crewai_book.workflows.pipeline import run_pipeline
@@ -20,9 +21,9 @@ def _simulate_research_crew_kickoff(out_path: Path):
     latex_dir = out_path / "latex"
     latex_dir.mkdir(parents=True, exist_ok=True)
 
-    # Generate mock bibliography with 10 sources (to pass QG-1)
+    # Generate mock bibliography with 15 sources (to pass QG-1)
     bib_content = ""
-    for i in range(10):
+    for i in range(15):
         bib_content += (
             f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
         )
@@ -104,7 +105,7 @@ def test_pipeline_integration_success(
     assert state.topic == "Integration Test Topic"
 
     # Verify the artifacts were actually parsed and populated in the state
-    assert state.artifacts["bib_count"] == 10
+    assert state.artifacts["bib_count"] == 15
     assert state.artifacts["hallucination_count"] == 0
     assert state.artifacts["compiled"] is True
 
@@ -148,9 +149,9 @@ def test_pipeline_integration_retry_logic(
                 "All claims verified.", encoding="utf-8"
             )
         else:
-            # Second run: Passes QG-1 (10 sources)
+            # Second run: Passes QG-1 (15 sources)
             bib_content = ""
-            for i in range(10):
+            for i in range(15):
                 bib_content += f"@article{{source{i},\n  title={{Source {i}}},\n  author={{Author {i}}}\n}}\n\n"
             (latex_dir / "references.bib").write_text(bib_content, encoding="utf-8")
             (research_dir / "verification_report.md").write_text(

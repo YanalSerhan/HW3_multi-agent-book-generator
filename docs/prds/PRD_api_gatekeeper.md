@@ -1,20 +1,33 @@
 # PRD: API Gatekeeper Mechanism
 
-## Background
-A centralized system to manage all external LLM and Search API requests.
+## 1. Background
+The CrewAI multi-agent pipeline makes hundreds of API calls to LLM providers (OpenAI) and Search tools (Serper, ArXiv) within a few minutes. To prevent HTTP 429 Rate Limit errors and maintain robust execution, a centralized API Gatekeeper is required.
 
-## Requirements
-- Enforce config-driven rate limits (requests per minute/hour).
-- Queue requests in a FIFO manner when limits are reached.
-- Retry on transient errors.
+## 2. Requirements
+- **Centralized Execution**: All outbound API calls must pass through the `ApiGatekeeper.execute()` method. No direct `requests.get` or `openai.ChatCompletion.create` calls are allowed.
+- **Config-Driven Limits**: The system must read rate limits (requests per minute, concurrent max) from `config/rate_limits.json`.
+- **FIFO Queuing**: If the concurrent limit is reached, requests must be queued in a FIFO manner, not dropped.
+- **Exponential Backoff**: Transient errors (e.g., HTTP 429, 502, 503) must trigger an automatic retry with exponential backoff (e.g., 2s, 4s, 8s).
+- **Thread Safety**: The queuing and token bucket algorithm must be thread-safe using `threading.Lock` since agents execute concurrently.
 
-## Expected I/O
-- Input: API Request payload.
-- Output: Valid API Response or specific Error after retries.
+## 3. Configuration Schema
+`config/rate_limits.json` must contain:
+```json
+{
+  "rate_limits": {
+    "version": "1.00",
+    "services": {
+      "default": {
+        "requests_per_minute": 30,
+        "concurrent_max": 5,
+        "max_retries": 3
+      }
+    }
+  }
+}
+```
 
-## Constraints
-- Must be thread-safe if multi-threading is used.
-
-## Test Scenarios
-- Limit threshold exceeded test (verify queuing).
-- Exponential backoff test.
+## 4. Edge Cases & Test Scenarios
+- **Burst Traffic**: Simulate 50 concurrent requests. Verify the gatekeeper allows exactly 5 in parallel and queues the rest.
+- **Persistent Failure**: Simulate a permanent 401 error. Verify the gatekeeper throws a fatal exception after `max_retries` rather than looping infinitely.
+- **Timeout Management**: Ensure queued requests that wait too long eventually time out gracefully.

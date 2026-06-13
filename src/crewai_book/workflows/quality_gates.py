@@ -17,8 +17,8 @@ def check_qg1_sources(state: PipelineState) -> QualityGateResult:
     if not bib:
         return QualityGateResult(False, "Bibliography not found in state artifacts")
     count = len(bib.entries)
-    passed = count >= 10
-    return QualityGateResult(passed, f"Found {count}/10 verified sources")
+    passed = count >= 15
+    return QualityGateResult(passed, f"Found {count}/15 verified sources")
 
 
 def check_qg2_hallucinations(state: PipelineState) -> QualityGateResult:
@@ -49,7 +49,17 @@ def check_qg4_word_count(state: PipelineState) -> QualityGateResult:
     article = state.artifacts.get("article")
     if not article:
         return QualityGateResult(False, "Article not found in state artifacts")
-    target = 7500
+
+    import json
+    import os
+    try:
+        settings_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "..", "config", "settings.json")
+        with open(settings_path) as f:
+            settings = json.load(f)
+        target = settings.get("book_length", {}).get("target_word_count", 7500)
+    except Exception:
+        target = 7500
+
     actual = article.total_word_count
     lower = int(target * 0.9)
     upper = int(target * 1.1)

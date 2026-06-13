@@ -12,6 +12,7 @@
   ],
   "book_length": {
     "chapter_count": 8,
-    "words_per_section": 325
+    "words_per_section": 325,
+    "target_word_count": 7500
   }
 }

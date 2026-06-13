@@ -35,6 +35,7 @@
 - [Running the Pipeline](#-running-the-pipeline)
 - [Testing & Quality Verification](#-testing--quality-verification)
 - [Roadmap & Feature Progress](#-roadmap--feature-progress)
+- [Contributing](#-contributing)
 - [License & Acknowledgments](#-license--acknowledgments)
 
 ---
@@ -354,6 +355,12 @@ make test-unit         # Runs fast unit tests
 make test-integration  # Runs integration tests
 make check-all         # Runs linting, typechecking, and tests
 ```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on our code standards, PR process, and file length restrictions.
 
 ---
 

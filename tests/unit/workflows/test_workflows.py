@@ -68,16 +68,16 @@ def _make_bibliography(n: int) -> Bibliography:
 
 
 def test_qg1_sources_pass() -> None:
-    """QG-1 should pass with ≥10 sources."""
+    """QG-1 should pass with ≥15 sources."""
     state = PipelineState(
-        topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(10)}
+        topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(15)}
     )
     res = check_qg1_sources(state)
     assert res.passed is True
 
 
 def test_qg1_fail() -> None:
-    """QG-1 should fail with <10 sources."""
+    """QG-1 should fail with <15 sources."""
     state = PipelineState(
         topic="test", run_id="r1", artifacts={"bibliography": _make_bibliography(5)}
     )
