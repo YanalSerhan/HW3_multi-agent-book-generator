@@ -1,7 +1,12 @@
 # pyrefly: ignore [missing-import]
-import pytest
 from pathlib import Path
-from crewai_book.workflows.artifact_parser import parse_bibliography, parse_hallucination_count, parse_article
+
+from crewai_book.workflows.artifact_parser import (
+    parse_article,
+    parse_bibliography,
+    parse_hallucination_count,
+)
+
 
 def test_parse_bibliography_valid(tmp_path: Path) -> None:
     bib_file = tmp_path / "valid.bib"
@@ -10,7 +15,7 @@ def test_parse_bibliography_valid(tmp_path: Path) -> None:
 @book{test2, author={Test 2}}
     """
     bib_file.write_text(content)
-    
+
     bib = parse_bibliography(bib_file)
     assert len(bib.entries) == 2
     assert bib.entries[0].bibtex_key == "test1"
@@ -22,7 +27,7 @@ def test_parse_bibliography_markdown_wrapped(tmp_path: Path) -> None:
 @article{test3, title={Test 3}}
 ```"""
     bib_file.write_text(content)
-    
+
     bib = parse_bibliography(bib_file)
     assert len(bib.entries) == 1
     assert bib.entries[0].bibtex_key == "test3"
@@ -35,7 +40,7 @@ def test_parse_bibliography_missing(tmp_path: Path) -> None:
 def test_parse_bibliography_malformed(tmp_path: Path) -> None:
     bib_file = tmp_path / "malformed.bib"
     bib_file.write_text("This is just some random text without any bibtex entries.")
-    
+
     bib = parse_bibliography(bib_file)
     assert len(bib.entries) == 0
 
@@ -69,7 +74,7 @@ More text.
 ### Section 1
 Final text."""
     art_file.write_text(content)
-    
+
     art = parse_article(art_file)
     assert len(art.chapters) == 2
     assert art.chapters[0].title == "Chapter 1"
@@ -88,7 +93,7 @@ Latex text.
 \\subsection{Deep dive}
 More text."""
     art_file.write_text(content)
-    
+
     art = parse_article(art_file)
     assert len(art.chapters) == 1
     assert art.chapters[0].title == "Intro"
@@ -101,7 +106,7 @@ def test_parse_article_no_chapter(tmp_path: Path) -> None:
     content = """## Section Only
 Text here."""
     art_file.write_text(content)
-    
+
     art = parse_article(art_file)
     assert len(art.chapters) == 1
     assert art.chapters[0].title == "Default"
@@ -112,7 +117,7 @@ def test_parse_article_no_section(tmp_path: Path) -> None:
     content = """# Chapter Only
 Text here."""
     art_file.write_text(content)
-    
+
     art = parse_article(art_file)
     assert len(art.chapters) == 1
     assert len(art.chapters[0].sections) == 1
